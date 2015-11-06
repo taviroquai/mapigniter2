@@ -2,6 +2,8 @@
 
 MapIgniter2 is a geocms based on Laravel 5 and OpenLayers 3.  
 
+A demo can be found [here](http://taviroquai.com/mapigniter2/public/).  
+
 ## Install
 
 1. *Download* zip and *extract* to a web server folder
