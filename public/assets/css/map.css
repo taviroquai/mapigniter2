@@ -1,0 +1,64 @@
+
+/* 
+    Created on : 7/out/2015, 12:40:20
+    Author     : mafonso
+*/
+
+html, body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+#map {
+    position: absolute;
+    top: 50px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 35;
+}
+
+#content {
+    position: absolute;
+    top: 50px;
+    bottom: 0px;
+    left: 0px;
+    width: 350px;
+    background-color: #e0e0e0;
+    z-index: 40;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#layerSwitcher h1, #layerSwitcher h2, #layerSwitcher h3, #layerSwitcher h4 {
+    cursor: pointer;
+}
+
+@media (max-width: 992px) {
+    
+    #map {
+        position: absolute;
+        top: 50px;
+        bottom: auto;
+        height: 280px;
+        left: 0px;
+        right: 0px;
+        z-index: 35;
+    }
+
+    #content {
+        position: absolute;
+        top: 280px;
+        left: 0px;
+        width: 100%;
+        min-height: 280px;
+        background-color: #e0e0e0;
+        z-index: 40;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+}

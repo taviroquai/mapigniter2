@@ -1,0 +1,22 @@
+
+/* 
+    Created on : 21/jul/2015, 16:09:27
+    Author     : mafonso
+*/
+
+#mainContent {
+    margin-top: 60px;
+}
+
+#gallery .delete-image {
+    position: relative;
+    top: -54px;
+}
+
+#tableLayeritem tr:first-child .action-layeritem-orderup {
+    display: none;
+}
+
+#tableLayeritem tr:last-child .action-layeritem-orderdown {
+    display: none;
+}

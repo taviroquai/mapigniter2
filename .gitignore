@@ -1,0 +1,6 @@
+/nbproject
+/vendor
+/config/local
+/storage/logs
+/public/storage
+.env
