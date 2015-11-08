@@ -17,9 +17,9 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password', 60);
-            $table->string('twitter_id', 32);
-            $table->string('facebook_id', 32);
-            $table->string('gplus_id', 32);
+            $table->string('twitter_id', 32)->nullable();
+            $table->string('facebook_id', 32)->nullable();
+            $table->string('gplus_id', 32)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
