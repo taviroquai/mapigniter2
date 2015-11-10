@@ -33,6 +33,11 @@ class Layer extends Content
         'feature_info_template',
         'gpx_filename',
         'kml_filename',
+        'postgis_host',
+        'postgis_port',
+        'postgis_user',
+        'postgis_pass',
+        'postgis_dbname',
         'postgis_schema',
         'postgis_table',
         'postgis_field',
@@ -181,20 +186,29 @@ class Layer extends Content
      */
     public function savePostgisFile()
     {
+        // Make connection
+        $dsn = "pgsql:host={$this->postgis_host};port={$this->postgis_port};dbname={$this->postgis_dbname}";
+        $pdo = new \PDO($dsn, $this->postgis_user, $this->postgis_pass);
         
         // Get table CRS
-        $result = \DB::select(\DB::raw("SELECT Find_SRID('{$this->postgis_schema}','{$this->postgis_table}', '{$this->postgis_field}') as srid"));
+        $stm = $pdo->query("SELECT Find_SRID('{$this->postgis_schema}','{$this->postgis_table}', '{$this->postgis_field}') as srid");
+        if (!$stm) throw new \Exception ('Could not execute query');
+        $stm->execute();
+        $srid = $stm->fetchColumn(0);
         
         // Get items
         $sql = "SELECT {$this->postgis_attributes}, ST_AsGeoJSON({$this->postgis_field}) as json FROM {$this->postgis_schema}.{$this->postgis_table}";
-        $items = \DB::select(\DB::raw($sql), []);
+        $stm = $pdo->query($sql);
+        if (!$stm) throw new \Exception ('Could not execute query');
+        $stm->execute();
+        $items = $stm->fetchAll(\PDO::FETCH_OBJ);
         
         $json = [
             'type' => 'FeatureCollection',
             'crs' => [
                 'type' => 'name',
                 'properties' => [
-                    'name' => 'EPSG:' . $result[0]->srid
+                    'name' => 'EPSG:' . $srid
                 ]
             ],
             'features' => []
@@ -210,9 +224,9 @@ class Layer extends Content
         }
         
         // Create filename
-        @mkdir($this->getPublicStoragePath(), 0777, true);
+        mkdir($this->getPublicStoragePath(), 0777, true);
         $filename = $this->getPublicStoragePath() . '/postgis.json';
-        @file_put_contents($filename, json_encode($json));
+        file_put_contents($filename, json_encode($json));
     }
     
     /**

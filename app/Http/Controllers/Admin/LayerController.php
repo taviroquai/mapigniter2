@@ -131,7 +131,13 @@ class LayerController extends BaseController
         $layer->saveGPXFile(\Request::file('gpx_filename_0'));
         $layer->saveKMLFile(\Request::file('kml_filename_0'));
         if ($layer->type === 'postgis') {
-            $layer->savePostgisFile();
+            try {
+                $layer->savePostgisFile();
+            } catch (\PDOException $e) {
+                return response()->json(['errors' => ['postgis_error' => [$e->getMessage()]]]);
+            } catch (\Exception $e) {
+                return response()->json(['errors' => ['postgis_error' => [$e->getMessage()]]]);
+            }
         }
         if ($layer->type === 'geojson') {
             $layer->saveGeoJSONFile();

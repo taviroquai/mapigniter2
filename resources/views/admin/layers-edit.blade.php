@@ -259,6 +259,58 @@
                     <div id="postgis_options">
                         <div class="row">
                             <div class="col-md-12">
+                                <span class="help-block alert-danger v-error-postgis_error"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="postgis_host">{{ trans('backoffice.postgis_host') }}</label>
+                                    <input class="form-control" type="text" name="postgis_host"
+                                        placeholder=""
+                                        value="{{ $layer->postgis_host }}">
+                                    <span class="help-block alert-danger v-error-postgis_host"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="postgis_port">{{ trans('backoffice.postgis_port') }}</label>
+                                    <input class="form-control" type="text" name="postgis_port"
+                                        placeholder=""
+                                        value="{{ $layer->postgis_port }}">
+                                    <span class="help-block alert-danger v-error-postgis_port"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="postgis_user">{{ trans('backoffice.postgis_user') }}</label>
+                                    <input class="form-control" type="text" name="postgis_user"
+                                        placeholder=""
+                                        value="{{ $layer->postgis_user }}">
+                                    <span class="help-block alert-danger v-error-postgis_user"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="postgis_pass">{{ trans('backoffice.postgis_pass') }}</label>
+                                    <input class="form-control" type="text" name="postgis_pass"
+                                        placeholder=""
+                                        value="{{ $layer->postgis_pass }}">
+                                    <span class="help-block alert-danger v-error-postgis_pass"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="postgis_dbname">{{ trans('backoffice.postgis_dbname') }}</label>
+                                    <input class="form-control" type="text" name="postgis_dbname"
+                                        placeholder=""
+                                        value="{{ $layer->postgis_dbname }}">
+                                    <span class="help-block alert-danger v-error-postgis_dbname"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="postgis_schema">{{ trans('backoffice.postgis_schema') }}</label>
                                     <input class="form-control" type="text" name="postgis_schema"
@@ -267,9 +319,7 @@
                                     <span class="help-block alert-danger v-error-postgis_schema"></span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="postgis_table">{{ trans('backoffice.postgis_table') }}</label>
                                     <input class="form-control" type="text" name="postgis_table"
@@ -278,9 +328,7 @@
                                     <span class="help-block alert-danger v-error-postgis_table"></span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="postgis_field">{{ trans('backoffice.postgis_field') }}</label>
                                     <input class="form-control" type="text" name="postgis_field"
