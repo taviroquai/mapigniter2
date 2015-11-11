@@ -256,6 +256,42 @@
                             </div>
                         </div>
                     </div>
+                    <div id="shapefile_options">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="shapefile_filename">{{ trans('backoffice.shapefile_filename') }}</label>
+                                    @if ($layer->shapefile_filename)
+                                    <span><small>Previous: {{ $layer->shapefile_filename }}</small></span>
+                                    @endif
+                                    <input class="form-control" type="file" name="shapefile_filename" id="shapefile_filename" value="">
+                                    <span class="help-block alert-danger v-error-shapefile_filename_0"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="shapefile_geomtype">{{ trans('backoffice.shapefile_geomtype') }}</label>
+                                    <select class="form-control" name="shapefile_geomtype">
+                                        <option value="POINT" @if($layer->shapefile_geomtype === 'POINT') selected @endif>POINT</option>
+                                        <option value="LINE" @if($layer->shapefile_geomtype === 'LINE') selected @endif>LINE</option>
+                                        <option value="POLYGON" @if($layer->shapefile_geomtype === 'POLYGON') selected @endif>POLYGON</option>
+                                    </select>
+                                    <span class="help-block alert-danger v-error-shapefile_geomtype"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="shapefile_msclass">{{ trans('backoffice.shapefile_msclass') }}
+                                        <small><a href="http://mapserver.org/documentation.html" target="_blank">{{ trans('backoffice.mapserver_link') }}</a></small>
+                                    </label>
+                                    <textarea rows="15" class="form-control"
+                                        name="shapefile_msclass">{{ $layer->shapefile_msclass }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div id="postgis_options">
                         <div class="row">
                             <div class="col-md-12">
@@ -604,6 +640,7 @@
         $('#wfs_options').hide();
         $('#gpx_options').hide();
         $('#kml_options').hide();
+        $('#shapefile_options').hide();
         $('#postgis_options').hide();
         $('#geojson_options').hide();
         $('#vector_options').hide();
@@ -612,13 +649,13 @@
     function showTypeOptions(value) {
         hideTypeOptions();
         $('#' + value + '_options').show(200);
-        if (value === 'wfs' || value === 'wms') {
+        if (value === 'wfs' || value === 'wms' || value === 'shapefile') {
             $('#projection_options').show(200);
         }
-        if (value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson') {
+        if (value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile') {
             $('#style_options').show(200);
         }
-        if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson') {
+        if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile') {
             $('#vector_options').show(200);
         }
     }
@@ -642,6 +679,15 @@
         showUpload: false,
         showRemove: false,
 		maxFileCount: 1
+    });
+    
+    $("#shapefile_filename").fileinput({
+        showCaption: false,
+        overwriteInitial: true,
+        showUpload: false,
+        showRemove: false,
+		maxFileCount: 1,
+        allowedFileExtensions: ['zip']
     });
     
     $("#ol_style_static_icon").fileinput({
@@ -688,7 +734,12 @@
     $('[name="ol_style_static_fill_color"]').parent().colorpicker();
     $('[name="ol_style_static_stroke_color"]').parent().colorpicker();
     
-    var form = new Form($, '#formLayer', {files: ['#gpx_filename', '#kml_filename', '#ol_style_static_icon']});
+    var form = new Form($, '#formLayer', {files: [
+        '#gpx_filename',
+        '#kml_filename',
+        '#shapefile_filename',
+        '#ol_style_static_icon'
+    ]});
     
     @if($layer->type === 'geojson')
         var EditMap = function () {

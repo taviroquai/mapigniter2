@@ -110,6 +110,9 @@ Map.prototype.addLayers = function () {
         case "kml":
             layer = self.createLayerKML(item);
             break;
+        case "shapefile":
+            layer = self.createLayerShapefile(item);
+            break;
         case "postgis":
             layer = self.createLayerPostgis(item);
             break;
@@ -456,6 +459,26 @@ Map.prototype.createLayerKML = function (config) {
             url: self.config.base_url + '/storage/layer/' + config.layer.id + '/' + config.layer.kml_filename,
             format: new ol.format.KML()
         })
+    });
+    return layer;
+};
+
+// Camada raster WMS
+Map.prototype.createLayerShapefile = function (config) {
+    var self = this;
+    config.layer['serverType'] = 'mapserver';
+    config.layer['url'] = config.layer.shapefile_wmsurl;
+    config.layer['params'] = {
+        'LAYERS': config.layer.content.seo_slug,
+        'TILED': false,
+        'VERSION': '1.1.1',
+        'SRS': 'EPSG:' + config.layer.projection_id,
+        'CRS': 'EPSG:' + config.layer.projection_id
+    };
+    var layer = new ol.layer.Tile({
+        visible: config.visible,
+        gutter: 6,
+        source: new ol.source.TileWMS(config.layer)
     });
     return layer;
 };

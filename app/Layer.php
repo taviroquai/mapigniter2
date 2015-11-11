@@ -33,6 +33,10 @@ class Layer extends Content
         'feature_info_template',
         'gpx_filename',
         'kml_filename',
+        'shapefile_filename',
+        'shapefile_geomtype',
+        'shapefile_wmsurl',
+        'shapefile_msclass',
         'postgis_host',
         'postgis_port',
         'postgis_user',
@@ -107,6 +111,7 @@ class Layer extends Content
             'wfs' => 'WFS',
             'gpx' => 'GPX',
             'kml' => 'KML',
+            'shapefile' => 'Shapefile (requires MapServer)',
             'postgis' => 'Postgis'
         ];
     }
@@ -179,6 +184,41 @@ class Layer extends Content
         }
     }
     
+    /**
+     * Save shapefile
+     * 
+     * @param null|File $file
+     */
+    public function saveShapeFile($file)
+    {
+        if ($file) {
+            $filename = 'shapefile.'.$file->getClientOriginalExtension();
+            $file->move($this->getPublicStoragePath(), $filename);
+            $this->shapefile_filename = $filename;
+            $this->save();
+            
+            // Unpack
+            $zip = new \ZipArchive;
+            $res = $zip->open($this->getPublicStoragePath() . '/' . $filename);
+            if ($res === TRUE) {
+                $zip->extractTo($this->getPublicStoragePath());
+                $zip->close();
+                $files = glob($this->getPublicStoragePath() . '/*.shp');
+                if (!empty($files)) {
+                    $this->shapefile_filename = basename($files[0]);
+                    $this->save();
+                }
+            }
+        }
+        if ($this->shapefile_filename) {
+            $this->shapefile_wmsurl = "http://{$_SERVER['SERVER_NAME']}/cgi-bin/mapserv?map=" . storage_path('layer/' . $this->id . '/mapfile.map') . "&";
+            $this->save();
+            $this->generateMapfile();
+        }
+    }
+    
+    
+
     /**
      * Save postgis file
      * 
@@ -290,6 +330,75 @@ class Layer extends Content
     public function delete() {
         array_map('unlink', glob($this->getPublicStoragePath()."/*"));
         parent::delete();
+    }
+    
+    /**
+     * Generate mapfile
+     */
+    protected function generateMapfile()
+    {
+        @mkdir(storage_path('layer/'.$this->id), 0777, true);
+        ob_start();
+        include storage_path('app/template.map');
+        $content = ob_get_clean();
+        @file_put_contents(storage_path('layer/'.$this->id) . '/mapfile.map', $content);
+    }
+
+    /**
+     * Convert hexadecimal color to rgb
+     * 
+     * @param string $hex
+     * @return string
+     */
+    protected function hex2rgb($hex)
+    {
+        if (strpos($hex, '#') === 0) {
+            $hex = str_replace("#", "", $hex);
+
+            if(strlen($hex) == 3) {
+                $r = hexdec(substr($hex,0,1).substr($hex,0,1));
+                $g = hexdec(substr($hex,1,1).substr($hex,1,1));
+                $b = hexdec(substr($hex,2,1).substr($hex,2,1));
+            } else {
+                $r = hexdec(substr($hex,0,2));
+                $g = hexdec(substr($hex,2,2));
+                $b = hexdec(substr($hex,4,2));
+            }
+            $rgb = array($r, $g, $b);
+            return implode(" ", $rgb); // returns the rgb values separated by space
+        }
+        return $hex;
+    }
+    
+    /**
+     * Get icon path
+     * 
+     * @return string
+     */
+    protected function getStaticIconPath()
+    {
+        return public_path('storage/layer/' . $this->id . '/' . $this->ol_style_static_icon);
+    }
+    
+    /**
+     * Get icon size
+     * 
+     * @return int
+     */
+    protected function getStaticIconSize()
+    {
+        list($width, $height) = getimagesize($this->getStaticIconPath());
+        return $height;
+    }
+    
+    /**
+     * Convert shapefile name to mapfile layer data
+     * 
+     * @return string
+     */
+    protected function getMapfileData()
+    {
+        return substr($this->shapefile_filename, 0, strrpos($this->shapefile_filename, '.'));
     }
     
 }

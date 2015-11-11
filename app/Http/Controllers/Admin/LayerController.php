@@ -130,6 +130,7 @@ class LayerController extends BaseController
         $layer->saveStyleIcon(\Request::file('ol_style_static_icon_0'));
         $layer->saveGPXFile(\Request::file('gpx_filename_0'));
         $layer->saveKMLFile(\Request::file('kml_filename_0'));
+        $layer->saveShapeFile(\Request::file('shapefile_filename_0'));
         if ($layer->type === 'postgis') {
             try {
                 $layer->savePostgisFile();
