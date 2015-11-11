@@ -30,7 +30,7 @@ p: admin
 ## Web Mapping Features
 
 1. Multiple maps and layers allowed
-1. Data Sources: Bing, OSM, WMS, WFS, GPX, KML, Postgis, GeoJSON and more to be develop...
+1. Data Sources: Bing, OSM, WMS, WFS, GPX, KML, Postgis, GeoJSON and Shapefile...
 1. Create and edit own map features
 1. Default map layout with layer switcher, map navigation and search
 1. Vector features styling
