@@ -264,7 +264,9 @@ class Layer extends Content
         }
         
         // Create filename
-        mkdir($this->getPublicStoragePath(), 0777, true);
+        if (!is_dir($this->getPublicStoragePath())) {
+            mkdir($this->getPublicStoragePath(), 0777, true);
+        }
         $filename = $this->getPublicStoragePath() . '/postgis.json';
         file_put_contents($filename, json_encode($json));
     }
@@ -277,7 +279,9 @@ class Layer extends Content
         if (empty($this->geojson_features)) {
             $this->geojson_features = '{"type":"FeatureCollection","features":[]}';
         }
-        @mkdir($this->getPublicStoragePath(), 0777, true);
+        if (!is_dir($this->getPublicStoragePath())) {
+            mkdir($this->getPublicStoragePath(), 0777, true);
+        }
         $filename = $this->getPublicStoragePath() . '/geojson.json';
         @file_put_contents($filename, $this->geojson_features);
     }
@@ -337,7 +341,9 @@ class Layer extends Content
      */
     protected function generateMapfile()
     {
-        @mkdir(storage_path('layer/'.$this->id), 0777, true);
+        if (!is_dir(storage_path('layer/'.$this->id))) {
+            mkdir(storage_path('layer/'.$this->id), 0777, true);
+        }
         ob_start();
         include storage_path('app/template.map');
         $content = ob_get_clean();
