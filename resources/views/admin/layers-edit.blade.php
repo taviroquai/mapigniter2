@@ -329,7 +329,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="postgis_pass">{{ trans('backoffice.postgis_pass') }}</label>
-                                    <input class="form-control" type="text" name="postgis_pass"
+                                    <input class="form-control" type="password" name="postgis_pass"
                                         placeholder=""
                                         value="{{ $layer->postgis_pass }}">
                                     <span class="help-block alert-danger v-error-postgis_pass"></span>

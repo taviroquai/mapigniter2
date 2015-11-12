@@ -85,6 +85,9 @@ class LayerController extends BaseController
                 $rules['kml_filename_0'] = 'required';
                 break;
             case 'postgis':
+                $rules['postgis_host'] = 'required';
+                $rules['postgis_port'] = 'required';
+                $rules['postgis_user'] = 'required';
                 $rules['postgis_schema'] = 'required';
                 $rules['postgis_table'] = 'required';
                 $rules['postgis_field'] = 'required';
