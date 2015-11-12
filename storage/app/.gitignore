@@ -1,2 +1,4 @@
-layer
+*
 !.gitignore
+!projections.json
+!template.map

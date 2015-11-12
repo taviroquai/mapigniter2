@@ -328,7 +328,7 @@ class Layer extends Content
      * Delete layer
      */
     public function delete() {
-        array_map('unlink', glob($this->getPublicStoragePath()."/*"));
+        //array_map('unlink', glob($this->getPublicStoragePath()."/*"));
         parent::delete();
     }
     
