@@ -42,14 +42,28 @@ MAP
                 <?php endif; ?>
                 
                 <?php if ($this->ol_style_static_fill_color) : ?>
+                <?php if ($this->parseRGBA($this->ol_style_static_fill_color)) : ?>
+
+                COLOR <?= $this->getRGB($this->parseRGBA($this->ol_style_static_fill_color)) . PHP_EOL ?>
+                OPACITY <?= $this->getOpacity($this->parseRGBA($this->ol_style_static_fill_color)) . PHP_EOL ?>
+
+                <?php else: ?>
 
                 COLOR <?= $this->hex2rgb($this->ol_style_static_fill_color) . PHP_EOL ?>
 
                 <?php endif; ?>
+                <?php endif; ?>
                 
                 <?php if ($this->ol_style_static_stroke_color) : ?>
+                <?php if ($this->parseRGBA($this->ol_style_static_stroke_color)) : ?>
+
+                OUTLINECOLOR <?= $this->getRGB($this->parseRGBA($this->ol_style_static_stroke_color)) . PHP_EOL ?>
+
+                <?php else: ?>
 
                 OUTLINECOLOR <?= $this->hex2rgb($this->ol_style_static_stroke_color) . PHP_EOL ?>
+
+                <?php endif; ?>
 
                 WIDTH <?= $this->ol_style_static_stroke_width . PHP_EOL ?>
 

@@ -349,6 +349,42 @@ class Layer extends Content
         $content = ob_get_clean();
         @file_put_contents(storage_path('layer/'.$this->id) . '/mapfile.map', $content);
     }
+    
+    /**
+     * Check if color is rgba format
+     * @param type $color
+     * @return type
+     */
+    protected function parseRGBA($color)
+    {
+        $expr = '/rgba\(([0-9]+)\,([0-9]+)\,([0-9]+)\,([0-9]*\.[0-9]+)\)/';
+        if (preg_match($expr, $color, $m)) {
+            return $m;
+        }
+        return false;
+    }
+    
+    /**
+     * Get opacity value
+     * 
+     * @param array $parsedRGBA
+     * @return int
+     */
+    protected function getOpacity($parsedRGBA)
+    {
+        return (int) ($parsedRGBA[4] * 100);
+    }
+    
+    /**
+     * Format parsed color to RGB
+     * 
+     * @param array $parsedRGBA
+     * @return string
+     */
+    protected function getRGB($parsedRGBA)
+    {
+        return $parsedRGBA[1].' '.$parsedRGBA[2].' '.$parsedRGBA[3];
+    }
 
     /**
      * Convert hexadecimal color to rgb
