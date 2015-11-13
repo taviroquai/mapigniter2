@@ -2,7 +2,11 @@
 
 MapIgniter2 is a geocms based on Laravel 5 and OpenLayers 3.  
 
-A demo can be found [here](http://taviroquai.com/mapigniter2/public/).  
+A demo can be found [here](http://taviroquai.com/mapigniter2/public/).  Login with  
+email: admin@isp.com  
+password: admin  
+
+![MapIgniter 2 Screenshot](public/assets/images/screenshot.png?raw=true "Screenshot")
 
 ## Install
 
@@ -22,10 +26,6 @@ A demo can be found [here](http://taviroquai.com/mapigniter2/public/).
 
 ### Install troubleshooting
 Check web server logs for errors
-
-## Default Login
-u: admin@isp.com  
-p: admin  
 
 ## Web Mapping Features
 
