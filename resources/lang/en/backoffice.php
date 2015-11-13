@@ -78,6 +78,7 @@ return [
     'geo' => 'Geography',
     'map_center' => 'Center Coordinates',
     'map_zoom' => 'Zoom Level',
+    'baselayer' => 'Belongs to Base Layer Switcher',
     
     // Projection
     'edit_projection' => 'Edit Projection',

@@ -16,7 +16,7 @@ class Layeritem extends Layer
      *
      * @var array
      */
-    protected $fillable = ['map_id', 'parent_id', 'layer_id', 'visible', 'displayorder'];
+    protected $fillable = ['map_id', 'parent_id', 'layer_id', 'visible', 'displayorder', 'baselayer'];
     
     /**
      * Maps relation

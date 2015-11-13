@@ -109,6 +109,7 @@
     <div id="content" class="container collapse in">
         <div class="row">
             <div class="col-md-12">
+                <div id="baseLayerSwitcher"></div>
                 <div id="layerSwitcher"></div>
                 <div id="featureInfo"></div>
                 <div id="featureSearchResults" style="display: none">
@@ -124,6 +125,12 @@
             </div>
         </div>
     </div>
+    <script type="text/html" id="layer_switcher_basegroup_tpl">
+        @include('mustache.layer_switcher.basegroup')
+    </script>
+    <script type="text/html" id="layer_switcher_baseitem_tpl">
+        @include('mustache.layer_switcher.baseitem')
+    </script>
     <script type="text/html" id="layer_switcher_group_tpl">
         @include('mustache.layer_switcher.group')
     </script>

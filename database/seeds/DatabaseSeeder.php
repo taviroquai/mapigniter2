@@ -363,6 +363,7 @@ class DatabaseSeeder extends Seeder
             $mapitem->layer_id = 1;
             $mapitem->parent_id = 0;
             $mapitem->visible = 1;
+            $mapitem->baselayer = 1;
             $mapitem->displayorder = 1;
             $mapitem->save();
             
@@ -372,6 +373,7 @@ class DatabaseSeeder extends Seeder
             $mapitem->layer_id = 2;
             $mapitem->parent_id = 0;
             $mapitem->visible = 1;
+            $mapitem->baselayer = 0;
             $mapitem->displayorder = 1;
             $mapitem->save();
         }

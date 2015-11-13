@@ -126,6 +126,7 @@ Map.prototype.addLayers = function () {
             layer.set('id', item.id);
             layer.set('title', item.layer.title);
             layer.set('group', item.group);
+            layer.set('baselayer', item.baselayer);
             layer.set('content', item.layer.content);
             layer.set('template', item.layer.feature_info_template !== '' ? item.layer.feature_info_template : false);
             layer.set('search', item.layer.search ? item.layer.search.split(',') : false);
@@ -138,6 +139,12 @@ Map.prototype.addLayers = function () {
 Map.prototype.createLayerSwitcher = function () {
     var group, group_id, self = this;
     
+    function hideBaseLayers() {
+        $('#baseLayerSwitcher option').each(function (i, item) {
+            $(item).data('ol').setVisible(false);
+        });
+    }
+    
     // Add to layer switcher
     self.map.getLayers().forEach(function (camada) {
         group = camada.get('group');
@@ -145,26 +152,65 @@ Map.prototype.createLayerSwitcher = function () {
         if (group) {
             camada.set('group', group.content.title);
         }
-        group_id = 'group_' + camada.get('group').replace(/ /g, "");
-        if ($('#layerSwitcher #' + group_id).length === 0) {
-            $('#layerSwitcher').append(Mustache.render($('#layer_switcher_group_tpl').html(), camada.getProperties()));
-            $('#layerSwitcher').append('<ul id="' + group_id + '" class="list-group" />');
-            if (!$.inArray(camada.get('group'), self.config.layerswitcher.closed)) {
-                $('#layerSwitcher #' + group_id).hide();
-            }
-        }
-        camada.set('_visible', (camada.getVisible() ? 'checked' : ''));
-        $('#layerSwitcher #' + group_id).append(Mustache.render($('#layer_switcher_item_tpl').html(), camada.getProperties()));
-        camada.on('change:visible', function() {
-            $('#layerSwitcher input[data-layer="' + camada.get('content').seo_slug + '"]').prop("checked", camada.getVisible());
-        });
-        $('#layerSwitcher input[data-layer="' + camada.get('content').seo_slug + '"]').data('ol', camada);
-        $('#layerSwitcher input[data-layer="' + camada.get('content').seo_slug + '"]').on('click', function () {
-            $(this).data('ol').setVisible(!$(this).data('ol').getVisible());
-        });
         
+        // Add base layers
+        if (camada.get('baselayer')) {
+            if ($('#baseLayerSwitcher select').length === 0) {
+                $('#baseLayerSwitcher').append(Mustache.render($('#layer_switcher_basegroup_tpl').html(), camada.getProperties()));
+                if (!$.inArray(camada.get('group'), self.config.layerswitcher.closed)) {
+                    $('#baseLayerSwitcher select').hide();
+                }
+            }
+            camada.set('_visible', (camada.getVisible() ? 'checked' : ''));
+            $('#baseLayerSwitcher select').append(Mustache.render($('#layer_switcher_baseitem_tpl').html(), camada.getProperties()));
+            camada.on('change:visible', function() {
+                if (camada.getVisible()) {
+                    $('#baseLayerSwitcher select').val(camada.get('content').seo_slug);
+                }
+            });
+            $('#baseLayerSwitcher option[value="' + camada.get('content').seo_slug + '"]').data('ol', camada);
+            $('#baseLayerSwitcher select').on('change', function (e) {
+                hideBaseLayers();
+                var value = $(this).val();
+                $(this).find('option').each(function (i, item) {
+                    if (value === $(item).data('ol').get('content').seo_slug) {
+                        $(item).data('ol').setVisible(true);
+                    }
+                });
+            });
+            
+        } else {
+        
+            // Add normal layers
+            group_id = 'group_' + camada.get('group').replace(/ /g, "");
+            if ($('#layerSwitcher #' + group_id).length === 0) {
+                $('#layerSwitcher').append(Mustache.render($('#layer_switcher_group_tpl').html(), camada.getProperties()));
+                $('#layerSwitcher').append('<ul id="' + group_id + '" class="list-group" />');
+                if (!$.inArray(camada.get('group'), self.config.layerswitcher.closed)) {
+                    $('#layerSwitcher #' + group_id).hide();
+                }
+            }
+            camada.set('_visible', (camada.getVisible() ? 'checked' : ''));
+            $('#layerSwitcher #' + group_id).append(Mustache.render($('#layer_switcher_item_tpl').html(), camada.getProperties()));
+            camada.on('change:visible', function() {
+                $('#layerSwitcher input[data-layer="' + camada.get('content').seo_slug + '"]').prop("checked", camada.getVisible());
+            });
+            $('#layerSwitcher input[data-layer="' + camada.get('content').seo_slug + '"]').data('ol', camada);
+            $('#layerSwitcher input[data-layer="' + camada.get('content').seo_slug + '"]').on('click', function () {
+                $(this).data('ol').setVisible(!$(this).data('ol').getVisible());
+            });
+        }
     });
     
+    // Turn on visible base layers
+    hideBaseLayers();
+    var selectedBaseLayer = $('#baseLayerSwitcher option[data-visible="checked"]').first();
+    if (selectedBaseLayer.length && selectedBaseLayer.data('ol')) {
+        selectedBaseLayer.data('ol').setVisible(true);
+        $('#baseLayerSwitcher select').val(selectedBaseLayer.attr('value'));
+    }
+    
+    // Activate group toggle event
     $('#layerSwitcher h4').on('click', function () {
         $(this).next('ul').toggle('slow');
     });

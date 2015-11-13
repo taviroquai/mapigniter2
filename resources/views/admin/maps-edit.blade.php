@@ -201,6 +201,22 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>{{ trans('backoffice.baselayer') }}</label>
+                                <div class="form-group">
+                                    <label class="radio-inline" title="The layer will be exclusive">
+                                        <input required type="radio" name="baselayer" value="1"> {{ trans('backoffice.yes') }}
+                                    </label>
+                                    <label class="radio-inline" title="The layer will not be exclusive">
+                                        <input type="radio" name="baselayer" value="0" checked> {{ trans('backoffice.no') }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-md-12">
@@ -211,7 +227,7 @@
                                         <input required type="radio" name="visible" value="1" checked> {{ trans('backoffice.yes') }}
                                     </label>
                                     <label class="radio-inline" title="The layer will not be visible by default">
-                                        <input type="radio" name="active" value="0"> {{ trans('backoffice.no') }}
+                                        <input type="radio" name="visible" value="0"> {{ trans('backoffice.no') }}
                                     </label>
                                 </div>
                             </div>

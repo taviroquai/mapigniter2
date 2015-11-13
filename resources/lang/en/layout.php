@@ -11,6 +11,7 @@ return [
     'link_admin' => 'Admin',
     'link_layers' => 'Layers',
     'link_contents' => 'Contents',
+    'base_layers' => 'Base Layers',
     'search' => 'Search on Map...',
     'feature_results_title' => 'Map Results',
     'feature_no_results' => 'No features found.',
