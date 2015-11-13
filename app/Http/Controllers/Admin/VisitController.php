@@ -43,11 +43,17 @@ class VisitController extends BaseController
     {
         Session::put('visits_start', $date_start);
         Session::put('visits_end', $date_end);
-        $totals = DB::table('visits')
-            ->select(DB::raw('created_at as x, count(id) as y'))
-            ->whereRaw('date(created_at) >= ? and date(created_at) <= ?', [$date_start, $date_end])
-            ->groupBy(DB::raw('date_part(\'day\', created_at), visits.created_at'))
-            ->get();
+        $sql = "
+            SELECT x, sum(y) as y FROM (
+                SELECT date(created_at) as x, count(id) as y
+                FROM visits
+                WHERE date(created_at) >= ? and date(created_at) <= ?
+                GROUP BY visits.created_at
+            ) t1
+            GROUP BY x
+            ORDER BY date(x)
+        ";
+        $totals = DB::select(DB::raw($sql),  [$date_start, $date_end]);
         $data = [];
         foreach ($totals as $item) {
             $data[] = [strtotime($item->x).'000', $item->y];
