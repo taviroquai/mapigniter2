@@ -61,4 +61,8 @@ html, body {
         overflow-y: auto;
     }
     
+    #mapNavigation.navbar-nav>li {
+        float: left;
+    }
+    
 }
