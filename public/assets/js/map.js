@@ -621,8 +621,8 @@ var Map = function ($, Mustache, ol, proj4)
         function loadFeatures(url) {
             $.get(url, function (response) {
                 features = format.readFeatures(response, {featureProjection: 'EPSG:' + config.map.projection.srid});
-                $.each(features, function (i, item) {
-                    source.addFeature(item);
+                $.each(features, function (i, f) {
+                    source.addFeature(f);
                 });
             });
         }
@@ -639,32 +639,32 @@ var Map = function ($, Mustache, ol, proj4)
             var source = new ol.source.Vector({
                 features: [] 
             });
-            finalurl = config.layer.wfs_url
+            finalurl = item.layer.wfs_url
                 + '&' + params.join('&') 
-                + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + config.zoom_attribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
+                + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + item.layer.zoom_attribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
         } else {
             var source = new ol.source.Vector({
                 strategy: ol.loadingstrategy.bbox,
                 loader: function (extent, resolution, projection) {
-                    finalurl = config.layer.wfs_url + "&" + params.join('&') + '&BBOX=' + extent.join(',') + ',EPSG:' + config.map.projection.srid;
+                    finalurl = item.layer.wfs_url + "&" + params.join('&') + '&BBOX=' + extent.join(',') + ',EPSG:' + config.map.projection.srid;
                     loadFeatures(finalurl);
                 }
             });
         }
 
         map.on('moveend', function () {
-            if (typeof config.zoomAttribute !== 'undefined') {
-                finalurl = config.url + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + config.zoomAttribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
+            if (typeof item.layer.zoom_attribute !== 'undefined') {
+                finalurl = item.layer.wfs_url + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + item.layer.zoom_attribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
                 source.clear();
                 loadFeatures(finalurl);
             }
         });
 
         var layer = new ol.layer.Vector({
-            visible: config.visible,
+            visible: item.visible,
             source: source,
             style: function (feature, resolution) {
-                style = createStyle(config.layer, feature, resolution);
+                style = createStyle(item.layer, feature, resolution);
                 return [style];
             }
         });
@@ -686,7 +686,7 @@ var Map = function ($, Mustache, ol, proj4)
                 format: new ol.format.GPX()
             }),
             style: function (feature, resolution) {
-                style = createStyle(config.layer, feature, resolution);
+                style = createStyle(item.layer, feature, resolution);
                 return [style];
             }
         });
@@ -718,9 +718,9 @@ var Map = function ($, Mustache, ol, proj4)
      */
     var createLayerShapefile = function (item) {
         
-        config.layer['serverType'] = 'mapserver';
-        config.layer['url'] = item.layer.shapefile_wmsurl;
-        config.layer['params'] = {
+        item.layer['serverType'] = 'mapserver';
+        item.layer['url'] = item.layer.shapefile_wmsurl;
+        item.layer['params'] = {
             'LAYERS': item.layer.content.seo_slug,
             'TILED': false,
             'VERSION': '1.1.1',
@@ -751,8 +751,8 @@ var Map = function ($, Mustache, ol, proj4)
                 features = format.readFeatures(response, {
                     featureProjection: 'EPSG:' + config.map.projection.srid
                 });
-                $.each(features, function (i, item) {
-                    layer.getSource().addFeature(item);
+                $.each(features, function (i, f) {
+                    layer.getSource().addFeature(f);
                 });
             });
         }
@@ -765,7 +765,7 @@ var Map = function ($, Mustache, ol, proj4)
                 }
             }),
             style: function (feature, resolution) {
-                style = createStyle(config.layer, feature, resolution);
+                style = createStyle(item.layer, feature, resolution);
                 return [style];
             }
         });
@@ -788,8 +788,8 @@ var Map = function ($, Mustache, ol, proj4)
                 features = format.readFeatures(response, {
                     featureProjection: 'EPSG:' + config.map.projection.srid
                 });
-                $.each(features, function (i, item) {
-                    layer.getSource().addFeature(item);
+                $.each(features, function (i, f) {
+                    layer.getSource().addFeature(f);
                 });
             });
         }
@@ -868,7 +868,7 @@ var Map = function ($, Mustache, ol, proj4)
      */
     var createStyle = function (item, feature, resolution)
     {
-        var imagem = {src: ''}, self = this;
+        var image = {src: ''};
 
         // Get static style
         var style = new ol.style.Style({
@@ -885,8 +885,8 @@ var Map = function ($, Mustache, ol, proj4)
             })
         });
         if (item.ol_style_static_icon) {
-            imagem.src = item.ol_style_static_icon;
-            imagem.src = APP_URL + '/storage/layer/' + item.id + '/' + imagem.src;
+            image.src = item.ol_style_static_icon;
+            image.src = APP_URL + '/storage/layer/' + item.id + '/' + image.src;
         }
 
         // Get feature style
@@ -906,12 +906,12 @@ var Map = function ($, Mustache, ol, proj4)
             });
         }
         if (item.ol_style_field_icon) {
-            imagem.src = feature.get(item.ol_style_field_icon);
-            imagem.src = APP_URL + '/storage/layer/' + item.id + '/icons/' + imagem.src;
+            image.src = feature.get(item.ol_style_field_icon);
+            image.src = APP_URL + '/storage/layer/' + item.id + '/icons/' + image.src;
         }
-        if (imagem.src !== '') {
+        if (image.src !== '') {
             style = new ol.style.Style({
-                image: new ol.style.Icon(imagem)
+                image: new ol.style.Icon(image)
             });
         }
 
