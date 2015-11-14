@@ -67,7 +67,7 @@
                     @endif
                 </ul>
                 <form class="navbar-form navbar-right" id="searchForm">
-                    <input id="search" type="text" class="form-control" placeholder="{{ trans('layout.search') }}">
+                    <input name="query" type="text" class="form-control" placeholder="{{ trans('layout.search') }}">
                 </form>
                 <ul id="mapNavigation" class="nav navbar-nav navbar-right">
                     <li>
@@ -146,21 +146,27 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/js/mustache.min.js') }}"></script>
     
     @section('script')
+    <script src="{{ asset('assets/js/mustache.min.js') }}"></script>
     <script src="{{ asset('assets/js/proj4.js') }}"></script>
     <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/map.js') }}" type="text/javascript"></script>
     <script type="text/javascript">
+        
+        // Define base URL
+        var APP_URL = {!! json_encode(url('/')) !!};
         @if ($map)
-        $.getJSON('{{ url("maps/{$map->id}/config") }}', function(config) {
-            config['base_url'] = '{{ url("/") }}'
-            var app = new Map($, config);
-        });
+        
+        // Define map application
+        var app = new Map($, Mustache, ol, proj4);
+        app.init({!! json_encode(url("maps/{$map->id}/config")) !!});
         @else
+        
+        // Notify missing map
         alert('Please create a map.');
         @endif
+        
     </script>
     @show
     
