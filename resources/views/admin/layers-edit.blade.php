@@ -257,6 +257,17 @@
                         </div>
                     </div>
                     <div id="shapefile_options">
+                        @if ($layer->shapefile_wmsurl)
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="alert alert-success" role="alert">
+                                    {{ trans('backoffice.shareogcservice') }} <a href="{{ $layer->shapefile_wmsurl }}&SERVICE=WMS&VERSION=1.1.0&REQUEST=GetCapabilities" target="_blank">
+                                        {{ $layer->shapefile_wmsurl }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -387,6 +398,17 @@
                         </div>
                     </div>
                     <div id="geojson_options">
+                        @if ($layer->id)
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="alert alert-success" role="alert">
+                                    {{ trans('backoffice.sharegeojson') }} <a href="{{ url('storage/layer/'.$layer->id.'/geojson.json') }}"  target="_blank">
+                                        {{ url('storage/layer/'.$layer->id.'/geojson.json') }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">

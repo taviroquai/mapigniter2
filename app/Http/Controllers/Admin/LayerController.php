@@ -79,10 +79,14 @@ class LayerController extends BaseController
                 $rules['wfs_typename'] = 'required';
                 break;
             case 'gpx':
-                $rules['gpx_filename_0'] = 'required';
+                if (empty($input['id'])) {
+                    $rules['gpx_filename_0'] = 'required';
+                }
                 break;
             case 'kml':
-                $rules['kml_filename_0'] = 'required';
+                if (empty($input['id'])) {
+                    $rules['kml_filename_0'] = 'required';
+                }
                 break;
             case 'postgis':
                 $rules['postgis_host'] = 'required';
@@ -95,6 +99,11 @@ class LayerController extends BaseController
                 break;
             case 'geojson':
                 $rules['geojson_attributes'] = 'required';
+                break;
+            case 'shapefile':
+                if (empty($input['id'])) {
+                    $rules['shapefile_filename_0'] = 'required';
+                }
                 break;
             case 'group':
             default:;
