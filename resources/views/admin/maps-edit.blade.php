@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-12">
                 
-        <h3>{{ trans('backoffice.edit_content') }}</h3>
+        <h3>{{ trans('backoffice.edit_map') }}</h3>
         
         <form id="formMap" method="POST" action="{{ url('/admin/maps') }}" enctype="mutipart/form-data">
             

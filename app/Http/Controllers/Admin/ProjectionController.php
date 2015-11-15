@@ -1,9 +1,8 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use Illuminate\Routing\Controller as BaseController;
 use App\Projection;
 
-class ProjectionController extends BaseController
+class ProjectionController extends AdminController
 {
     /**
      * Get projections index

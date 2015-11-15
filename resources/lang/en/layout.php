@@ -3,6 +3,7 @@
 return [
     
     // Layout
+    'select_idiom' => 'Choose Idiom',
     'link_menu' => 'Navigation',
     'link_login' => 'Login',
     'link_login_ldap' => 'LDAP Login',

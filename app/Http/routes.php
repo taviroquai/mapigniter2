@@ -23,25 +23,13 @@ Route::model('map', 'App\Map');
 Route::model('layer', 'App\Layer');
 Route::model('layeritem', 'App\Layeritem');
 
-// Load user pages
-Route::group(['middleware' => ['visit']], function () {
-    
-    // Run all pages
-    if (\Schema::hasTable('pages')) {
-        foreach(App\Page::where('active', 1)->get() as $page) {
+Route::get('/old', 'HomeController@index');
 
-            // Create page route
-            Route::get($page->route, function () use ($page) {
+// Load user pages routes
+App\Http\Controllers\HomeController::loadUserPagesRoutes();
 
-                // Get page data file
-                $data = (array) include($page->getDataPath());
-
-                // Display page view file
-                return view($page->getView(), $data);
-            });
-        }
-    }
-});
+// Set idiom
+Route::get('/idiom/{idiom}', 'IdiomController@setIdiom');
 
 // WebGIS
 Route::get('/maps/{map}/config', 'MapController@getConfig');

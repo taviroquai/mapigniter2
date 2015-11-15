@@ -1,11 +1,10 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use Illuminate\Routing\Controller as BaseController;
 use App\Content;
 use App\Map;
 use App\Layeritem;
 
-class MapController extends BaseController
+class MapController extends AdminController
 {
     /**
      * Get content index

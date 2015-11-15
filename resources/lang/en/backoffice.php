@@ -133,6 +133,8 @@ return [
     'geojson_geomtype' => 'Geometry Type',
     'geojson_attributes' => 'Feature Attributes (separate with comma; no spaces allowed)',
     'sharegeojson' => 'Share GeoJSON link:',
+    'static_style' => 'Static Symbology',
+    'dynamic_style' => 'Dynamic Symbology',
     'ol_style_static_icon' => 'Static Icon',
     'ol_style_static_fill_color' => 'Static Fill Color',
     'ol_style_static_stroke_color' => 'Static Stroke Color',

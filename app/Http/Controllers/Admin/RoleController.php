@@ -1,10 +1,8 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
 use App\Role;
 
-class RoleController extends BaseController
+class RoleController extends AdminController
 {
     
     /**

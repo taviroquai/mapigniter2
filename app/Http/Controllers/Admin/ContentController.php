@@ -1,10 +1,8 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
 use App\Content;
 
-class ContentController extends BaseController
+class ContentController extends AdminController
 {
     /**
      * Get content index

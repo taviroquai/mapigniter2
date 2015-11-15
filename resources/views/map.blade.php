@@ -57,6 +57,16 @@
                     
                 </ul>
                 
+                <form class="navbar-form navbar-right">
+                    <select id="selectIdiom" class="form-control" title="{{ trans('layout.select_idiom') }}">
+                    @foreach (\App\Idiom::getAvailableIdioms() as $item)
+                        <option value="{{ $item }}"
+                            @if(\App::getLocale() === $item) selected @endif
+                            >{{ $item }}</option>
+                    @endforeach
+                    </select>
+                </form>
+                
                 <ul class="nav navbar-nav navbar-right">
                     @if (!Auth::check())
                     <li><a href="{{ url('auth/login') }}">{{ trans('layout.link_login') }}</a></li>

@@ -470,7 +470,7 @@
                         </div>
                     </div>
                     <fieldset id="style_options">
-                        <legend>Static Style</legend>
+                        <legend>{{ trans('backoffice.static_style') }}</legend>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -515,7 +515,7 @@
                                 </div>
                             </div>
                         </div>
-                        <legend>Dynamic Style</legend>
+                        <legend>{{ trans('backoffice.dynamic_style') }}</legend>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">

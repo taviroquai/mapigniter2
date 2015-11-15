@@ -113,6 +113,13 @@ var Map = function ($, Mustache, ol, proj4)
     var searchResultsItemTmpl = $('#search_result_item_tpl').html();
     
     /**
+     * Holds the idiom selector
+     * 
+     * @type String
+     */
+    var selectIdiomEl = '#selectIdiom';
+    
+    /**
      * Loads map configuration from url
      * 
      * @param {string} url
@@ -950,6 +957,13 @@ var Map = function ($, Mustache, ol, proj4)
         });
         return result;
     };
+    
+    /**
+     * Handle select idiom event
+     */
+    $(selectIdiomEl).on('change', function () {
+        window.location = APP_URL + '/idiom/' + $(this).val();
+    });
     
     /**
      * Map application API

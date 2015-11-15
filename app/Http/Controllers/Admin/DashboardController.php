@@ -1,12 +1,9 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
-use App\Visit;
 use Session;
 use DB;
 
-class DashboardController extends BaseController
+class DashboardController extends AdminController
 {
     
     public function index()
