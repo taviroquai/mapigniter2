@@ -65,7 +65,7 @@ MAP
 
                 <?php endif; ?>
 
-                WIDTH <?= $this->ol_style_static_stroke_width . PHP_EOL ?>
+                WIDTH <?= (empty($this->ol_style_static_stroke_width) ? 1 : $this->ol_style_static_stroke_width) . PHP_EOL ?>
 
                 <?php endif; ?>
 
