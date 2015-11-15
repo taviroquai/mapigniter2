@@ -74,6 +74,17 @@ var Form = function ($, selector, options)
         }
     };
     
+    // Capture pressed button
+    form.find('[type="submit"]').click(function(){
+        if ($(this).attr('name') && $(this).attr('value')) {
+            form.append(
+                $('<input type="hidden">').attr( { 
+                    name: $(this).attr('name'), 
+                    value: $(this).attr('value') })
+            );
+        }
+    });
+    
     // On submit
     form.on('submit', function (e) {
         e.preventDefault();

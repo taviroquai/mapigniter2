@@ -52,7 +52,6 @@
                     "orderable": false,
                     "searchable": false,
                     "render": function ( data, type, full, meta ) {
-                        console.log(full);
                         return '<a class="btn btn-info btn-xs" href="' + "{{ url('admin/users/form') }}/" + full.id + '"><i class="fa fa-pencil"></i></a>'
                             + '&nbsp;<a class="btn btn-danger btn-xs" href="' + "{{ url('admin/users/delete') }}/" + full.id + '"><i class="fa fa-trash"></i></a>'
                     }

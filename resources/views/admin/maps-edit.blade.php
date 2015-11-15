@@ -148,7 +148,8 @@
             </div>
 
             <div class="form-group">
-                <button class="btn btn-primary" type="submit">{{ trans('backoffice.save') }}</button>
+                <input class="btn btn-primary" type="submit" name="close" value="{{ trans('backoffice.saveclose') }}" />
+                <button class="btn btn-success" type="submit" >{{ trans('backoffice.save') }}</button>
                 <a href="javascript: window.history.back()" class="btn btn-danger">{{ trans('backoffice.cancel') }}</a>
             </div>
         </form>

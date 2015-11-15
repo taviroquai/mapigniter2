@@ -34,6 +34,7 @@ return [
     'keywords' => 'Keywords',
     'author' => 'Author',
     'save' => 'Save',
+    'saveclose' => 'Save & Close',
     'cancel' => 'Cancel',
     'options' => 'Options',
     'edit' => 'Edit',

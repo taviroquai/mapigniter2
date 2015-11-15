@@ -80,7 +80,11 @@ class MapController extends BaseController
         $map->save();
         
         // Response
-        return response()->json(['success' => 'Map saved', 'redirect' => url('/admin/maps/list')]);
+        if (isset($input['close'])) {
+            return response()->json(['success' => 'Map saved', 'redirect' => url('/admin/maps/list')]);
+        } else {
+            return response()->json(['success' => 'Map saved', 'redirect' => url('/admin/maps/form/' . $map->id)]);
+        }
     }
     
     /**

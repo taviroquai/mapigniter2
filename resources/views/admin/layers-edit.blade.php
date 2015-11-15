@@ -581,7 +581,8 @@
             </div>
 
             <div class="form-group">
-                <button class="btn btn-primary" type="submit">{{ trans('backoffice.save') }}</button>
+                <input class="btn btn-primary" type="submit" name="close" value="{{ trans('backoffice.saveclose') }}" />
+                <button class="btn btn-success" type="submit">{{ trans('backoffice.save') }}</button>
                 <a href="javascript: window.history.back()" class="btn btn-danger">{{ trans('backoffice.cancel') }}</a>
             </div>
         </form>
@@ -742,7 +743,7 @@
     ]});
     
     @if($layer->type === 'geojson')
-        var EditMap = function () {
+    var EditMap = function () {
         var raster = new ol.layer.Tile({
             source: new ol.source.OSM()
         });
@@ -894,6 +895,16 @@
             $.each(items, function (i, feature) {
                 features.push(feature);
             });
+        });
+        
+        var url = document.location.toString();
+        if (url.match('#')) {
+            $('.nav-tabs a[href=#' + url.split('#')[1] + ']').tab('show');
+        } 
+
+        // Change hash for page-reload
+        $('.nav-tabs a').on('shown.bs.tab', function (e) {
+            window.location.hash = e.target.hash;
         });
     };
 

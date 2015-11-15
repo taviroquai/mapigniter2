@@ -147,8 +147,15 @@ class LayerController extends BaseController
             $layer->saveGeoJSONFile();
         }
         
-        // Response
-        return response()->json(['success' => 'Layer saved', 'redirect' => url('/admin/layers/list')]);
+        // Response with redirect
+        $redirect = url('/admin/layers/list');
+        if (!isset($input['close'])) {
+            $redirect = url('/admin/layers/form/' . $layer->id);
+            if (empty($input['id'])) {
+                $redirect .= '#features';
+            }
+        }
+        return response()->json(['success' => 'Layer saved', 'redirect' => $redirect]);
     }
     
     /**
