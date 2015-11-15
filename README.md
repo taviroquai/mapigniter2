@@ -38,6 +38,7 @@ Check web server logs for errors
 ## CMS Features
 
 1. Authentication (Inc. LDAP)
+1. Multilanguage
 1. Backoffice (based on Twitter Bootstrap)
     1. Users
     1. Roles
