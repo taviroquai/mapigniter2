@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="ngMap">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -76,36 +76,41 @@
                     <li><a href="{{ url('auth/logout') }}">{{ trans('layout.link_logout') }}</a></li>
                     @endif
                 </ul>
-                <form class="navbar-form navbar-right" id="searchForm">
-                    <input name="query" type="text" class="form-control" placeholder="{{ trans('layout.search') }}">
-                </form>
-                <ul id="mapNavigation" class="nav navbar-nav navbar-right">
+                
+                <ul ng-controller="ngNavigationToolbar" ng-cloak
+                    class="nav navbar-nav navbar-right">
                     <li>
-                        <a class="btn action-nav-extent" title="{{ trans('layout.map_navigation_full') }}">
+                        <a ng-click="fullView()"
+                            class="btn" title="{{ trans('layout.map_navigation_full') }}">
                             <i class="fa fa-globe"></i>
                         </a>
                     </li>
                     <li>
-                        <a class="btn action-nav-reset" title="{{ trans('layout.map_navigation_reset') }}">
+                        <a ng-click="reset()"
+                            class="btn" title="{{ trans('layout.map_navigation_reset') }}">
                             <i class="fa fa-hand-paper-o"></i>
                         </a>
                     </li>
                     <li>
-                        <a class="btn action-nav-zoombox" title="{{ trans('layout.map_navigation_zoomin') }}">
+                        <a ng-click="zoomBox()" ng-class="{'active': zoomBoxEnable}"
+                            class="btn" title="{{ trans('layout.map_navigation_zoomin') }}">
                             <i class="fa fa-search-plus"></i>
                         </a>
                     <li>
-                        <a class="btn action-nav-zoomout" title="{{ trans('layout.map_navigation_zoomout') }}">
+                        <a ng-click="zoomOut()"
+                            class="btn" title="{{ trans('layout.map_navigation_zoomout') }}">
                             <i class="fa fa-search-minus"></i>
                         </a>
                     </li>
                     <li>
-                        <a class="btn action-nav-previous" title="{{ trans('layout.map_navigation_previous') }}">
+                        <a ng-click="previousView()"
+                            class="btn" title="{{ trans('layout.map_navigation_previous') }}">
                             <i class="fa fa-mail-reply"></i>
                         </a>
                     </li>
                     <li>
-                        <a class="btn action-nav-next" title="{{ trans('layout.map_navigation_next') }}">
+                        <a ng-click="nextView()"
+                            class="btn" title="{{ trans('layout.map_navigation_next') }}">
                             <i class="fa fa-mail-forward"></i>
                         </a>
                     </li>
@@ -119,14 +124,71 @@
     <div id="content" class="container collapse in">
         <div class="row">
             <div class="col-md-12">
-                <div id="baseLayerSwitcher"></div>
-                <div id="layerSwitcher"></div>
-                <div id="featureInfo"></div>
-                <div id="featureSearchResults" style="display: none">
-                    <h4>{{ trans('layout.feature_results_title') }}</h4>
-                    <p class="no-results">{{ trans('layout.feature_no_results') }}</p>
-                    <button id="featureSearchClear" class="btn btn-primary btn-xs pull-right">{{ trans('layout.feature_results_clear') }}</button>
-                    <ul></ul>
+                
+                <div ng-controller="ngLayerSwitcher" ng-cloak>
+                    <div id="baseLayerSwitcher">
+                        <h4><span class="fa fa-list"> {{ trans('layout.base_layers') }}</span></h4>
+                        <select class="form-control" 
+                            ng-options="item.content.title for item in baseLayers"
+                            ng-model="baseLayer"
+                            ng-change="selectedBaseLayer()">
+                        </select>
+                    </div>
+                    <div id="layerSwitcher">
+                        <div ng-repeat="group in groupLayers">
+                            <h4><span class="fa fa-list"> <% group.title %></span></h4>
+                            <ul id="<% group.id %>" class="list-group">
+                                <li ng-repeat="l in group.layers" class="list-group-item checkbox">
+                                    <label>
+                                        <input ng-model="l.visible" ng-click="toggleLayer(l)"
+                                            type="checkbox" checked="<% l.visible %>" /><% l.content.title %>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div ng-controller="ngFeatureInfo" ng-cloak>
+                    <div ng-bind-html="info"></div>
+                </div>
+                
+                <div ng-controller="ngSearchResults" ng-cloak>
+                    <h4>{{ trans('layout.search_title') }}</h4>
+                    <form ng-submit="doSearch()">
+                        <div class="input-group">
+                            <input ng-model="query"
+                                name="query"
+                                type="text"
+                                class="form-control"
+                                placeholder="{{ trans('layout.search') }}" />
+                            <div class="input-group-btn">
+                                <button ng-hide="hasResults"
+                                    type="submit" class="btn btn-default">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                                <button ng-show="hasResults"
+                                    ng-click="clearResults(); query = ''" 
+                                    class="btn btn-default">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <p class="no-results" ng-show="hasResults && results.length === 0">{{ trans('layout.feature_no_results') }}</p>
+                    
+                    <div ng-show="hasResults">
+                        <ul>
+                            <li ng-repeat="item in results">
+                                <a ng-click="locateItem(item)"
+                                    class="btn btn-default btn-xs"
+                                    data-name="<% item.name %>"
+                                    data-index="<% item.index %>"><% item.label %> (<% item.layer %>)</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
                 </div>
                 
                 @section('content')
@@ -135,21 +197,6 @@
             </div>
         </div>
     </div>
-    <script type="text/html" id="layer_switcher_basegroup_tpl">
-        @include('mustache.layer_switcher.basegroup')
-    </script>
-    <script type="text/html" id="layer_switcher_baseitem_tpl">
-        @include('mustache.layer_switcher.baseitem')
-    </script>
-    <script type="text/html" id="layer_switcher_group_tpl">
-        @include('mustache.layer_switcher.group')
-    </script>
-    <script type="text/html" id="layer_switcher_item_tpl">
-        @include('mustache.layer_switcher.item')
-    </script>
-    <script type="text/html" id="search_result_item_tpl">
-        @include('mustache.search.item')
-    </script>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -161,21 +208,19 @@
     <script src="{{ asset('assets/js/mustache.min.js') }}"></script>
     <script src="{{ asset('assets/js/proj4.js') }}"></script>
     <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('assets/js/map.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/angular.min.js') }}"></script>
+    <script src="{{ asset('assets/js/angular-sanitize.min.js') }}"></script>
+    <script src="{{ asset('assets/js/ngMap.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/ngFeatureInfo.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/ngLayerSwitcher.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/ngSearchResults.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/ngNavigationToolbar.js') }}" type="text/javascript"></script>
     <script type="text/javascript">
         
-        // Define base URL
-        var APP_URL = {!! json_encode(url('/')) !!};
-        @if ($map)
-        
-        // Define map application
-        var app = new Map($, Mustache, ol, proj4);
-        app.init({!! json_encode(url("maps/{$map->id}/config")) !!});
-        @else
-        
-        // Notify missing map
-        alert('Please create a map.');
-        @endif
+        angular.module('ngMap').value('config', { 
+            baseURL: '{!! url('/') !!}',
+            mapId: {{ $map ? $map->id : null }}
+        });
         
     </script>
     @show

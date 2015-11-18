@@ -13,6 +13,7 @@ return [
     'link_layers' => 'Camadas',
     'link_contents' => 'Conteúdos',
     'base_layers' => 'Camadas Base',
+    'search_title' => 'Procurar',
     'search' => 'Pocurar no Mapa...',
     'feature_results_title' => 'Resultados',
     'feature_no_results' => 'Não foram encontrados resultados.',

@@ -1,0 +1,555 @@
+
+angular.module('ngMap', ['ngSanitize'], function ($interpolateProvider) {
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
+});
+
+angular.module('ngMap').service('Mustache', function () { return Mustache });
+angular.module('ngMap').service('ol', function () { return ol });
+angular.module('ngMap').service('proj4', function () { return proj4 });
+
+angular.module('ngMap').filter('unsafe', ['$sce', function ($sce) {
+    return function (val) {
+        return $sce.trustAsHtml(val);
+    };
+}]);
+
+angular.module('ngMap')
+.service('ngMapBuilder', ['$http', 'ol', 'proj4', 'config',
+function ($http, ol, proj4, c) {
+    
+    var config = false;
+    var extent = [];
+    var projection;
+    var map;
+    var buildStatus = 0;
+    
+    /**
+     * Build openlayers map
+     * 
+     * @param {type} cb
+     * @returns {undefined}
+     */
+    var buildMap = function (cb) {
+        
+        if (buildStatus > 0) {
+            return false;
+        }
+        
+        buildStatus = 1;
+        
+        $http.get(c.baseURL + '/maps/' + c.mapId + '/config')
+        .success(function (r) {
+
+            config = r;
+            
+            // Parse configuration items
+            config.map.extent = config.map.projection.extent.split(' ');
+            config.map.center = config.map.center.split(' ');
+            config.map.center = [parseFloat(config.map.center[0]), parseFloat(config.map.center[1])];
+            angular.forEach(config.map.extent, function (item, i) {
+                extent.push(parseFloat(item));
+            });
+            config.map.extent = extent;
+            
+            if (config.map.projection.srid !== '3857' && config.map.projection.srid !== '4326' && config.map.projection.proj4_params !== '') {
+                proj4.defs("EPSG:" + config.map.srid, config.map.projection.proj4_params);
+
+                projection = new ol.proj.Projection({
+                    code: 'EPSG:' + config.map.projection.srid,
+                    units: 'm'
+                });
+                ol.proj.addProjection(projection);
+
+                // Create OpenLayers map with specific projection and extent
+                map = new ol.Map({
+                    target: 'map',
+                    layers: [],
+                    view: new ol.View({
+                        projection: projection,
+                        extent: config.map.extent,
+                        center: config.map.center,
+                        zoom: 1
+                    })
+                });
+
+            } else {
+
+                // Create regular OpenLayers map
+                map = new ol.Map({
+                    target: 'map',
+                    layers: [],
+                    view: new ol.View({
+                        center: ol.proj.transform([0, 0], 'EPSG:4326', 'EPSG:3857'),
+                        zoom: 1
+                    })
+                });
+            }
+            
+            // Center map
+            map.getView().setCenter(config.map.center);
+            map.getView().setZoom(parseInt(config.map.zoom));
+            
+            cb();
+        });
+    };
+    
+    /**
+     * Add layers to map from configuration
+     * 
+     * @returns {undefined}
+     */
+    var addLayers = function () {
+        
+        angular.forEach(config.layers, function (item, i) {
+            var layer = false;
+            switch (item.layer.type) {
+            case "mapquest":
+                layer = createLayerMapQuest(item);
+                break;
+            case "osm":
+                layer = criarLayerOSM(item);
+                break;
+            case "opencyclemap":
+                layer = createLayerOpenCycleMap(item);
+                break;
+            case "bing":
+                layer = createLayerBing(item);
+                break;
+            case "wms":
+                layer = createLayerWMS(item);
+                break;
+            case "wfs":
+                layer = createLayerWFS(item);
+                break;
+            case "gpx":
+                layer = createLayerGPX(item);
+                break;
+            case "kml":
+                layer = createLayerKML(item);
+                break;
+            case "shapefile":
+                layer = createLayerShapefile(item);
+                break;
+            case "postgis":
+                layer = createLayerPostgis(item);
+                break;
+            case "geojson":
+                layer = createLayerGeoJSON(item);
+                break;
+            default:
+                console ? console.log('Layer type not suported:', item.layer.type) : false;
+            }
+            if (layer) {
+                layer.set('id', item.id);
+                layer.set('title', item.layer.title);
+                layer.set('group', item.group);
+                layer.set('baselayer', item.baselayer);
+                layer.set('content', item.layer.content);
+                layer.set('template', item.layer.feature_info_template !== '' ? item.layer.feature_info_template : false);
+                layer.set('search', item.layer.search ? item.layer.search.split(',') : false);
+                map.addLayer(layer);
+            }
+        });
+    };
+    
+    /**
+     * Create map quest layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Tile}
+     */
+    var createLayerMapQuest = function (item)
+    {
+        var layer = new ol.layer.Tile({
+            source: new ol.source.MapQuest({layer: 'sat'})
+        });
+        return layer;
+    };
+    
+    /**
+     * Create Bing layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Tile}
+     */
+    var createLayerBing = function (item) {
+        item.layer['key'] = item.layer.bing_key;
+        item.layer['imagerySet'] = item.layer.bing_imageryset;
+        var layer = new ol.layer.Tile({
+            visible: item.visible,
+            source: new ol.source.BingMaps(item.layer)
+        });
+        return layer;
+    };
+    
+    /**
+     * Create OSM layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Tile}
+     */
+    var criarLayerOSM = function (item) {
+        var layer = new ol.layer.Tile({
+            source: new ol.source.OSM()
+        });
+        return layer;
+    };
+    
+    /**
+     * Create OpenCycle layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Tile}
+     */
+    var createLayerOpenCycleMap = function (item) {
+        var layer = new ol.layer.Tile({
+            source: new ol.source.OSM({
+                attributions: [
+                    new ol.Attribution({
+                        html: 'All maps &copy; ' +
+                        '<a href="http://www.opencyclemap.org/">OpenCycleMap</a>'
+                    }),
+                    ol.source.OSM.ATTRIBUTION
+                ],
+                url: 'http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'
+            })
+        });
+        return layer;
+    };
+    
+    /**
+     * Create WMS layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Tile}
+     */
+    var createLayerWMS = function (item) {
+        
+        item.layer['serverType'] = item.layer.wms_servertype;
+        item.layer['url'] = item.layer.wms_url;
+        item.layer['params'] = {
+            'LAYERS': item.layer.wms_layers,
+            'TILED': item.layer.wms_tiled,
+            'VERSION': item.layer.wms_version,
+            'SRS': 'EPSG:' + config.map.projection.srid,
+            'CRS': 'EPSG:' + config.map.projection.srid
+        };
+        var layer = new ol.layer.Tile({
+            visible: item.visible,
+            source: new ol.source.TileWMS(config.layer)
+        });
+        return layer;
+    };
+    
+    /**
+     * Create WFS layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Vector}
+     */
+    var createLayerWFS = function (item) {
+        
+        var finalurl, features, style, format = new ol.format.WFS();
+        
+        function loadFeatures(url) {
+            $http.get(url)
+            .success(function (response) {
+                features = format.readFeatures(response, {featureProjection: 'EPSG:' + config.map.projection.srid});
+                angular.forEach(features, function (f, i) {
+                    source.addFeature(f);
+                });
+            });
+        }
+
+        // Carregador de source
+        var params = [
+            'SERVICE=WFS',
+            'VERSION=' + item.layer.wfs_version,
+            'REQUEST=GetFeature',
+            'typename=' + item.layer.wfs_typename,
+            'srsname=EPSG:' + config.map.projection.srid
+        ];
+        if (typeof item.layer.zoom_attribute !== 'undefined') {
+            var source = new ol.source.Vector({
+                features: [] 
+            });
+            finalurl = item.layer.wfs_url
+                + '&' + params.join('&') 
+                + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + item.layer.zoom_attribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
+        } else {
+            var source = new ol.source.Vector({
+                strategy: ol.loadingstrategy.bbox,
+                loader: function (extent, resolution, projection) {
+                    finalurl = item.layer.wfs_url + "&" + params.join('&') + '&BBOX=' + extent.join(',') + ',EPSG:' + config.map.projection.srid;
+                    loadFeatures(finalurl);
+                }
+            });
+        }
+
+        map.on('moveend', function () {
+            if (typeof item.layer.zoom_attribute !== 'undefined') {
+                finalurl = item.layer.wfs_url + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + item.layer.zoom_attribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
+                source.clear();
+                loadFeatures(finalurl);
+            }
+        });
+
+        var layer = new ol.layer.Vector({
+            visible: item.visible,
+            source: source,
+            style: function (feature, resolution) {
+                style = createStyle(item.layer, feature, resolution);
+                return [style];
+            }
+        });
+        return layer;
+    };
+    
+    /**
+     * Create GPX layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Vector}
+     */
+    var createLayerGPX = function (item) {
+        var style;
+        var layer = new ol.layer.Vector({
+            visible: item.visible,
+            source: new ol.source.Vector({
+                url: c.baseURL + '/storage/layer/' + item.layer.id + '/' + item.layer.gpx_filename,
+                format: new ol.format.GPX()
+            }),
+            style: function (feature, resolution) {
+                style = createStyle(item.layer, feature, resolution);
+                return [style];
+            }
+        });
+        return layer;
+    };
+    
+    /**
+     * Create KML layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Vector}
+     */
+    var createLayerKML = function (item) {
+        
+        var layer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                url: c.baseURL + '/storage/layer/' + item.layer.id + '/' + item.layer.kml_filename,
+                format: new ol.format.KML()
+            })
+        });
+        return layer;
+    };
+    
+    /**
+     * Create Shapefile layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Tile}
+     */
+    var createLayerShapefile = function (item) {
+        
+        item.layer['serverType'] = 'mapserver';
+        item.layer['url'] = item.layer.shapefile_wmsurl;
+        item.layer['params'] = {
+            'LAYERS': item.layer.content.seo_slug,
+            'TILED': false,
+            'VERSION': '1.1.1',
+            'SRS': 'EPSG:' + item.layer.projection_id,
+            'CRS': 'EPSG:' + item.layer.projection_id
+        };
+        var layer = new ol.layer.Tile({
+            visible: item.visible,
+            gutter: 6,
+            source: new ol.source.TileWMS(item.layer)
+        });
+        return layer;
+    };
+    
+    /**
+     * Create Postgis layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Vector|Map.createLayerPostgis.layer}
+     */
+    var createLayerPostgis = function (item) {
+        var style, features = [];
+        var format = new ol.format.GeoJSON();
+        var url = c.baseURL + '/storage/layer/' + item.layer.id + '/postgis.json';
+
+        function loadFeatures(extent, resolution, projection) {
+            $http.get(url)
+            .success(function (response) {
+                features = format.readFeatures(response, {
+                    featureProjection: 'EPSG:' + config.map.projection.srid
+                });
+                angular.forEach(features, function (f, i) {
+                    layer.getSource().addFeature(f);
+                });
+            });
+        }
+
+        var layer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [],
+                loader: function (extent, resolution, projection) {
+                    loadFeatures(extent, resolution, projection);
+                }
+            }),
+            style: function (feature, resolution) {
+                style = createStyle(item.layer, feature, resolution);
+                return [style];
+            }
+        });
+        return layer;
+    };
+    
+    /**
+     * Create GeoJSON layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Vector|Map.createLayerGeoJSON.layer}
+     */
+    var createLayerGeoJSON = function (item) {
+        var style, features = [];
+        var format = new ol.format.GeoJSON();
+        var url = c.baseURL + '/storage/layer/' + item.layer.id + '/geojson.json';
+
+        function loadFeatures(extent, resolution, projection) {
+            $http.get(url)
+            .success(function (response) {
+                features = format.readFeatures(response, {
+                    featureProjection: 'EPSG:' + config.map.projection.srid
+                });
+                angular.forEach(features, function (f, i) {
+                    layer.getSource().addFeature(f);
+                });
+            });
+        }
+
+        var layer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [],
+                loader: function (extent, resolution, projection) {
+                    loadFeatures(extent, resolution, projection);
+                }
+            }),
+            style: function (feature, resolution) {
+                style = createStyle(item.layer, feature, resolution);
+                return [style];
+            }
+        });
+        return layer;
+    };
+    
+    /**
+     * Create feature style
+     * 
+     * @param {Object} item
+     * @param {ol.Feature} feature
+     * @param {float} resolution
+     * @returns {Map.ol.style.Style}
+     */
+    var createStyle = function (item, feature, resolution)
+    {
+        var image = {src: ''};
+
+        // Get static style
+        var style = new ol.style.Style({
+            fill: new ol.style.Fill({ color: item.ol_style_static_fill_color }),
+            stroke: new ol.style.Stroke({
+                width: parseInt((item.ol_style_static_stroke_width === '' ? 2 : item.ol_style_static_stroke_width)),
+                color: (item.ol_style_static_stroke_color === '' ? '#000000' : item.ol_style_static_stroke_color)
+            }),
+            image: new ol.style.Circle({
+                radius: parseInt((item.ol_style_static_stroke_width === '' ? 2 : item.ol_style_static_stroke_width)),
+                fill: new ol.style.Fill({
+                  color: (item.ol_style_static_fill_color === '' ? '#000000' : item.ol_style_static_fill_color)
+                })
+            })
+        });
+        if (item.ol_style_static_icon) {
+            image.src = item.ol_style_static_icon;
+            image.src = c.baseURL + '/storage/layer/' + item.id + '/' + image.src;
+        }
+
+        // Get feature style
+        if (item.ol_style_field_fill_color) {
+            style = new ol.style.Style({
+                fill: new ol.style.Fill({ color: feature.get(item.ol_style_field_fill_color) }),
+                stroke: new ol.style.Stroke({
+                    width: parseInt(feature.get(item.ol_style_field_stroke_width)),
+                    color: feature.get(item.ol_style_field_stroke_color)
+                }),
+                image: new ol.style.Circle({
+                    radius: parseInt(feature.get(item.ol_style_field_stroke_width)),
+                    fill: new ol.style.Fill({
+                        color: feature.get(item.ol_style_field_fill_color)
+                    })
+                })
+            });
+        }
+        if (item.ol_style_field_icon) {
+            image.src = feature.get(item.ol_style_field_icon);
+            image.src = c.baseURL + '/storage/layer/' + item.id + '/icons/' + image.src;
+        }
+        if (image.src !== '') {
+            style = new ol.style.Style({
+                image: new ol.style.Icon(image)
+            });
+        }
+
+        // TODO
+        /*
+        if (imagem && item.text) {
+            style = new ol.style.Style({
+                image: new ol.style.Icon(imagem),
+                text: new ol.style.Text({
+                    font: item.text.font,
+                    textAlign: item.text.textAlign,
+                    fill: new ol.style.Fill(item.text.fill),
+                    stroke: new ol.style.Stroke(item.text.stroke),
+                    textBaseline: item.text.textBaseline,
+                    text: feature.get(item.text.text)
+                })
+            });
+        }*/
+
+        return style;
+    };
+    
+    /**
+     * Return map builder API
+     * 
+     * @type type
+     */
+    var service = {
+        
+        getConfig: function () {
+            return config;
+        },
+        
+        getMap: function () {
+            return map;
+        },
+        
+        ready: function (cb) {
+            buildMap(function () {
+                addLayers();
+                buildStatus = 2;
+            });
+            var wait = setInterval(function () {
+                if (buildStatus === 2) {
+                    clearInterval(wait);
+                    cb();
+                }
+            }, 500);
+        }
+    };
+
+    return service;
+}]);
