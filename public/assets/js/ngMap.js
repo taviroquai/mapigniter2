@@ -30,69 +30,64 @@ function ($http, ol, proj4, c) {
      * @param {type} cb
      * @returns {undefined}
      */
-    var buildMap = function (cb) {
-        
-        if (buildStatus > 0) {
-            return false;
+
+    $http.get(c.baseURL + '/maps/' + c.mapId + '/config')
+    .success(function (r) {
+
+        config = r;
+
+        // Parse configuration items
+        config.map.extent = config.map.projection.extent.split(' ');
+        config.map.center = config.map.center.split(' ');
+        config.map.center = [parseFloat(config.map.center[0]), parseFloat(config.map.center[1])];
+        angular.forEach(config.map.extent, function (item, i) {
+            extent.push(parseFloat(item));
+        });
+        config.map.extent = extent;
+
+        if (config.map.projection.srid !== '3857' && config.map.projection.srid !== '4326' && config.map.projection.proj4_params !== '') {
+            proj4.defs("EPSG:" + config.map.srid, config.map.projection.proj4_params);
+
+            projection = new ol.proj.Projection({
+                code: 'EPSG:' + config.map.projection.srid,
+                units: 'm'
+            });
+            ol.proj.addProjection(projection);
+
+            // Create OpenLayers map with specific projection and extent
+            map = new ol.Map({
+                target: 'map',
+                layers: [],
+                view: new ol.View({
+                    projection: projection,
+                    extent: config.map.extent,
+                    center: config.map.center,
+                    zoom: 1
+                })
+            });
+
+        } else {
+
+            // Create regular OpenLayers map
+            map = new ol.Map({
+                target: 'map',
+                layers: [],
+                view: new ol.View({
+                    center: ol.proj.transform([0, 0], 'EPSG:4326', 'EPSG:3857'),
+                    zoom: 1
+                })
+            });
         }
         
+        // Add layers
+        addLayers();
+
+        // Center map
+        map.getView().setCenter(config.map.center);
+        map.getView().setZoom(parseInt(config.map.zoom));
+
         buildStatus = 1;
-        
-        $http.get(c.baseURL + '/maps/' + c.mapId + '/config')
-        .success(function (r) {
-
-            config = r;
-            
-            // Parse configuration items
-            config.map.extent = config.map.projection.extent.split(' ');
-            config.map.center = config.map.center.split(' ');
-            config.map.center = [parseFloat(config.map.center[0]), parseFloat(config.map.center[1])];
-            angular.forEach(config.map.extent, function (item, i) {
-                extent.push(parseFloat(item));
-            });
-            config.map.extent = extent;
-            
-            if (config.map.projection.srid !== '3857' && config.map.projection.srid !== '4326' && config.map.projection.proj4_params !== '') {
-                proj4.defs("EPSG:" + config.map.srid, config.map.projection.proj4_params);
-
-                projection = new ol.proj.Projection({
-                    code: 'EPSG:' + config.map.projection.srid,
-                    units: 'm'
-                });
-                ol.proj.addProjection(projection);
-
-                // Create OpenLayers map with specific projection and extent
-                map = new ol.Map({
-                    target: 'map',
-                    layers: [],
-                    view: new ol.View({
-                        projection: projection,
-                        extent: config.map.extent,
-                        center: config.map.center,
-                        zoom: 1
-                    })
-                });
-
-            } else {
-
-                // Create regular OpenLayers map
-                map = new ol.Map({
-                    target: 'map',
-                    layers: [],
-                    view: new ol.View({
-                        center: ol.proj.transform([0, 0], 'EPSG:4326', 'EPSG:3857'),
-                        zoom: 1
-                    })
-                });
-            }
-            
-            // Center map
-            map.getView().setCenter(config.map.center);
-            map.getView().setZoom(parseInt(config.map.zoom));
-            
-            cb();
-        });
-    };
+    });
     
     /**
      * Add layers to map from configuration
@@ -538,12 +533,8 @@ function ($http, ol, proj4, c) {
         },
         
         ready: function (cb) {
-            buildMap(function () {
-                addLayers();
-                buildStatus = 2;
-            });
             var wait = setInterval(function () {
-                if (buildStatus === 2) {
+                if (buildStatus === 1) {
                     clearInterval(wait);
                     cb();
                 }
