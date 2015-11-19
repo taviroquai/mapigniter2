@@ -327,7 +327,7 @@ class DatabaseSeeder extends Seeder
                     'geojson_geomtype' => 'Point',
                     'geojson_attributes' => 'label',
                     'geojson_features' => '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-851576.57182518,4456806.642252369]},"properties":{"label":"Tavira"}}],"crs":{"type":"name","properties":{"name":"EPSG:3857"}}}',
-                    'feature_info_template' => '<p>{{ label }}</p>',
+                    'feature_info_template' => '<p>{{ item.label }}</p>',
                     'search' => 'label',
                     'ol_style_static_icon' => 'ol_style_static_icon.png',
                     'ol_style_static_fill_color' => '',

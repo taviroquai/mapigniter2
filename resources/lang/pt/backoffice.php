@@ -110,7 +110,7 @@ return [
     'wfs_version' => 'Versão de WFS',
     'wfs_typename' => 'Type Name do WFS',
     'feature_info_template' => 'Template HTML para cada Feature',
-    'mustache_link' => '(ver Mustache)',
+    'angularjs_link' => '(ver AngularJS)',
     'gpx_filename' => 'Ficheiro GPX',
     'kml_filename' => 'Ficheiro KML',
     'shapefile_filename' => 'Ficheiro Zip contendo ficheiros .shp, .shx, .prj e .dbf',

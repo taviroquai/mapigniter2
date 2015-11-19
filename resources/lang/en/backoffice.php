@@ -111,7 +111,7 @@ return [
     'wfs_version' => 'WFS Version',
     'wfs_typename' => 'WFS Feature Type Name',
     'feature_info_template' => 'Feature Info HTML Template',
-    'mustache_link' => '(see Mustache)',
+    'angularjs_link' => '(see AngularJS)',
     'gpx_filename' => 'GPX File',
     'kml_filename' => 'KML File',
     'shapefile_filename' => 'Zip file containing .shp, .shx, .prj and .dbf files',

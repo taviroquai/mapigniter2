@@ -136,12 +136,13 @@
                     </div>
                     <div id="layerSwitcher">
                         <div ng-repeat="group in groupLayers">
-                            <h4><span class="fa fa-list"> <% group.title %></span></h4>
-                            <ul id="<% group.id %>" class="list-group">
+                            <h4><span class="fa fa-list"> <span ng-bing="group.title"></span></span></h4>
+                            <ul class="list-group">
                                 <li ng-repeat="l in group.layers" class="list-group-item checkbox">
                                     <label>
                                         <input ng-model="l.visible" ng-click="toggleLayer(l)"
-                                            type="checkbox" checked="<% l.visible %>" /><% l.content.title %>
+                                            type="checkbox" ng-checked="l.visible" />
+                                        <span ng-bind="l.content.title"></span>
                                     </label>
                                 </li>
                             </ul>
@@ -150,7 +151,7 @@
                 </div>
                 
                 <div ng-controller="ngFeatureInfo" ng-cloak>
-                    <div ng-bind-html="info"></div>
+                    <div compile="template"></div>
                 </div>
                 
                 <div ng-controller="ngSearchResults" ng-cloak>
@@ -176,15 +177,17 @@
                         </div>
                     </form>
                     
-                    <p class="no-results" ng-show="hasResults && results.length === 0">{{ trans('layout.feature_no_results') }}</p>
+                    <p class="no-results" ng-show="hasResults && results.length === 0">
+                        {{ trans('layout.feature_no_results') }}
+                    </p>
                     
                     <div ng-show="hasResults">
                         <ul>
                             <li ng-repeat="item in results">
-                                <a ng-click="locateItem(item)"
-                                    class="btn btn-default btn-xs"
-                                    data-name="<% item.name %>"
-                                    data-index="<% item.index %>"><% item.label %> (<% item.layer %>)</a>
+                                <a ng-click="locateItem(item)" class="btn btn-default btn-xs">
+                                    <span ng-bind="item.label"></span> 
+                                    (<span ng-bind="item.layer"></span>)
+                                </a>
                             </li>
                         </ul>
                     </div>

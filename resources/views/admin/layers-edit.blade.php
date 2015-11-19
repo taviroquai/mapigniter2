@@ -447,7 +447,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="feature_info_template">{{ trans('backoffice.feature_info_template') }} 
-                                        <small><a href="https://mustache.github.io/mustache.5.html" target="_blank">{{ trans('backoffice.mustache_link') }}</a></small>
+                                        <small><a href="https://docs.angularjs.org/tutorial/step_02" target="_blank">{{ trans('backoffice.angularjs_link') }}</a></small>
                                     </label>
                                     <span class="help-block alert-danger v-error-feature_info_template"></span>
                                     <textarea class="form-control" type="text" 

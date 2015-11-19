@@ -6,7 +6,8 @@ function (Mustache, $scope, ngMapBuilder) {
     /**
      * Scope models
      */
-    $scope.info = '';
+    $scope.item = {};
+    $scope.template = '';
     
     /**
      * Init seach results
@@ -26,12 +27,16 @@ function (Mustache, $scope, ngMapBuilder) {
             });
             
             // Get feature attributes and show HTML
-            $scope.info = '';
+            $scope.template = '';
             if (features.length > 0) {
                 if (features[0].layer.get('template')) {
-                    $scope.info = Mustache.render(features[0].layer.get('template'), features[0].getProperties());
+                    $scope.template = features[0].layer.get('template');
+                    $scope.item = features[0].getProperties();
                 }
             }
+            
+            // Apply changes (why manualy angular???)
+            $scope.$apply();
             
         });
 
