@@ -210,7 +210,7 @@
                 
                 <div ng-controller="ngFeatureInfo" ng-cloak>
                     <div ng-show="item">
-                        <h4>Feature Info</h4>
+                        <h4>{{ trans('layout.featureinfo_title') }}</h4>
                         <button ng-click="clearInfo()" 
                             class="btn btn-danger btn-xs pull-right">
                             {{ trans('layout.clear') }}

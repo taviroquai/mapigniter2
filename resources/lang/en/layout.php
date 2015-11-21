@@ -17,6 +17,7 @@ return [
     'search' => 'Search on Map...',
     'feature_results_title' => 'Map Results',
     'feature_no_results' => 'No features found.',
+    'featureinfo_title' => 'Feature Info',
     'clear' => 'Clear',
     'map_navigation_full' => 'Full View',
     'map_navigation_reset' => 'Navigate',
