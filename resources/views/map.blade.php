@@ -135,10 +135,10 @@
                         </select>
                     </div>
                     <div id="layerSwitcher">
-                        <div ng-repeat="group in groupLayers">
-                            <h4><span class="fa fa-list"> <span ng-bing="group.title"></span></span></h4>
-                            <ul class="list-group">
-                                <li ng-repeat="l in group.layers" class="list-group-item checkbox">
+                        <div ng-repeat="g in groupLayers">
+                            <h4 ng-click="toggleGroup(g)"><span class="fa fa-list"> <span ng-bind="g.title"></span></span></h4>
+                            <ul class="list-group" ng-show="g.visible">
+                                <li ng-repeat="l in g.layers" class="list-group-item checkbox">
                                     <label>
                                         <input ng-model="l.visible" ng-click="toggleLayer(l)"
                                             type="checkbox" ng-checked="l.visible" />
@@ -147,12 +147,23 @@
                                 </li>
                             </ul>
                         </div>
+                        <ul class="list-group" ng-show="layers.length">
+                            <li ng-repeat="l in layers" class="list-group-item checkbox">
+                                <label>
+                                    <input ng-model="l.visible" ng-click="toggleLayer(l)"
+                                        type="checkbox" ng-checked="l.visible" />
+                                    <span ng-bind="l.content.title"></span>
+                                </label>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 
-                <div ng-controller="ngFeatureInfo" ng-cloak>
-                    <div compile="template"></div>
-                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
                 
                 <div ng-controller="ngSearchResults" ng-cloak>
                     <h4>{{ trans('layout.search_title') }}</h4>
@@ -193,6 +204,28 @@
                     </div>
                     
                 </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                
+                <div ng-controller="ngFeatureInfo" ng-cloak>
+                    <div ng-show="item">
+                        <h4>Feature Info</h4>
+                        <button ng-click="clearInfo()" 
+                            class="btn btn-danger btn-xs pull-right">
+                            {{ trans('layout.clear') }}
+                        </button>
+                        <div compile="template"></div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
                 
                 @section('content')
                 @show

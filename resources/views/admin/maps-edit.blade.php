@@ -181,7 +181,7 @@
                             <div class="form-group">
                                 <label for="layer_id">{{ trans('backoffice.layer') }}</label>
                                 <select class="form-control" name="layer_id">
-                                    @foreach(App\Layer::where('type', '!=', 'group')->get() as $item)
+                                    @foreach(App\Layer::all() as $item)
                                     <option value="{{ $item->id }}">{{ $item->content->title }}</option>
                                     @endforeach
                                 </select>

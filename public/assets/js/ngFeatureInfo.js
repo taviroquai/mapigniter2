@@ -6,8 +6,18 @@ function (Mustache, $scope, ngMapBuilder) {
     /**
      * Scope models
      */
-    $scope.item = {};
+    $scope.item = false;
     $scope.template = '';
+    
+    /**
+     * Clear feature info
+     * 
+     * @returns {undefined}
+     */
+    $scope.clearInfo = function () {
+        $scope.item = false;
+        $scope.template = '';
+    };
     
     /**
      * Init seach results

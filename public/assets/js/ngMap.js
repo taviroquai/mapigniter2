@@ -38,12 +38,6 @@ angular.module('ngMap').service('Mustache', function () { return Mustache });
 angular.module('ngMap').service('ol', function () { return ol });
 angular.module('ngMap').service('proj4', function () { return proj4 });
 
-angular.module('ngMap').filter('unsafe', ['$sce', function ($sce) {
-    return function (val) {
-        return $sce.trustAsHtml(val);
-    };
-}]);
-
 angular.module('ngMap')
 .service('ngMapBuilder', ['$http', 'ol', 'proj4', 'config',
 function ($http, ol, proj4, c) {
@@ -120,11 +114,29 @@ function ($http, ol, proj4, c) {
     });
     
     /**
+     * Find base layer group
+     * 
+     * @param {type} id
+     * @returns {item|Boolean}
+     */
+    var getGroup = function (id) {
+        var result = false;
+        map.getLayers().forEach(function (item) {
+            if ((item instanceof ol.layer.Group) && (''+item.get('content').id === id)) {
+                result = item;
+            }
+        });
+        return result;
+    };
+    
+    /**
      * Add layers to map from configuration
      * 
      * @returns {undefined}
      */
     var addLayers = function () {
+        
+        var group, glayers = {};
         
         angular.forEach(config.layers, function (item, i) {
             var layer = false;
@@ -162,6 +174,9 @@ function ($http, ol, proj4, c) {
             case "geojson":
                 layer = createLayerGeoJSON(item);
                 break;
+            case "group":
+                layer = new ol.layer.Group(item);
+                break;
             default:
                 console ? console.log('Layer type not suported:', item.layer.type) : false;
             }
@@ -173,9 +188,22 @@ function ($http, ol, proj4, c) {
                 layer.set('content', item.layer.content);
                 layer.set('template', item.layer.feature_info_template !== '' ? item.layer.feature_info_template : false);
                 layer.set('search', item.layer.search ? item.layer.search.split(',') : false);
-                map.addLayer(layer);
+                if (layer.get('group')) {
+                    if (typeof glayers[layer.get('group').content.id] === 'undefined') {
+                        glayers[layer.get('group').content.id] = new ol.Collection();
+                    }
+                    glayers[layer.get('group').content.id].push(layer);
+                } else {
+                    map.addLayer(layer);
+                }
             }
         });
+        
+        // Add layers to groups
+        for (var k in glayers) {
+            group = getGroup(k);
+            group.setLayers(glayers[k]);
+        }
     };
     
     /**

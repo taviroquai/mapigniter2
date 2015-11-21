@@ -17,7 +17,7 @@ return [
     'search' => 'Pocurar no Mapa...',
     'feature_results_title' => 'Resultados',
     'feature_no_results' => 'Não foram encontrados resultados.',
-    'feature_results_clear' => 'Limpar',
+    'clear' => 'Limpar',
     'map_navigation_full' => 'Vista Inicial',
     'map_navigation_reset' => 'Navegar',
     'map_navigation_zoomin' => 'Aproximar à Área',

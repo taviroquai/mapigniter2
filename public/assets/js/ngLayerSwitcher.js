@@ -8,6 +8,7 @@ function ($scope, ngMapBuilder) {
      */
     $scope.baseLayers = [];
     $scope.groupLayers = [];
+    $scope.layers = [];
     $scope.baseLayer = null;
     
     /**
@@ -26,6 +27,16 @@ function ($scope, ngMapBuilder) {
      */
     $scope.toggleLayer = function (l) {
         l.ol.setVisible(l.visible);
+    };
+    
+    /**
+     * Toggle group visibility
+     * 
+     * @param {type} g
+     * @returns {undefined}
+     */
+    $scope.toggleGroup = function(g) {
+        g.visible = !g.visible;
     };
     
     /**
@@ -64,15 +75,37 @@ function ($scope, ngMapBuilder) {
      * @param {type} id
      * @returns {item|Boolean}
      */
-    var getGroup = function (id) {
-        var result = false;
+    var findOrNewGroup = function (l) {
+        var group = false;
         angular.forEach($scope.groupLayers, function (item) {
-            if (item.id === id) {
-                result = item;
+            if (item.id === l.get('content').seo_slug) {
+                group = item;
             }
         });
-        return result;
+        if (!group) {
+            group = {
+                id: l.get('content').seo_slug,
+                title: l.get('content').title,
+                visible: l.getVisible(),
+                layers: []
+            };
+            $scope.groupLayers.push(group);
+        }
+        return group;
     };
+    
+    /**
+     * Add layer to group
+     * 
+     * @param {type} layer
+     * @param {type} group
+     * @returns {undefined}
+     */
+    var addLayer = function(layer, group) {
+        var item = layer.getProperties();
+        item['ol'] = layer;
+        group.push(item);
+    }
     
     /**
      * Init layer switcher
@@ -81,42 +114,25 @@ function ($scope, ngMapBuilder) {
      */
     var init = function () {
         
-        var group, layer;
+        var group;
         
         ngMapBuilder.getMap().getLayers().forEach(function (l) {
             
-            layer = l.getProperties();
-            layer['ol'] = l;
-            
             if (l.get('baselayer')) {
-                
-                $scope.baseLayers.push(layer);
-                
+                addLayer(l, $scope.baseLayers);
             } else {
-                
-                group = getGroup(l.get('group') ? l.get('group').content.seo_slug : 'default');
-                if (!group) {
-                    if (l.get('group')) {
-                        group = {
-                            id: l.get('group').content.seo_slug,
-                            title: l.get('group').content.title,
-                            layers: []
-                        };
-                    } else {
-                        group = {
-                            id: 'default',
-                            title: 'Default',
-                            layers: []
-                        };
-                    }
-                    $scope.groupLayers.push(group);
+                if (l instanceof ol.layer.Group) {
+                    group = findOrNewGroup(l);
+                    l.getLayers().forEach(function (item) {
+                        addLayer(item, group.layers);
+                    });
+                } else {
+                    addLayer(l, $scope.layers);
                 }
-                
-                group.layers.push(layer);
-                
             }
         });
         
+        // Init default base layer
         initBaseLayer();
         
         // Apply

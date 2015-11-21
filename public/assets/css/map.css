@@ -41,6 +41,10 @@ html, body {
     cursor: pointer;
 }
 
+#layerSwitcher .list-group-item {
+    padding: 6px 15px;
+}
+
 @media (max-width: 992px) {
     
     #map {
