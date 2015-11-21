@@ -57,14 +57,12 @@
                     
                 </ul>
                 
-                <form class="navbar-form navbar-right">
-                    <select id="selectIdiom" class="form-control" title="{{ trans('layout.select_idiom') }}">
-                    @foreach (\App\Idiom::getAvailableIdioms() as $item)
-                        <option value="{{ $item }}"
-                            @if(\App::getLocale() === $item) selected @endif
-                            >{{ $item }}</option>
-                    @endforeach
-                    </select>
+                <form ng-controller="ngIdiom" ng-cloak
+                    class="navbar-form navbar-right">
+                    <select ng-model="selected"
+                            ng-options="item for item in idioms"
+                            ng-change="changeIdiom()"
+                        class="form-control" title="{{ trans('layout.select_idiom') }}"></select>
                 </form>
                 
                 <ul class="nav navbar-nav navbar-right">
@@ -247,6 +245,7 @@
     <script src="{{ asset('assets/js/angular.min.js') }}"></script>
     <script src="{{ asset('assets/js/angular-sanitize.min.js') }}"></script>
     <script src="{{ asset('assets/js/ngMap.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/ngIdiom.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngFeatureInfo.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngLayerSwitcher.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngSearchResults.js') }}" type="text/javascript"></script>
@@ -255,6 +254,8 @@
         
         angular.module('ngMap').value('config', { 
             baseURL: '{!! url('/') !!}',
+            idioms: {!! json_encode(\App\Idiom::getAvailableIdioms()) !!},
+            idiomId: '{{ \App::getLocale() }}',
             mapId: {{ $map ? $map->id : null }}
         });
         
