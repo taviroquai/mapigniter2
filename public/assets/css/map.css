@@ -25,6 +25,12 @@ html, body {
     z-index: 35;
 }
 
+#map .ol-zoom {
+    top: .5em;
+    left: auto;
+    right: .5em;
+}
+
 #content {
     position: absolute;
     top: 50px;
