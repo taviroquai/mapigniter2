@@ -202,7 +202,9 @@ function ($http, ol, proj4, c) {
         // Add layers to groups
         for (var k in glayers) {
             group = getGroup(k);
-            group.setLayers(glayers[k]);
+            if (group) {
+                group.setLayers(glayers[k]);
+            }
         }
     };
     
