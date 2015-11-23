@@ -17,7 +17,7 @@
 ####################################################################
 
 # Set target install directory
-TARGET="mapigniter3"
+TARGET="mapigniter2"
 
 # Set database name. This must match database name in file .env
 DBNAME="mapigniter2"
