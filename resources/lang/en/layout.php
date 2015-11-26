@@ -40,5 +40,6 @@ return [
     'btn_resetpassword' => 'Reset Password',
     'title_register' => 'Register',
     'btn_register' => 'Register',
+    'link_maps' => 'Maps',
     
 ];

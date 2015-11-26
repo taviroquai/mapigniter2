@@ -38,4 +38,29 @@ class Map extends Content
         return $this->hasOne('App\Projection', 'srid', 'projection_id');
     }
     
+    /**
+     * Get published maps
+     * 
+     * @return array
+     */
+    static function getPublishedItems()
+    {
+        $items = Map::with(['content' => function ($query) {
+            $query->orWhere(function($query) {
+                $query->where('publish_start', '<', date('Y-m-d'));
+                $query->where('publish_end', '<', date('Y-m-d'));
+            })
+            ->orWhere(function($query) {
+                $query->where('publish_start', '<', date('Y-m-d'));
+                $query->whereNull('publish_end');
+            })
+            ->orWhere(function($query) {
+                $query->whereNull('publish_start');
+                $query->where('publish_end', '>', date('Y-m-d'));
+            });
+        }])
+        ->get();
+        return $items;
+    }
+    
 }

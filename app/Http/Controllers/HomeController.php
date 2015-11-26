@@ -57,7 +57,6 @@ class HomeController extends Controller {
                         
                         // Load idiom
                         Idiom::loadIdiom();
-                        Idiom::getAvailableIdioms();
 
                         // Get page data file
                         $data = (array) include($page->getDataPath());

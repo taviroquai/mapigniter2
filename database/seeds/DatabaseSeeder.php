@@ -346,6 +346,7 @@ class DatabaseSeeder extends Seeder
             $content->title = 'Map1';
             $content->seo_slug = 'map1';
             $content->role_permission = 'NONE';
+            $content->publish_start = '2015-07-01';
             $content->save();
             Map::create(
                 [

@@ -32,6 +32,7 @@ App\Http\Controllers\HomeController::loadUserPagesRoutes();
 Route::get('/idiom/{idiom}', 'IdiomController@setIdiom');
 
 // WebGIS
+Route::get('/maps/{map}', 'MapController@getMap');
 Route::get('/maps/{map}/config', 'MapController@getConfig');
 
 // Auth routes

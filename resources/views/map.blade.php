@@ -44,6 +44,17 @@
                 <ul class="nav navbar-nav navbar">
                     <li><a href="#" data-toggle="collapse" data-target="#content" aria-expanded="false" aria-controls="content">{{ trans('layout.link_layers') }}</a></li>
                     <li class="dropdown">
+                        <a class="dropdown-toggle" href="#" data-toggle="collapse" data-target="#map-items" aria-expanded="false" aria-controls="content">
+                            {{ trans('layout.link_maps') }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" id="map-items">
+                        @foreach(App\Map::getPublishedItems() as $item)
+                            <li><a href="{{ url('maps/' . $item->id) }}">{{ $item->content->title }}</a></li>
+                        @endforeach
+                        </ul>
+                    </li>
+                    <li class="dropdown">
                         <a class="dropdown-toggle" href="#" data-toggle="collapse" data-target="#content-items" aria-expanded="false" aria-controls="content">
                             {{ trans('layout.link_contents') }}
                             <span class="caret"></span>
@@ -54,6 +65,7 @@
                         @endforeach
                         </ul>
                     </li>
+                    
                     
                 </ul>
                 
