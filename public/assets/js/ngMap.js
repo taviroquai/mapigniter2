@@ -34,7 +34,6 @@ function ($interpolateProvider, $compileProvider) {
     });
 });
 
-angular.module('ngMap').service('Mustache', function () { return Mustache });
 angular.module('ngMap').service('ol', function () { return ol });
 angular.module('ngMap').service('proj4', function () { return proj4 });
 

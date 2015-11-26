@@ -1,1 +1,0 @@
-<li><a class="btn btn-default btn-xs" data-name="@{{ name }}" data-index="@{{ index }}">@{{ label }} (@{{ layer }})</a></li>

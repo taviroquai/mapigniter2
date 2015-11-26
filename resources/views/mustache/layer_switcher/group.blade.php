@@ -1,1 +1,0 @@
-<h4><span class="fa fa-list"> @{{ group }}</span></h4>

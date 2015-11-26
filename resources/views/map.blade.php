@@ -239,7 +239,6 @@
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     
     @section('script')
-    <script src="{{ asset('assets/js/mustache.min.js') }}"></script>
     <script src="{{ asset('assets/js/proj4.js') }}"></script>
     <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/angular.min.js') }}"></script>

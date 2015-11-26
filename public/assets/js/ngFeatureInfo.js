@@ -1,7 +1,7 @@
     
 angular.module('ngMap')
-.controller('ngFeatureInfo', ['Mustache', '$scope', 'ngMapBuilder', 
-function (Mustache, $scope, ngMapBuilder) {
+.controller('ngFeatureInfo', ['$scope', 'ngMapBuilder', 
+function ($scope, ngMapBuilder) {
     
     /**
      * Scope models
