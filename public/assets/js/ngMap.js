@@ -1,10 +1,6 @@
 
-angular.module('ngMap', ['ngSanitize'],
-function ($interpolateProvider, $compileProvider) {
-    
-    // Change template tags
-    //$interpolateProvider.startSymbol('<%');
-    //$interpolateProvider.endSymbol('%>');
+angular.module('ngMap', [],
+function ($compileProvider) {
     
     // configure new 'compile' directive by passing a directive
     // factory function. The factory function injects the '$compile'

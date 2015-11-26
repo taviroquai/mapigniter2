@@ -242,7 +242,6 @@
     <script src="{{ asset('assets/js/proj4.js') }}"></script>
     <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/angular.min.js') }}"></script>
-    <script src="{{ asset('assets/js/angular-sanitize.min.js') }}"></script>
     <script src="{{ asset('assets/js/ngMap.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngIdiom.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngFeatureInfo.js') }}" type="text/javascript"></script>
