@@ -7,6 +7,7 @@ use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use App\Idiom;
 
 class AuthController extends Controller
 {
@@ -32,6 +33,9 @@ class AuthController extends Controller
      */
     public function __construct()
     {
+        // Load idiom
+        Idiom::loadIdiom();
+        
         $this->middleware('guest', ['except' => 'getLogout']);
     }
 

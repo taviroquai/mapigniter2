@@ -11,6 +11,7 @@ use Auth;
 use App\Ldap;
 use Validator;
 use Input;
+use App\Idiom;
 
 
 /**
@@ -20,6 +21,18 @@ use Input;
  */
 class AuthController extends Controller
 {
+    /**
+     * Create a new authentication controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // Load idiom
+        Idiom::loadIdiom();
+        
+        $this->middleware('guest', ['except' => 'getLogout']);
+    }
     
     /**
      * Display login page
@@ -65,7 +78,7 @@ class AuthController extends Controller
             }
             
             // Login failed
-            return Redirect::back()->with('status', 'Wrong username / password');
+            return Redirect::back()->with('status', trans('auth.failed'));
         
         } catch (Exception $e) {
             return Redirect::back()->with('status', $e->getMessage());
