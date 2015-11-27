@@ -180,6 +180,7 @@ function ($http, ol, proj4, c) {
                 layer.set('title', item.layer.title);
                 layer.set('group', item.group);
                 layer.set('baselayer', item.baselayer);
+                layer.setVisible(item.visible);
                 layer.set('content', item.layer.content);
                 layer.set('template', item.layer.feature_info_template !== '' ? item.layer.feature_info_template : false);
                 layer.set('search', item.layer.search ? item.layer.search.split(',') : false);

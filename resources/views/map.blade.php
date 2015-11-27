@@ -154,6 +154,13 @@
                                             type="checkbox" ng-checked="l.visible" />
                                         <span ng-bind="l.content.title"></span>
                                     </label>
+                                    <span ng-show="l.content.seo_description.length"
+                                        class="pull-right layer-details-toggle"
+                                        data-toggle="collapse"
+                                        data-target=".layer-details-@{{ l.id }}"><span class="caret"></span></span>
+                                    <div class="collapse layer-details-@{{ l.id }}">
+                                        <div ng-bind="l.content.seo_description"></div>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -164,6 +171,13 @@
                                         type="checkbox" ng-checked="l.visible" />
                                     <span ng-bind="l.content.title"></span>
                                 </label>
+                                <span ng-show="l.content.seo_description.length"
+                                    class="pull-right layer-details-toggle"
+                                    data-toggle="collapse"
+                                    data-target=".layer-details-@{{ l.id }}"><span class="caret"></span></span>
+                                <div class="collapse layer-details-@{{ l.id }}">
+                                    <div ng-bind="l.content.seo_description"></div>
+                                </div>
                             </li>
                         </ul>
                     </div>

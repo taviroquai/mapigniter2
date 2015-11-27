@@ -51,6 +51,10 @@ html, body {
     padding: 6px 15px;
 }
 
+#layerSwitcher .layer-details-toggle {
+    cursor: pointer;
+}
+
 @media (max-width: 992px) {
     
     #map {
