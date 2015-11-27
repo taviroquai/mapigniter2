@@ -26,7 +26,7 @@ class VisitController extends AdminController
 	{
         $visits = Visit::with('content', 'user')
                 ->addSelect(DB::raw('visits.*, count(id) as visits'))
-                ->groupBy('http_url', 'user_id', 'content_id')
+                ->groupBy('id', 'http_url', 'user_id', 'content_id')
                 ->orderBy('created_at', 'desc')
                 ->get();
 		return response()->json(['data' => $visits]);
