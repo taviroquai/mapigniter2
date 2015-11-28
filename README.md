@@ -1,6 +1,6 @@
 # MapIgniter2
 
-MapIgniter2 is a geocms based on Laravel 5 and OpenLayers 3.  
+MapIgniter2 is a geocms based on Laravel 5, OpenLayers 3, and AngularJS.  
 
 A demo can be found [here](http://taviroquai.com/mapigniter2/public/).  Login with  
 email: admin@isp.com  
