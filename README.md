@@ -8,11 +8,23 @@ password: admin
 
 ![MapIgniter 2 Screenshot](public/assets/images/screenshot.png?raw=true "Screenshot")
 
+## Requirements
+1. PHP 5.5+ (recommended 5.5.9+)
+2. Database server (with PDO driver) - defaults to PostgreSQL server and has currenly only been tested on PostgreSQL
+3. PHP extensions: pdo, pdo_pgsql (if you are using PostgreSQL), fileinfo and any other extensions required by [Laravel Install](http://laravel.com/docs/5.1#installation)
+
 ## Install
 
 1. *Download* zip and *extract* to a web server folder
 1. Copy **.env.example** to **.env**, create a database and set your local configuration on **.env**
-1. Install as you would install a Laravel application
+   * If you are not running PostgreSQL on default postgres port (5432), you should specify the port
+     as part of DB_HOST. For example:
+
+      ```
+           DB_HOST=localhost port=5439 
+          
+      ```
+1. Install as you would install a [Laravel](http://laravel.com/) application
     * ./composer.phar install --prefer-dist
     * php artisan key:generate
     * php artisan migrate
@@ -22,7 +34,7 @@ password: admin
     * bootstrap/cache
     * public/storage
     * resources/views/pages
-1. Open browser
+1. Open in browser --  your_website_url/public 
 
 ### Install troubleshooting
 Check web server logs for errors
