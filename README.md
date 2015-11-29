@@ -1,6 +1,6 @@
 # MapIgniter2
 
-MapIgniter2 is a geocms based on Laravel 5, OpenLayers 3, and AngularJS.  
+MapIgniter2 is a geocms that uses [Laravel 5](http://laravel.com), [OpenLayers 3](http://openlayers.org), and [AngularJS](https://angularjs.org/).  
 
 A demo can be found [here](http://taviroquai.com/mapigniter2/public/).  Login with  
 email: admin@isp.com  
@@ -9,8 +9,8 @@ password: admin
 ![MapIgniter 2 Screenshot](public/assets/images/screenshot.png?raw=true "Screenshot")
 
 ## Requirements
-1. PHP 5.5+ (recommended 5.5.9+)
-2. Database server (with PDO driver) - defaults to PostgreSQL server and has currently only been tested on PostgreSQL, but should work with MySQL, SQLite, and Microsoft SQL Server
+1. Webserver with PHP 5.5+ (recommended 5.5.9+)
+2. Database server (with PDO driver) - defaults to [PostgreSQL](http://www.postgresql.org) server and has currently only been tested on PostgreSQL, but should work with MySQL, SQLite, and Microsoft SQL Server
 3. PHP extensions: pdo, pdo_pgsql (if you are using PostgreSQL), fileinfo and any other extensions required by [Laravel Install](http://laravel.com/docs/5.1#installation)
 
 ## Install
