@@ -160,6 +160,7 @@
                                         data-target=".layer-details-@{{ l.id }}"><span class="caret"></span></span>
                                     <div class="collapse layer-details-@{{ l.id }}">
                                         <div ng-bind="l.content.seo_description"></div>
+                                        <img ng-show="l.ol.get('legendURL')" ng-src="@{{ l.ol.get('legendURL') }}" />
                                     </div>
                                 </li>
                             </ul>
@@ -177,6 +178,7 @@
                                     data-target=".layer-details-@{{ l.id }}"><span class="caret"></span></span>
                                 <div class="collapse layer-details-@{{ l.id }}">
                                     <div ng-bind="l.content.seo_description"></div>
+                                    <img ng-show="l.ol.get('legendURL')" ng-src="@{{ l.ol.get('legendURL') }}" />
                                 </div>
                             </li>
                         </ul>

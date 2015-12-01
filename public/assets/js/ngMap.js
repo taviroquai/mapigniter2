@@ -205,6 +205,27 @@ function ($http, ol, proj4, c) {
     };
     
     /**
+     * Create legend URL
+     * 
+     * @param {string} url
+     * @param {string} layer
+     * @param {string} srs
+     * @returns {String}
+     */
+    var createLegendUrl = function (url, layer, srs)
+    {
+        return url + '&' + ([
+            'SERVICE=WMS',
+            'VERSION=1.1.1',
+            'REQUEST=GetLegendGraphic',
+            'FORMAT=image%2Fpng',
+            'SRS=EPSG:' + srs,
+            'CRS=EPSG:' + srs,
+            'LAYER=' + layer
+        ].join('&'));
+    };
+    
+    /**
      * Create map quest layer
      * 
      * @param {Object} item
@@ -290,6 +311,7 @@ function ($http, ol, proj4, c) {
             visible: item.visible,
             source: new ol.source.TileWMS(config.layer)
         });
+        layer.set('legendURL', createLegendUrl(item.layer['url'], item.layer.content.seo_slug, config.map.projection.srid));
         return layer;
     };
     
@@ -418,6 +440,7 @@ function ($http, ol, proj4, c) {
             gutter: 6,
             source: new ol.source.TileWMS(item.layer)
         });
+        layer.set('legendURL', createLegendUrl(item.layer['url'], item.layer.content.seo_slug, config.map.projection.srid));
         return layer;
     };
     
