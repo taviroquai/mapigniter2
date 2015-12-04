@@ -17,13 +17,20 @@ password: admin
 
 1. *Download* zip and *extract* to a web server folder
 1. Copy **.env.example** to **.env**, create a database and set your local configuration on **.env**
-   * If you are not running PostgreSQL on default postgres port (5432), you should specify the port
-     as part of DB_HOST. For example:
+   * If you are not running PostgreSQL on default postgres port (5432), you should specify the port.
+     And then use it in your config/database file. For example in .env file:
 
       ```
-           DB_HOST=localhost port=5439 
+          DB_HOST=localhost
+          DB_PORT=5439
           
       ```
+      And in the config/database.php
+      ```
+          'host' => env('DB_HOST', 'localhost'),
+          'port' => env('DB_PORT', 5432),
+      ```
+    
 1. Install as you would install a [Laravel](http://laravel.com/) application
     * ./composer.phar install --prefer-dist
     * php artisan key:generate
