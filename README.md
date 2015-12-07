@@ -15,7 +15,7 @@ password: admin
 
 ## Install
 
-For linux users running under Apache, refer to [Install Linux](documentation/install_linux.md)
+For linux users running under Apache, refer to [Install Linux](documentation/install_linux.md)  
 For windows users running under IIS, refer to [Install Windows IIS](documentation/install_windows.md)
 
 ## Web Mapping Features
