@@ -16,7 +16,7 @@ There are two ways to install PHP.  Doing a Manual install, or using the Web Pla
 Basic instructions [Microsoft IIS 7.0 and later](http://php.net/manual/en/install.windows.iis7.php)
 
 
-### Using Web Platform Installer to instal PHP and URLRewrite
+### Using Web Platform Installer to install PHP and URLRewrite
 
 These instructions were tested on Windows 2012 R2 IIS 8, but should work more or less the same on lower IIS (Windows 2008+)
 
@@ -44,25 +44,14 @@ These instructions were tested on Windows 2012 R2 IIS 8, but should work more or
 
 1. *Download* zip and *extract* to a web server folder
 1. Open **.env.example** in an editor such as notepad++ and saves as **.env**  as .env. (this is nneeded since win windows files start with . sometimes yield error during copy.
-1. create a postgres database and set your local configuration on **.env**
-   * If you are not running PostgreSQL on default postgres port (5432), you should specify the port
-    by adding a port line. For example:
-
-      ```
-          DB_HOST=localhost
-	  DB_PORT=9999
-          
-      ```
-      
-      Where DB_PORT is entry in env set to what you want.
-      
+1. create a postgres database and set your local configuration on **.env**      
 1. Install as you would install a [Laravel](http://laravel.com/) application
-by opening up command prompt, cd into folder you extracted
+by opening up command prompt, cd into folder you extracted and then run the following:
     * php composer.phar install --prefer-dist
     * php artisan key:generate
     * php artisan migrate
     * php artisan db:seed
-1. Give *write permissions to web server* to the following folders:
+1. Give *write permissions to web server* IUSR and IIS_IUSRS accounts to the following folders:
     * storage
     * bootstrap/cache
     * public/storage
