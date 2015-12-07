@@ -16,7 +16,7 @@ There are two ways to install PHP.  Doing a Manual install, or using the Web Pla
 Basic instructions [Microsoft IIS 7.0 and later](http://php.net/manual/en/install.windows.iis7.php)
 
 
-### Using Web Platform Installer to instal PHP and URLRewrite
+### Using Web Platform Installer to install PHP and URLRewrite
 
 These instructions were tested on Windows 2012 R2 IIS 8, but should work more or less the same on lower IIS (Windows 2008+)
 
