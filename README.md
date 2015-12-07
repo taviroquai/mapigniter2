@@ -15,7 +15,7 @@ password: admin
 
 ## Install
 
-For windows users running under IIS, refer to [Install Windows IIS](documentation/windows_install.md)
+For windows users running under IIS, refer to [Install Windows IIS](documentation/install_windows.md)
 
 1. *Download* zip and *extract* to a web server folder
 1. Copy **.env.example** to **.env**, create a database and set your local configuration on **.env**
