@@ -15,24 +15,8 @@ password: admin
 
 ## Install
 
+For linux users running under Apache, refer to [Install Linux](documentation/install_linux.md)
 For windows users running under IIS, refer to [Install Windows IIS](documentation/install_windows.md)
-
-1. *Download* zip and *extract* to a web server folder
-1. Copy **.env.example** to **.env**, create a database and set your local configuration on **.env**
-1. Install as you would install a [Laravel](http://laravel.com/) application
-    * ./composer.phar install --prefer-dist
-    * php artisan key:generate
-    * php artisan migrate
-    * php artisan db:seed
-1. Give *write permissions to web server* to the following folders:
-    * storage
-    * bootstrap/cache
-    * public/storage
-    * resources/views/pages
-1. Open in browser --  your_website_url/public 
-
-### Install troubleshooting
-Check web server logs for errors
 
 ## Web Mapping Features
 
