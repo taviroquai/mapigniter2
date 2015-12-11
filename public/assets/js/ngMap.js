@@ -309,7 +309,7 @@ function ($http, ol, proj4, c) {
         };
         var layer = new ol.layer.Tile({
             visible: item.visible,
-            source: new ol.source.TileWMS(config.layer)
+            source: new ol.source.TileWMS(item.layer)
         });
         layer.set('legendURL', createLegendUrl(item.layer['url'], item.layer.content.seo_slug, config.map.projection.srid));
         return layer;
