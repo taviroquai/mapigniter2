@@ -324,8 +324,10 @@ function ($http, ol, proj4, c) {
     var createLayerWFS = function (item) {
         
         var finalurl, features, style, format = new ol.format.WFS();
+        finalurl = item.layer.wfs_url + (item.layer.wfs_url.indexOf('?') > -1 ? '' : '?');
         
         function loadFeatures(url) {
+            url = config.proxy + '/' + btoa(url);
             $http.get(url)
             .success(function (response) {
                 features = format.readFeatures(response, {featureProjection: 'EPSG:' + config.map.projection.srid});
@@ -347,14 +349,14 @@ function ($http, ol, proj4, c) {
             var source = new ol.source.Vector({
                 features: [] 
             });
-            finalurl = item.layer.wfs_url
-                + '&' + params.join('&') 
+            finalurl =  finalurl + '&' + params.join('&') 
                 + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + item.layer.zoom_attribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
         } else {
             var source = new ol.source.Vector({
                 strategy: ol.loadingstrategy.bbox,
                 loader: function (extent, resolution, projection) {
-                    finalurl = item.layer.wfs_url + "&" + params.join('&') + '&BBOX=' + extent.join(',') + ',EPSG:' + config.map.projection.srid;
+                    finalurl = finalurl + '&' + params.join('&')
+                         + '&BBOX=' + extent.join(',') + ',EPSG:' + config.map.projection.srid;
                     loadFeatures(finalurl);
                 }
             });
@@ -362,7 +364,7 @@ function ($http, ol, proj4, c) {
 
         map.on('moveend', function () {
             if (typeof item.layer.zoom_attribute !== 'undefined') {
-                finalurl = item.layer.wfs_url + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + item.layer.zoom_attribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
+                finalurl = finalurl + '&FILTER=' + encodeURIComponent('<Filter><PropertyIsLessThanOrEqualTo><PropertyName>' + item.layer.zoom_attribute + '</PropertyName><Literal>' + map.getView().getZoom() + '</Literal></PropertyIsLessThanOrEqualTo></Filter>');
                 source.clear();
                 loadFeatures(finalurl);
             }
