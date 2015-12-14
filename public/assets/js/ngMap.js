@@ -64,39 +64,25 @@ function ($http, ol, proj4, c) {
         });
         config.map.extent = extent;
 
-        if (config.map.projection.srid !== '3857' && config.map.projection.srid !== '4326' && config.map.projection.proj4_params !== '') {
-            proj4.defs("EPSG:" + config.map.srid, config.map.projection.proj4_params);
+        proj4.defs("EPSG:" + config.map.srid, config.map.projection.proj4_params);
 
-            projection = new ol.proj.Projection({
-                code: 'EPSG:' + config.map.projection.srid,
-                units: 'm'
-            });
-            ol.proj.addProjection(projection);
+        projection = new ol.proj.Projection({
+            code: 'EPSG:' + config.map.projection.srid,
+            units: 'm'
+        });
+        ol.proj.addProjection(projection);
 
-            // Create OpenLayers map with specific projection and extent
-            map = new ol.Map({
-                target: 'map',
-                layers: [],
-                view: new ol.View({
-                    projection: projection,
-                    extent: config.map.extent,
-                    center: config.map.center,
-                    zoom: 1
-                })
-            });
-
-        } else {
-
-            // Create regular OpenLayers map
-            map = new ol.Map({
-                target: 'map',
-                layers: [],
-                view: new ol.View({
-                    center: ol.proj.transform([0, 0], 'EPSG:4326', 'EPSG:3857'),
-                    zoom: 1
-                })
-            });
-        }
+        // Create OpenLayers map with specific projection and extent
+        map = new ol.Map({
+            target: 'map',
+            layers: [],
+            view: new ol.View({
+                projection: projection,
+                extent: config.map.extent,
+                center: config.map.center,
+                zoom: 1
+            })
+        });
         
         // Add layers
         addLayers();
@@ -288,7 +274,7 @@ function ($http, ol, proj4, c) {
         };
         var layer = new ol.layer.Tile({
             visible: item.visible,
-            source: new ol.source.TileWMS(config.layer)
+            source: new ol.source.TileWMS(item.layer)
         });
         return layer;
     };
@@ -409,9 +395,9 @@ function ($http, ol, proj4, c) {
         item.layer['params'] = {
             'LAYERS': item.layer.content.seo_slug,
             'TILED': false,
-            'VERSION': '1.1.1',
-            'SRS': 'EPSG:' + item.layer.projection_id,
-            'CRS': 'EPSG:' + item.layer.projection_id
+            'VERSION': '1.1.0',
+            'SRS': 'EPSG:' + config.map.projection.srid,
+            'CRS': 'EPSG:' + config.map.projection.srid
         };
         var layer = new ol.layer.Tile({
             visible: item.visible,

@@ -135,7 +135,9 @@ class Layer extends Content
     static function wmsVersionOptions()
     {
         return [
-            '1.1.0' => '1.1.0'
+            '1.1.0' => '1.1.0',
+            '1.1.1' => '1.1.1',
+            '1.3.0' => '1.3.0'
         ];
     }
     
