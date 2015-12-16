@@ -63,8 +63,8 @@ function ($http, ol, proj4, c) {
             extent.push(parseFloat(item));
         });
         config.map.extent = extent;
-
-        proj4.defs("EPSG:" + config.map.srid, config.map.projection.proj4_params);
+	
+        proj4.defs("EPSG:" + config.map.projection.srid, config.map.projection.proj4_params);
 
         projection = new ol.proj.Projection({
             code: 'EPSG:' + config.map.projection.srid,
@@ -80,6 +80,7 @@ function ($http, ol, proj4, c) {
                 projection: projection,
                 extent: config.map.extent,
                 center: config.map.center,
+                maxZoom: 32,
                 zoom: 1
             })
         });
@@ -200,7 +201,9 @@ function ($http, ol, proj4, c) {
      */
     var createLegendUrl = function (url, layer, srs)
     {
-        return url + '&' + ([
+        var finalurl = url;
+        finalurl += finalurl.indexOf('?') === -1 ? '?' : ''; 
+        return finalurl + '&' + ([
             'SERVICE=WMS',
             'VERSION=1.1.1',
             'REQUEST=GetLegendGraphic',
@@ -297,7 +300,7 @@ function ($http, ol, proj4, c) {
             visible: item.visible,
             source: new ol.source.TileWMS(item.layer)
         });
-        layer.set('legendURL', createLegendUrl(item.layer['url'], item.layer.content.seo_slug, config.map.projection.srid));
+        layer.set('legendURL', createLegendUrl(item.layer['url'], item.layer.wms_layers, config.map.projection.srid));
         return layer;
     };
     
@@ -309,14 +312,21 @@ function ($http, ol, proj4, c) {
      */
     var createLayerWFS = function (item) {
         
-        var finalurl, features, style, format = new ol.format.WFS();
+        var finalurl, features, style;
+        var gmlformat = (item.layer.wfs_version === '1.0.0' ? new ol.format.GML2 : new ol.format.GML3);
+        var format = new ol.format.WFS({
+            'gmlFormat': gmlformat
+        });
         finalurl = item.layer.wfs_url + (item.layer.wfs_url.indexOf('?') > -1 ? '' : '?');
         
         function loadFeatures(url) {
             url = config.proxy + '/' + btoa(url);
             $http.get(url)
-            .success(function (response) {
-                features = format.readFeatures(response, {featureProjection: 'EPSG:' + config.map.projection.srid});
+            .success(function (response) {                
+                features = format.readFeatures(response, {
+                    dataProjection: 'EPSG:' + config.map.projection.srid,
+                    featureProjection: 'EPSG:' + config.map.projection.srid
+                });
                 angular.forEach(features, function (f, i) {
                     source.addFeature(f);
                 });
