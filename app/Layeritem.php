@@ -19,6 +19,16 @@ class Layeritem extends Layer
     protected $fillable = ['map_id', 'parent_id', 'layer_id', 'visible', 'displayorder', 'baselayer'];
     
     /**
+     * The casts attributes
+     *
+     * @var array
+     */
+    protected $casts = [
+        'visible' => 'boolean',
+        'baselayer' => 'boolean'
+    ];
+    
+    /**
      * Maps relation
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

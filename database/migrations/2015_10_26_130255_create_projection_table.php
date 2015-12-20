@@ -14,7 +14,7 @@ class CreateProjectionTable extends Migration
     {
         Schema::create('projections', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('srid')->unique();
+            $table->integer('srid')->unique()->unsigned();
             $table->text('proj4_params');
             $table->string('extent');
             $table->timestamps();
