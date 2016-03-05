@@ -278,12 +278,23 @@ class Layer extends Content
      */
     public function saveGeoJSONFile()
     {
+        // Create valid geojson string
         if (empty($this->geojson_features)) {
             $this->geojson_features = '{"type":"FeatureCollection","features":[]}';
         }
+        
+        // Fix missing CRS
+        if (!strstr($this->geojson_features, '"name":"EPSG:')) {
+            $this->geojson_features = substr($this->geojson_features, 0, strlen($this->geojson_features)-1);
+            $this->geojson_features .= ',"crs":{"type":"name","properties":{"name":"EPSG:' . $this->projection_id . '"}}' . '}';
+        }
+        
+        // Fix missing layer directory
         if (!is_dir($this->getPublicStoragePath())) {
             mkdir($this->getPublicStoragePath(), 0777, true);
         }
+        
+        // Save file
         $filename = $this->getPublicStoragePath() . '/geojson.json';
         @file_put_contents($filename, $this->geojson_features);
     }

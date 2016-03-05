@@ -218,5 +218,102 @@ class LayerController extends AdminController
         $result = unlink($layer->getIconsPath().'/'.$image);
         return response()->json(['success' => $result]);
     }
+    
+    /**
+     * Import CSV (only geojson layer)
+     */
+    public function importCSV(Layer $layer)
+    {
+        $filename = public_path('storage/layer/2/geojson.json');
+        $layer->geojson_features = file_get_contents($filename);
+        
+        // Get attributes and indexes
+        $attributes = explode(',', $layer->geojson_attributes);
+        $csv_attributes = [];
+        $x_index = 1;
+        $y_index = 2;
+        
+        // Get current features
+        $json = json_decode($layer->geojson_features);
+        $json->features = [];
+        
+        // Parse csv file
+        $file = \Request::file('csv_uploader');
+        $filename = $file->getClientOriginalName();
+        $file->move(public_path($layer->getIconsPath().'/'), $filename);
+        $row = 1;
+        $tmp = public_path($layer->getIconsPath()).'/'.$filename;
+        if (($handle = fopen($tmp, "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $num = count($data);
+                
+                // Get csv columns on first row
+                if ($row === 1) {
+                    for ($c = 0; $c < $num; $c++) {
+                        
+                        //validate column
+                        if (in_array($data[$c], $attributes)) {
+                            $csv_attributes[] = $data[$c];
+                        }
+                        
+                        // Validate x column
+                        if (strtolower($data[$c]) == 'x') {
+                            $x_index = $c;
+                        }
+                        
+                        // Validate y column
+                        if (strtolower($data[$c]) == 'y') {
+                            $y_index = $c;
+                        }
+                    }
+                } else {
+                    
+                    // Create feature
+                    $feature = new \stdClass();
+                    $feature->type = 'Feature';
+                    $feature->properties = new \stdClass();
+                    $feature->geometry = new \stdClass();
+                    $feature->geometry->type = 'Point';
+                    $feature->geometry->coordinates = [];
 
+                    for ($c=0; $c < $num; $c++) {
+                        
+                        // Add attribute value
+                        if (isset($csv_attributes[$c]) && in_array($csv_attributes[$c], $attributes)) {
+                            $feature->properties->{$csv_attributes[$c]} = $data[$c];
+                        }
+                        
+                        // Add x value
+                        if ($c == $x_index) {
+                            $feature->geometry->coordinates[] = (float) $data[$c];
+                        }
+                        
+                        // Add y value
+                        if ($c == $y_index) {
+                            $feature->geometry->coordinates[] = (float) $data[$c];
+                        }
+                    }
+                    $json->features[] = $feature;
+                }
+                
+                // Next row
+                $row++;
+            }
+            
+            // Clear csv file
+            fclose($handle);
+            unlink($tmp);
+
+            // Update layer
+            $layer->geojson_features = json_encode($json);
+            $layer->save();
+            $layer->saveGeoJSONFile();
+            
+            //Response
+            return response()->json(['success' => true]);
+        }
+        
+        //Response
+        return response()->json(['success' => false]);
+    }
 }

@@ -35,6 +35,7 @@
                 <li role="presentation"><a href="#icons" aria-controls="icons" role="tab" data-toggle="tab">{{ trans('backoffice.icons') }}</a></li>
                 @if($layer->type === 'geojson')
                 <li role="presentation"><a href="#features" aria-controls="features" role="tab" data-toggle="tab">{{ trans('backoffice.layer_mapeditor') }}</a></li>
+                <li role="presentation"><a href="#import" aria-controls="import" role="tab" data-toggle="tab">{{ trans('backoffice.layer_import') }}</a></li>
                 @endif
             </ul>
             
@@ -598,6 +599,22 @@
                     </div>
                     
                 </div>
+                <div role="tabpanel" class="tab-pane fade" id="import">
+                    
+                    <h4>{{ trans('backoffice.layer_import') }}</h4>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+                            <div class="form-group">
+                                <label for="csv_uploader">{{ trans('backoffice.upload_csv') }}</label>
+                                <input class="form-control" type="file" name="csv_uploader" id="csv_uploader">
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                </div>
                 @endif
                 
             </div>
@@ -738,6 +755,26 @@
     });
     icons_uploader.on('filebatchselected', function(event, files) {
         icons_uploader.fileinput('upload');
+    });
+    
+    var csv_uploader = $("#csv_uploader").fileinput({
+        language: "pt",
+        uploadUrl: "{{ url('admin/layers/import/csv/'.$layer->id) }}",
+        allowedFileExtensions: ["csv"],
+        maxFileSize: 2000,
+        showCaption: false,
+        overwriteInitial: true,
+        showUpload: false,
+        showRemove: false,
+        uploadExtraData: function() {
+            return {
+                '_token': $('[name="_token"]').val()
+            };
+        }
+    });
+    csv_uploader.on('filebatchselected', function(event, files) {
+        csv_uploader.fileinput('upload');
+        //window.location.reload();
     });
 
     $('#icons .delete-image').on('click', function() {

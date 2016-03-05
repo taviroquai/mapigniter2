@@ -92,6 +92,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['aut
     Route::get('/layers/delete/{layer}', 'LayerController@delete');
     Route::post('/layers/upload/{layer}', 'LayerController@upload');
     Route::get('/layers/{layer}/delete/{filename}', 'LayerController@deleteIconImage');
+    Route::post('/layers/import/csv/{layer}', 'LayerController@importCSV');
     
     // Content
     Route::get('/contents', 'ContentController@json');
