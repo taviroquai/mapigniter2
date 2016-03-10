@@ -774,7 +774,7 @@
     });
     csv_uploader.on('filebatchselected', function(event, files) {
         csv_uploader.fileinput('upload');
-        //window.location.reload();
+        window.location.reload();
     });
 
     $('#icons .delete-image').on('click', function() {
