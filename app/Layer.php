@@ -538,6 +538,13 @@ class Layer extends Content
      */
     protected function parseGeoPackageGeometry($filename)
     {
+        // References
+        // http://ngageoint.github.io/geopackage-js/
+        // http://www.geopackage.org/spec/#gpb_spec
+        // https://en.wikipedia.org/wiki/Well-known_text
+        // http://edndoc.esri.com/arcsde/9.1/general_topics/wkb_representation.htm
+        // http://php.net/manual/en/function.pack.php
+        
         // Include geoPHP to parse WKB
         include_once app_path('geoPHP/geoPHP.inc');
         
