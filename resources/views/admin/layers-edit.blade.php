@@ -443,6 +443,36 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row" id="geopackage_options">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="geopackage_filename">{{ trans('backoffice.geopackage_filename') }}</label>
+                                @if ($layer->geopackage_filename)
+                                <span><small>Previous: {{ $layer->geopackage_filename }}</small></span>
+                                @endif
+                                <input class="form-control" type="file" name="geopackage_filename" id="geopackage_filename" value="">
+                                <span class="help-block alert-danger v-error-geopackage_filename_0"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="geopackage_table">{{ trans('backoffice.geopackage_table') }}</label>
+                                <input class="form-control" type="text" name="geopackage_table"
+                                    placeholder=""
+                                    value="{{ $layer->geopackage_table }}">
+                                <span class="help-block alert-danger v-error-geopackage_table"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="geopackage_field">{{ trans('backoffice.geopackage_field') }}</label>
+                                <input class="form-control" type="text" name="geopackage_field"
+                                    placeholder=""
+                                    value="{{ $layer->geopackage_field }}">
+                                <span class="help-block alert-danger v-error-geopackage_field"></span>
+                            </div>
+                        </div>
+                    </div>
                     <div id="vector_options">
                         <div class="row">
                             <div class="col-md-12">
@@ -730,6 +760,15 @@
         allowedFileExtensions: ['zip']
     });
     
+    $("#geopackage_filename").fileinput({
+        showCaption: false,
+        overwriteInitial: true,
+        showUpload: false,
+        showRemove: false,
+		maxFileCount: 1,
+        allowedFileExtensions: ['gpkg']
+    });
+    
     $("#ol_style_static_icon").fileinput({
         showCaption: false,
         overwriteInitial: true,
@@ -798,6 +837,7 @@
         '#gpx_filename',
         '#kml_filename',
         '#shapefile_filename',
+        '#geopackage_filename',
         '#ol_style_static_icon'
     ]});
     

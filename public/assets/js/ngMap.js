@@ -150,6 +150,9 @@ function ($http, ol, proj4, c) {
             case "shapefile":
                 layer = createLayerShapefile(item);
                 break;
+            case "geopackage":
+                layer = createLayerGeoPackage(item);
+                break;
             case "postgis":
                 layer = createLayerPostgis(item);
                 break;
@@ -439,6 +442,54 @@ function ($http, ol, proj4, c) {
             source: new ol.source.TileWMS(item.layer)
         });
         layer.set('legendURL', createLegendUrl(item.layer['url'], item.layer.content.seo_slug, config.map.projection.srid));
+        return layer;
+    };
+    
+    /**
+     * Create GeoPackage layer
+     * 
+     * @param {Object} item
+     * @returns {Map.ol.layer.Vector|Map.createLayerGeoPackage.layer}
+     */
+    var createLayerGeoPackage = function (item) {
+        var style, features = [];
+        var feat, format = new ol.format.WKT();
+        var url = c.baseURL + '/storage/layer/' + item.layer.id + '/geopackage.json';
+        
+        function parseJSONResponse(r) {
+            if (r.type === 'FeatureCollection') {
+                angular.forEach(r.features, function (f, i) {
+                    console.log(f);
+                    feat = new ol.Feature(f.attributes);
+                    console.log(f.geometry);
+                    console.log(atob(f.geometry));
+                    console.log(format.readGeometry(atob(f.geometry)));
+                    feat.setGeometry(format.readGeometry(atob(f.geometry)));
+                    console.log(feat);
+                    layer.getSource().addFeature(feat);
+                });
+            }
+        }
+
+        function loadFeatures(extent, resolution, projection) {
+            $http.get(url)
+            .success(function (response) {
+                parseJSONResponse(response);
+            });
+        }
+
+        var layer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [],
+                loader: function (extent, resolution, projection) {
+                    loadFeatures(extent, resolution, projection);
+                }
+            }),
+            style: function (feature, resolution) {
+                style = createStyle(item.layer, feature, resolution);
+                return [style];
+            }
+        });
         return layer;
     };
     

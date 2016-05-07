@@ -104,6 +104,11 @@ class LayerController extends AdminController
                     $rules['shapefile_filename_0'] = 'required';
                 }
                 break;
+            case 'geopackage':
+                if (empty($input['id'])) {
+                    $rules['geopackage_filename_0'] = 'required';
+                }
+                break;
             case 'group':
             default:;
             
@@ -141,6 +146,7 @@ class LayerController extends AdminController
         $layer->saveStyleIcon(\Request::file('ol_style_static_icon_0'));
         $layer->saveGPXFile(\Request::file('gpx_filename_0'));
         $layer->saveKMLFile(\Request::file('kml_filename_0'));
+        $layer->saveGeoPackageFile(\Request::file('geopackage_filename_0'));
         $layer->saveShapeFile(\Request::file('shapefile_filename_0'));
         if ($layer->type === 'postgis') {
             try {
