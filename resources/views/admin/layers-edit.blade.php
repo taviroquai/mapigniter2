@@ -713,6 +713,7 @@
         $('#shapefile_options').hide();
         $('#postgis_options').hide();
         $('#geojson_options').hide();
+        $('#geopackage_options').hide();
         $('#vector_options').hide();
     }
     
@@ -722,10 +723,10 @@
         if (value === 'wfs' || value === 'wms' || value === 'shapefile') {
             $('#projection_options').show(200);
         }
-        if (value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile') {
+        if (value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
             $('#style_options').show(200);
         }
-        if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile') {
+        if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
             $('#vector_options').show(200);
         }
     }

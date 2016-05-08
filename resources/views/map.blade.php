@@ -263,13 +263,15 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script>
     
     @section('script')
-    <script src="{{ asset('assets/js/proj4.js') }}"></script>
+    <script src="{{ asset('assets/js/buffer.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/wkx.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/proj4.js') }}"  type="text/javascript"></script>
     <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('assets/js/angular.min.js') }}"></script>
+    <script src="{{ asset('assets/js/angular.min.js') }}"  type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngMap.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngIdiom.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngFeatureInfo.js') }}" type="text/javascript"></script>

@@ -326,6 +326,13 @@ class Layer extends Content
         $pdo = new \PDO($dsn);
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         
+        // Get table feature id
+        $stm = $pdo->query("SELECT column_name FROM gpkg_data_columns WHERE table_name = '{$this->geopackage_table}' and title = 'FeatureID'");
+        if (!$stm) throw new \Exception ('Could not execute query');
+        $stm->execute();
+        $column_id = $stm->fetchColumn(0);
+        $column_id = empty($column_id) ? 'id' : $column_id;
+        
         // Get table srid
         $stm = $pdo->query("SELECT srs_id FROM gpkg_contents WHERE table_name = '{$this->geopackage_table}'");
         if (!$stm) throw new \Exception ('Could not execute query');
@@ -338,40 +345,48 @@ class Layer extends Content
         $stm->execute();
         $items = $stm->fetchAll(\PDO::FETCH_OBJ);
         
-        $json = [
-            'type' => 'FeatureCollection',
-            'crs' => [
-                'type' => 'name',
-                'properties' => [
-                    'name' => 'EPSG:' . $srid
-                ]
-            ],
-            'features' => []
-        ];
-
-        $id = 1;
-        foreach($items as $item) {
-            
-            // Create stream from binary geometry
-            $filename = $this->getPublicStoragePath().'/'. $id;
-            file_put_contents($filename, $item->{$this->geopackage_field});
-            
-            // Create feature
-            $feature = ['type' => 'Feature', 'geometry' => null, 'properties' => null];
-            list($header, $wkb) = $this->parseGeoPackageGeometry($filename);
-            $feature['geometry'] = $wkb;
-            unset($item->{$this->geopackage_field}); // Remove from feature attributes
-            $feature['properties'] = $item;
-            $json['features'][] = $feature;
-            $id++;
-        }
-        
-        // Create filename
+        // Create directories
         if (!is_dir($this->getPublicStoragePath())) {
             mkdir($this->getPublicStoragePath(), 0777, true);
         }
+        if (!is_dir($this->getPublicStoragePath().'/bin')) {
+            mkdir($this->getPublicStoragePath().'/bin', 0777, true);
+        }
+        
+        // Create JSON from GeoPackage table if does not exists
         $filename = $this->getPublicStoragePath() . '/geopackage.json';
-        file_put_contents($filename, json_encode($json));
+        if (!file_exists($filename)) {
+            $json = [
+                'type' => 'FeatureCollection',
+                'crs' => [
+                    'type' => 'name',
+                    'properties' => [
+                        'name' => 'EPSG:' . $srid
+                    ]
+                ],
+                'features' => []
+            ];
+
+            $id = 1;
+            foreach($items as $item) {
+
+                // Create stream from binary geometry
+                $featname = $this->getPublicStoragePath().'/bin/'.($column_id ? $item->{$column_id} : $id);
+                file_put_contents($featname, $item->{$this->geopackage_field});
+
+                // Create feature
+                $feature = ['type' => 'Feature', 'geometry' => null, 'properties' => null];
+                list($header, $wkb) = $this->parseGeoPackageGeometry($featname);
+                $feature['geometry'] = base64_encode($wkb);
+                unset($item->{$this->geopackage_field}); // Remove from feature attributes
+                $feature['properties'] = $item;
+                $json['features'][] = $feature;
+                $id++;
+            }
+
+            // Save JSON table
+            file_put_contents($filename, json_encode($json, JSON_PRETTY_PRINT));
+        }
     }
     
     /**
@@ -534,20 +549,18 @@ class Layer extends Content
     /**
      * Parse GeoPackageBinaryHeader
      * 
+     * References
+     * 
+     * http://www.geopackage.org/spec/#gpb_spec
+     * 
+     * https://en.wikipedia.org/wiki/Well-known_text
+     * http://php.net/manual/en/function.unpack.php
+     * http://ngageoint.github.io/geopackage-js/ (NodeJS + SQL.js Demo)
+     * 
      * @param string $filename
      */
     protected function parseGeoPackageGeometry($filename)
     {
-        // References
-        // http://ngageoint.github.io/geopackage-js/
-        // http://www.geopackage.org/spec/#gpb_spec
-        // https://en.wikipedia.org/wiki/Well-known_text
-        // http://edndoc.esri.com/arcsde/9.1/general_topics/wkb_representation.htm
-        // http://php.net/manual/en/function.pack.php
-        
-        // Include geoPHP to parse WKB
-        include_once app_path('geoPHP/geoPHP.inc');
-        
         // Default values
         $header = [
             'magic'     => '',
@@ -560,85 +573,86 @@ class Layer extends Content
         
         // Open binary
         $h = fopen($filename, 'rb');
-        if ($h) {
-            
-            // Count bytes
-            $fstat = fstat($h);
-            $total = $fstat['size'];
-            $read = 0;
-            
-            // Parse magic
-            $header['magic'] = fread($h, 2);
-            $read += 2;
-            
-            // Parse version
-            $bytes = array_values(unpack('c', fread($h, 1)));
-            $header['version'] = $bytes[0];
-            $read += 1;
-            
-            // Parse flags
-            $bytes = array_values(unpack('c', fread($h, 1)));
-            $header['flags'] = $bytes[0];
-            $read += 1;
-            
-            // Parse SRID
-            $bytes = array_values(unpack('N*', fread($h, 4)));
-            $header['srs_id'] = $bytes[0];
-            $read += 4;
-            
-            // Parse envelop
-            if ($header['flags'] > 0) { // 32 bytes envelop
-                $bytes = array_values(unpack('f*', fread($h, 32)));
-                $header['envelope'] = [
-                    'minx' => $bytes[0],
-                    'miny' => $bytes[1],
-                    'maxx' => $bytes[2],
-                    'maxy' => $bytes[3]
-                ];
-                $read += 32;
-            }
-            elseif ($header['flags'] > 1) { // 48 bytes envelop
-                // Skip
-                unpack('c', fread($h, 1)); $read += 1;
-                unpack('c', fread($h, 1)); $read += 1;
-            }
-            
-            var_dump($header);
-            
-            // Check byte order and reverse it
-            var_dump(unpack('c', fread($h, 1)));
-            var_dump(unpack('i', fread($h, 4)));
-            var_dump(unpack('f*', fread($h, 8)));
-            //var_dump(unpack('f', fread($h, 8)));
-            die();
-            $wkb = bin2hex(fread($h, $total - $read));
-            var_dump($wkb);
-            if ($wkb[0] === '0') {
-                $wkb = implode('', array_reverse(str_split($wkb, 2)));
-                $wkb[0] = '1';
-            }
-            var_dump($wkb);
-            //var_dump($wkb); var_dump($wkb[0]); var_dump(ord($wkb[0]));
-            //$wkb = $wkb & 128 >> 7 + $wkb & 64 >> 5 + $wkb & 32 >> 3 + $wkb & 16 >> 1 + $wkb & 8 << 1 + $wkb & 4 << 3 + $wkb & 2 << 5 + $wkb & 1 << 7;
-            //var_dump($wkb);
-            
-            // Parse WKB
-            $wkb_reader = new \WKB();
-            $geometry = $wkb_reader->read($wkb, true);
-            $wkt_writer = new \WKT();
-            $wkt = $wkt_writer->write($geometry);
-            
-            //$bytes = array_values(unpack('c*', fread($h, $total - $read)));
-            //$wkb = $bytes[0];
-            var_dump($total); var_dump($read);
-            //$wkb = fread($h, $total - $read);
-            
-            // Close handler
-            fclose($h);
+        if (!$h) {
+            throw new \Exception('Could not open stream (geometry data)');
         }
+            
+        // Get stream stats
+        $fstat = fstat($h);
+        $total = $fstat['size'];
+        $read = 0;
+
+        // Parse header
+        $bytes = unpack('A2magic/c1version/c1flags', fread($h, 4));
+        $read += 4;
+        $header['magic'] = $bytes['magic'];
+        $header['version'] = $bytes['version'];
+        $header['flags'] = $bytes['flags'];
+        $header['envelop_flag'] = ($header['flags'] >> 1) & 7;
+        $header['byte_order'] = $header['flags'] & 1;
+
+        // Parse SRID
+        $unpack_op = $header['byte_order'] ? 'V' : 'N';
+        $bytes = array_values(unpack($unpack_op, fread($h, 4)));
+        $read += 4;
+        $header['srs_id'] = $bytes[0];
+
+        switch ($header['envelop_flag']) {
+        case 1: // 32 bytes envelop
+            $unpack_op = $header['byte_order'] ? 'f*' : 'f*';
+            $bytes = array_values(unpack('f*', fread($h, 32)));
+            $header['envelope'] = [
+                'minx' => $bytes[0],
+                'miny' => $bytes[1],
+                'maxx' => $bytes[2],
+                'maxy' => $bytes[3],
+                'minz' => false,
+                'maxz' => false,
+                'minm' => false,
+                'maxm' => false
+            ];
+            $read += 32;
+            break;
+        case 2: // 48 bytes envelop
+            $unpack_op = $header['byte_order'] ? 'f*' : 'f*';
+            $bytes = array_values(unpack('f*', fread($h, 48)));
+            $header['envelope'] = [
+                'minx' => $bytes[0],
+                'miny' => $bytes[1],
+                'maxx' => $bytes[2],
+                'maxy' => $bytes[3],
+                'minz' => $bytes[4],
+                'maxz' => $bytes[5],
+                'minm' => false,
+                'maxm' => false
+            ];
+            $read += 48;
+            break;
+        case 3: // 48 bytes envelop
+            $unpack_op = $header['byte_order'] ? 'f*' : 'f*';
+            $bytes = array_values(unpack('f*', fread($h, 48)));
+            $header['envelope'] = [
+                'minx' => $bytes[0],
+                'miny' => $bytes[1],
+                'maxx' => $bytes[2],
+                'maxy' => $bytes[3],
+                'minz' => false,
+                'maxz' => false,
+                'minm' => $bytes[4],
+                'maxm' => $bytes[5]
+            ];
+            $read += 48;
+            break;
+        default: ;// 0 envelop
+        }
+
+        // Get WKB from bytes left
+        $wkb = fread($h, $total - $read);
+
+        // Close handler
+        fclose($h);
         
-        var_dump($header); var_dump($wkt); die();
-        return [$header, $wkt];
+        return [$header, $wkb];
     }
     
 }

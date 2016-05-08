@@ -32,10 +32,12 @@ function ($compileProvider) {
 
 angular.module('ngMap').service('ol', function () { return ol });
 angular.module('ngMap').service('proj4', function () { return proj4 });
+angular.module('ngMap').service('Buffer', function () { return require('buffer').Buffer; });
+angular.module('ngMap').service('wkx', function () { return require('wkx'); });
 
 angular.module('ngMap')
-.service('ngMapBuilder', ['$http', 'ol', 'proj4', 'config',
-function ($http, ol, proj4, c) {
+.service('ngMapBuilder', ['$http', 'ol', 'proj4', 'Buffer', 'wkx', 'config',
+function ($http, ol, proj4, Buffer, wkx, c) {
     
     var config = false;
     var extent = [];
@@ -452,19 +454,23 @@ function ($http, ol, proj4, c) {
      * @returns {Map.ol.layer.Vector|Map.createLayerGeoPackage.layer}
      */
     var createLayerGeoPackage = function (item) {
-        var style, features = [];
+        var style;
         var feat, format = new ol.format.WKT();
         var url = c.baseURL + '/storage/layer/' + item.layer.id + '/geopackage.json';
         
         function parseJSONResponse(r) {
+            console.log('parse JSON response', r.type);
             if (r.type === 'FeatureCollection') {
                 angular.forEach(r.features, function (f, i) {
                     console.log(f);
                     feat = new ol.Feature(f.attributes);
                     console.log(f.geometry);
-                    console.log(atob(f.geometry));
-                    console.log(format.readGeometry(atob(f.geometry)));
-                    feat.setGeometry(format.readGeometry(atob(f.geometry)));
+                    var wkbBuffer = new Buffer(atob(f.geometry));
+                    var geometry = wkx.Geometry.parse(wkbBuffer);
+                    console.log(geometry);
+                    console.log(geometry.toWkt());
+                    console.log(format.readGeometry(geometry.toWkt()));
+                    feat.setGeometry(format.readGeometry(geometry.toWkt()));
                     console.log(feat);
                     layer.getSource().addFeature(feat);
                 });
@@ -472,8 +478,10 @@ function ($http, ol, proj4, c) {
         }
 
         function loadFeatures(extent, resolution, projection) {
+            console.log('geopackage loadFeatures');
             $http.get(url)
             .success(function (response) {
+                console.log('$http success');
                 parseJSONResponse(response);
             });
         }
@@ -482,6 +490,7 @@ function ($http, ol, proj4, c) {
             source: new ol.source.Vector({
                 features: [],
                 loader: function (extent, resolution, projection) {
+                    console.log('ol source loader');
                     loadFeatures(extent, resolution, projection);
                 }
             }),
