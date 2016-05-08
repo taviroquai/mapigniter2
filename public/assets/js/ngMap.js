@@ -459,18 +459,21 @@ function ($http, ol, proj4, Buffer, wkx, c) {
         var url = c.baseURL + '/storage/layer/' + item.layer.id + '/geopackage.json';
         
         function parseJSONResponse(r) {
-            console.log('parse JSON response', r.type);
             if (r.type === 'FeatureCollection') {
                 angular.forEach(r.features, function (f, i) {
                     console.log(f);
                     feat = new ol.Feature(f.attributes);
                     console.log(f.geometry);
-                    var wkbBuffer = new Buffer(atob(f.geometry));
+                    var wkbBuffer = new Buffer(f.geometry, 'hex');
                     var geometry = wkx.Geometry.parse(wkbBuffer);
                     console.log(geometry);
                     console.log(geometry.toWkt());
-                    console.log(format.readGeometry(geometry.toWkt()));
-                    feat.setGeometry(format.readGeometry(geometry.toWkt()));
+                    var wkt = geometry.toWkt();
+                    wkt = geometry.hasZ ? wkt.replace('Z', '').replace(' 0)', ')') : wkt;
+                    wkt = geometry.hasM ? wkt.replace('M', '').replace(' 0)', ')') : wkt;
+                    wkt = wkt.replace('  (', '(');
+                    console.log(wkt);
+                    feat.setGeometry(format.readGeometry(wkt));
                     console.log(feat);
                     layer.getSource().addFeature(feat);
                 });
@@ -478,10 +481,8 @@ function ($http, ol, proj4, Buffer, wkx, c) {
         }
 
         function loadFeatures(extent, resolution, projection) {
-            console.log('geopackage loadFeatures');
             $http.get(url)
             .success(function (response) {
-                console.log('$http success');
                 parseJSONResponse(response);
             });
         }
@@ -490,7 +491,6 @@ function ($http, ol, proj4, Buffer, wkx, c) {
             source: new ol.source.Vector({
                 features: [],
                 loader: function (extent, resolution, projection) {
-                    console.log('ol source loader');
                     loadFeatures(extent, resolution, projection);
                 }
             }),

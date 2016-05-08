@@ -2,6 +2,8 @@
 
 namespace App;
 
+use CrEOF\Geo\WKB\Parser as WKBParser;
+
 class Layer extends Content
 {
     /**
@@ -327,11 +329,15 @@ class Layer extends Content
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         
         // Get table feature id
-        $stm = $pdo->query("SELECT column_name FROM gpkg_data_columns WHERE table_name = '{$this->geopackage_table}' and title = 'FeatureID'");
-        if (!$stm) throw new \Exception ('Could not execute query');
-        $stm->execute();
-        $column_id = $stm->fetchColumn(0);
-        $column_id = empty($column_id) ? 'id' : $column_id;
+        try {
+            $stm = $pdo->query("SELECT column_name FROM gpkg_data_columns WHERE table_name = '{$this->geopackage_table}' and title = 'FeatureID'");
+            if (!$stm) throw new \Exception ('Could not execute query');
+            $stm->execute();
+            $column_id = $stm->fetchColumn(0);
+            $column_id = empty($column_id) ? 'id' : $column_id;
+        } catch (\PDOException $e) {
+            $column_id = false;
+        }
         
         // Get table srid
         $stm = $pdo->query("SELECT srs_id FROM gpkg_contents WHERE table_name = '{$this->geopackage_table}'");
@@ -356,6 +362,11 @@ class Layer extends Content
         // Create JSON from GeoPackage table if does not exists
         $filename = $this->getPublicStoragePath() . '/geopackage.json';
         if (!file_exists($filename)) {
+            
+            // Get WKB parser
+            $parser = new WKBParser();
+            
+            // Init JSON string
             $json = [
                 'type' => 'FeatureCollection',
                 'crs' => [
@@ -377,7 +388,8 @@ class Layer extends Content
                 // Create feature
                 $feature = ['type' => 'Feature', 'geometry' => null, 'properties' => null];
                 list($header, $wkb) = $this->parseGeoPackageGeometry($featname);
-                $feature['geometry'] = base64_encode($wkb);
+                //$feature['geometry'] = $parser->parse(bin2hex($wkb));
+                $feature['geometry'] = bin2hex($wkb);
                 unset($item->{$this->geopackage_field}); // Remove from feature attributes
                 $feature['properties'] = $item;
                 $json['features'][] = $feature;
@@ -599,8 +611,10 @@ class Layer extends Content
 
         switch ($header['envelop_flag']) {
         case 1: // 32 bytes envelop
-            $unpack_op = $header['byte_order'] ? 'f*' : 'f*';
-            $bytes = array_values(unpack('f*', fread($h, 32)));
+            $data = fread($h, 32);
+            $data = $header['byte_order'] ? strrev($data) : $data;
+            $unpack_op = $header['byte_order'] ? 'd*' : 'd*';
+            $bytes = array_values(unpack($unpack_op, $data));
             $header['envelope'] = [
                 'minx' => $bytes[0],
                 'miny' => $bytes[1],
@@ -614,8 +628,10 @@ class Layer extends Content
             $read += 32;
             break;
         case 2: // 48 bytes envelop
-            $unpack_op = $header['byte_order'] ? 'f*' : 'f*';
-            $bytes = array_values(unpack('f*', fread($h, 48)));
+            $data = fread($h, 48);
+            $data = $header['byte_order'] ? strrev($data) : $data;
+            $unpack_op = $header['byte_order'] ? 'd*' : 'd*';
+            $bytes = array_values(unpack($unpack_op, $data));
             $header['envelope'] = [
                 'minx' => $bytes[0],
                 'miny' => $bytes[1],
@@ -629,8 +645,10 @@ class Layer extends Content
             $read += 48;
             break;
         case 3: // 48 bytes envelop
-            $unpack_op = $header['byte_order'] ? 'f*' : 'f*';
-            $bytes = array_values(unpack('f*', fread($h, 48)));
+            $data = fread($h, 48);
+            $data = $header['byte_order'] ? strrev($data) : $data;
+            $unpack_op = $header['byte_order'] ? 'd*' : 'd*';
+            $bytes = array_values(unpack($unpack_op, $data));
             $header['envelope'] = [
                 'minx' => $bytes[0],
                 'miny' => $bytes[1],

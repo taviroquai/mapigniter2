@@ -268,7 +268,7 @@
     
     @section('script')
     <script src="{{ asset('assets/js/buffer.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('assets/js/wkx.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/wkx.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/proj4.js') }}"  type="text/javascript"></script>
     <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/angular.min.js') }}"  type="text/javascript"></script>
