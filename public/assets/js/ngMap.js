@@ -455,29 +455,25 @@ function ($http, ol, proj4, Buffer, wkx, c) {
      */
     var createLayerGeoPackage = function (item) {
         var style;
-        var feat, format = new ol.format.WKT();
+        var wkb, geometry, format = new ol.format.GeoJSON();
         var url = c.baseURL + '/storage/layer/' + item.layer.id + '/geopackage.json';
         
         function parseJSONResponse(r) {
-            if (r.type === 'FeatureCollection') {
-                angular.forEach(r.features, function (f, i) {
-                    console.log(f);
-                    feat = new ol.Feature(f.attributes);
-                    console.log(f.geometry);
-                    var wkbBuffer = new Buffer(f.geometry, 'hex');
-                    var geometry = wkx.Geometry.parse(wkbBuffer);
-                    console.log(geometry);
-                    console.log(geometry.toWkt());
-                    var wkt = geometry.toWkt();
-                    wkt = geometry.hasZ ? wkt.replace('Z', '').replace(' 0)', ')') : wkt;
-                    wkt = geometry.hasM ? wkt.replace('M', '').replace(' 0)', ')') : wkt;
-                    wkt = wkt.replace('  (', '(');
-                    console.log(wkt);
-                    feat.setGeometry(format.readGeometry(wkt));
-                    console.log(feat);
-                    layer.getSource().addFeature(feat);
-                });
+            if (r.type !== 'FeatureCollection') {
+                console & console.warn('Not supported GeoJSON type');
             }
+            
+            // Tranform WKB hexadecimal to WKT geometry using nodes modules Buffer and wkx
+            angular.forEach(r.features, function (f, i) {
+                wkb = new Buffer(f.geometry, 'hex');
+                geometry = wkx.Geometry.parse(wkb);
+                geometry.hasZ = false;
+                geometry.hasM = false;
+                f.geometry = geometry.toGeoJSON();
+            });
+            
+            // Read JSON
+            layer.getSource().addFeatures(format.readFeatures(r));
         }
 
         function loadFeatures(extent, resolution, projection) {

@@ -465,11 +465,11 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="geopackage_field">{{ trans('backoffice.geopackage_field') }}</label>
-                                <input class="form-control" type="text" name="geopackage_field"
+                                <label for="geopackage_fields">{{ trans('backoffice.geopackage_fields') }}</label>
+                                <input class="form-control" type="text" name="geopackage_fields"
                                     placeholder=""
-                                    value="{{ $layer->geopackage_field }}">
-                                <span class="help-block alert-danger v-error-geopackage_field"></span>
+                                    value="{{ $layer->geopackage_fields }}">
+                                <span class="help-block alert-danger v-error-geopackage_fields"></span>
                             </div>
                         </div>
                     </div>

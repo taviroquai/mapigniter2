@@ -21,7 +21,7 @@ For windows users running under IIS, refer to [Install Windows IIS](documentatio
 ## Web Mapping Features
 
 1. Multiple maps and layers allowed
-1. Data Sources: Bing, OSM, WMS, WFS, GPX, KML, Postgis, GeoJSON, Shapefile and CSV
+1. Data sources supported: Bing, OSM, WMS, WFS, GPX, KML, Postgis, GeoJSON, Shapefile, CSV and GeoPackage (features only)
 1. Create and edit own map features
 1. Default map layout (AngularJS app) featuring layer switcher, map navigation and search
 1. Vector features styling

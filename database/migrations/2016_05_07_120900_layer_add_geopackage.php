@@ -16,7 +16,7 @@ class LayerAddGeopackage extends Migration
         {
             $table->string('geopackage_filename')->nullable();
             $table->string('geopackage_table')->nullable();
-            $table->string('geopackage_field')->nullable();
+            $table->string('geopackage_fields')->nullable();
         });
     }
 
@@ -31,7 +31,7 @@ class LayerAddGeopackage extends Migration
         {
             $table->dropColumn('geopackage_filename');
             $table->dropColumn('geopackage_table');
-            $table->dropColumn('geopackage_field');
+            $table->dropColumn('geopackage_fields');
         });
     }
 }

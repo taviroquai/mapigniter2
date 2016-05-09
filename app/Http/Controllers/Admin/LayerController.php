@@ -108,6 +108,8 @@ class LayerController extends AdminController
                 if (empty($input['id'])) {
                     $rules['geopackage_filename_0'] = 'required';
                 }
+                $rules['geopackage_table'] = 'required';
+                $rules['geopackage_fields'] = 'required';
                 break;
             case 'group':
             default:;

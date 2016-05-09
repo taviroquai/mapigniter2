@@ -116,7 +116,7 @@ return [
     'kml_filename' => 'KML File',
     'geopackage_filename' => 'Upload File',
     'geopackage_table' => 'Table Name',
-    'geopackage_field' => 'Geometry Column',
+    'geopackage_fields' => 'Select Columns',
     'shapefile_filename' => 'Zip file containing .shp, .shx, .prj and .dbf files',
     'shapefile_geomtype' => 'Geometry Type',
     'shapefile_msclass' => 'MapFile Class Syntax',
