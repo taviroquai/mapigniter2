@@ -333,7 +333,7 @@ class Layer extends Content
         
         // Create JSON from GeoPackage table if does not exists
         $filename = $this->getPublicStoragePath() . '/geopackage.json';
-        if (!file_exists($filename)) {
+        if (!file_exists($filename) || $file) {
             file_put_contents($filename, $geopackage->toGeoJSON(
                 $this->geopackage_table,
                 $this->geopackage_fields

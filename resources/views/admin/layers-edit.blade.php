@@ -758,7 +758,8 @@
         showUpload: false,
         showRemove: false,
 		maxFileCount: 1,
-        allowedFileExtensions: ['zip']
+        allowedFileExtensions: ['zip'],
+        showPreview: false
     });
     
     $("#geopackage_filename").fileinput({
@@ -767,7 +768,8 @@
         showUpload: false,
         showRemove: false,
 		maxFileCount: 1,
-        allowedFileExtensions: ['gpkg']
+        allowedFileExtensions: ['gpkg'],
+        showPreview: false
     });
     
     $("#ol_style_static_icon").fileinput({

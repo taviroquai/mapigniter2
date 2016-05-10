@@ -48,6 +48,10 @@ class LayerController extends AdminController
      */
     public function save()
     {
+        // Set php options
+        set_time_limit(60 * 10); // 10 minutes
+        
+        // Get input
         $input = \Input::except('_token');
         $rules = [];
         
@@ -148,8 +152,20 @@ class LayerController extends AdminController
         $layer->saveStyleIcon(\Request::file('ol_style_static_icon_0'));
         $layer->saveGPXFile(\Request::file('gpx_filename_0'));
         $layer->saveKMLFile(\Request::file('kml_filename_0'));
-        $layer->saveGeoPackageFile(\Request::file('geopackage_filename_0'));
         $layer->saveShapeFile(\Request::file('shapefile_filename_0'));
+        if ($layer->type === 'geojson') {
+            $layer->saveGeoJSONFile();
+        }
+        if ($layer->type === 'geopackage') {
+            try {
+                $layer->saveGeoPackageFile(\Request::file('geopackage_filename_0'));
+            } catch (\PDOException $e) {
+                return response()->json(['errors' => ['geopackage_filename_0_error' => [$e->getMessage()]]]);
+            } catch (\Exception $e) {
+                return response()->json(['errors' => ['geopackage_filename_0_error' => [$e->getMessage()]]]);
+            }
+        }
+        
         if ($layer->type === 'postgis') {
             try {
                 $layer->savePostgisFile();
@@ -158,9 +174,6 @@ class LayerController extends AdminController
             } catch (\Exception $e) {
                 return response()->json(['errors' => ['postgis_error' => [$e->getMessage()]]]);
             }
-        }
-        if ($layer->type === 'geojson') {
-            $layer->saveGeoJSONFile();
         }
         
         // Response with redirect

@@ -3,7 +3,7 @@
 namespace App;
 
 // TODO: Parse WKB
-// use CrEOF\Geo\WKB\Parser as WKBParser;
+//use CrEOF\Geo\WKB\Parser as WKBParser;
 
 /**
  * GeoPackage wapper
@@ -99,7 +99,6 @@ class GeoPackage
          * Validate gpkg_data_columns table
          */
         $stm = $this->pdo->query("SELECT sql FROM sqlite_master WHERE tbl_name = 'gpkg_data_columns'");
-        if (!$stm) throw new \Exception ('Could not execute query');
         $stm->execute();
         $result = $stm->fetchAll();
         if (count($result) === 0) {
@@ -120,9 +119,9 @@ class GeoPackage
          * Test Case ID: /base/core/contents/data/table_def
          * URL: http://www.geopackage.org/spec/#abstract_test_suite
          */
-        $stm = $this->pdo->query("SELECT sql FROM sqlite_master WHERE tbl_name = '{$tablename}'");
+        $stm = $this->pdo->prepare("SELECT sql FROM sqlite_master WHERE tbl_name = ?");
         if (!$stm) throw new \Exception ('Could not execute query');
-        $stm->execute();
+        $stm->execute([$tablename]);
         $result = $stm->fetchAll();
         if (count($result) === 0) {
             throw new \Exception ('Table '. $tablename . ' does not exists');
@@ -133,8 +132,8 @@ class GeoPackage
          * Test Case ID: /base/core/container/data/table_data_types
          * URL: http://www.geopackage.org/spec/#abstract_test_suite
          */
-        $stm = $this->pdo->query("SELECT table_name FROM gpkg_contents WHERE table_name = '{$tablename}' and data_type = 'features'");
-        $stm->execute();
+        $stm = $this->pdo->prepare("SELECT table_name FROM gpkg_contents WHERE table_name = ? and data_type = 'features'");
+        $stm->execute([$tablename]);
         $result = $stm->fetchAll();
         if (count($result) === 0) {
             throw new \Exception ('Table '. $tablename . ' is not a features table');
@@ -156,27 +155,35 @@ class GeoPackage
         $this->validateFeaturesTable($tablename);
         
         // Get table feature id column
-        $stm = $this->pdo->query("SELECT column_name FROM gpkg_data_columns WHERE table_name = '{$tablename}' and title = 'FeatureID'");
-        $stm->execute();
-        $column_id = $stm->fetchColumn(0);
+        $stm = $this->pdo->query("SELECT sql FROM sqlite_master where tbl_name = ? and type = 'table'");
+        $stm->execute([$tablename]);
+        $result = $stm->fetchColumn(0);
+        $result = preg_match('/\(.*\"(.*)\".*PRIMARY.*\)/', $result, $matches);
+        if (!$result || empty($matches[1])) {
+            throw new \Exception('GeoPackage error: could not find table primary key');
+        }
+        $column_id = $matches[1];
         
         // Get table geometry column
-        $stm = $this->pdo->query("SELECT column_name FROM gpkg_data_columns WHERE table_name = '{$tablename}' and title = 'Feature Geometry'");
-        $stm->execute();
+        $stm = $this->pdo->query("SELECT column_name FROM gpkg_geometry_columns WHERE table_name = ?");
+        $stm->execute([$tablename]);
         $geom_column = $stm->fetchColumn(0);
         
         // Get table srid
-        $stm = $this->pdo->query("SELECT srs_id FROM gpkg_contents WHERE table_name = '{$tablename}'");
-        $stm->execute();
+        $stm = $this->pdo->query("SELECT srs_id FROM gpkg_contents WHERE table_name = ?");
+        $stm->execute([$tablename]);
         $srid = $stm->fetchColumn(0);
         
         // Get table items
-        $stm = $this->pdo->query("SELECT {$column_id},{$geom_column},{$columns} FROM {$tablename} WHERE {$geom_column} IS NOT NULL");
+        $sql = 'SELECT "'.$column_id.'","'. $geom_column.'","'.$columns.'"'
+            . ' FROM "' . $tablename . '"'
+            . ' WHERE "' . $geom_column . '" IS NOT NULL';
+        $stm = $this->pdo->query($sql);
         $stm->execute();
         $items = $stm->fetchAll(\PDO::FETCH_OBJ);
         
         // Get WKB parser (TODO)
-        // $parser = new WKBParser();
+        //$parser = new WKBParser();
 
         // Init GeoJSON object
         $geojson = [
@@ -203,7 +210,7 @@ class GeoPackage
             $feature = ['type' => 'Feature', 'geometry' => null, 'properties' => null];
             
             // Add geometry
-            //$feature['geometry'] = $parser->parse(bin2hex($wkb)); // TODO: use PHP parser
+            //$feature['geometry'] = $parser->parse(pack('H*', bin2hex($wkb))); // TODO: use PHP parser
             $feature['geometry'] = bin2hex($wkb); // Use hexadecimal for interopability
             unset($item->{$geom_column}); // Remove geometry column from feature attributes
             
