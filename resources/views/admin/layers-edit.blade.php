@@ -81,6 +81,7 @@
                                         @if($k === $layer->type) selected @endif>{{ $label }}</option>
                                     @endforeach
                                 </select>
+                                <span class="vector-warning text-danger">{{ trans('backoffice.vector_warning') }}</span>
                             </div>
                         </div>
                     </div>
@@ -715,6 +716,7 @@
         $('#geojson_options').hide();
         $('#geopackage_options').hide();
         $('#vector_options').hide();
+        $('.vector-warning').hide();
     }
     
     function showTypeOptions(value) {
@@ -728,6 +730,7 @@
         }
         if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
             $('#vector_options').show(200);
+            $('.vector-warning').show('slow');
         }
     }
     

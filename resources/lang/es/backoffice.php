@@ -146,6 +146,9 @@ return [
     'ol_style_field_fill_color' => 'Color de relleno del Atributo',
     'ol_style_field_stroke_color' => 'Color del trazo del Atributo',
     'ol_style_field_stroke_width' => 'Estilo del ancho del Atributo',
+    'layer_import' => 'Import CSV',
+    'vector_warning' => 'WARNING: Do not load data with more than a 1000 features',
+    'upload_csv' => 'Upload CSV file',
     
     // Content
     'edit_content' => 'Editar contenido',

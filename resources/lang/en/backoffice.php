@@ -147,6 +147,7 @@ return [
     'ol_style_field_stroke_color' => 'Stroke Color Attribute',
     'ol_style_field_stroke_width' => 'Stroke Width Attribute',
     'layer_import' => 'Import CSV',
+    'vector_warning' => 'WARNING: Do not load data with more than a 1000 features',
     'upload_csv' => 'Upload CSV file',
     
     // Content

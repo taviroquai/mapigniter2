@@ -146,6 +146,7 @@ return [
     'ol_style_field_stroke_color' => 'Atributo para o Rebordo',
     'ol_style_field_stroke_width' => 'Atributo para o Tamanho do Rebordo',
     'layer_import' => 'Importar CSV',
+    'vector_warning' => 'AVISO: não carregue dados com mais de 1000 vetores',
     'upload_csv' => 'Carregar ficheiro CSV',
     
     // Content
