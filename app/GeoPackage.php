@@ -43,6 +43,13 @@ class GeoPackage
     private $base_dir;
     
     /**
+     * Cache validated tables
+     * 
+     * @var array
+     */
+    private $valid_tables = [];
+    
+    /**
      * Creates a new GeoPackage
      * 
      * @param string $filename
@@ -111,9 +118,15 @@ class GeoPackage
      * 
      * @param sting $tablename
      * @throws \Exception
+     * @return boolean
      */
     public function validateFeaturesTable($tablename)
     {
+        // Skip is table is validated
+        if (in_array($tablename, $this->valid_tables)) {
+            return true;
+        }
+        
         /**
          * Validate input table
          * Test Case ID: /base/core/contents/data/table_def
@@ -138,8 +151,28 @@ class GeoPackage
         if (count($result) === 0) {
             throw new \Exception ('Table '. $tablename . ' is not a features table');
         }
+        
+        // Add valid table
+        $this->valid_tables[] = $tablename;
+        return true;
     }
     
+    /**
+     * 
+     * @param type $tablename
+     * @return type
+     */
+    public function getSRID($tablename)
+    {
+        // Validate first
+        $this->validateFeaturesTable($tablename);
+        
+        // Get table srid
+        $stm = $this->pdo->query("SELECT srs_id FROM gpkg_contents WHERE table_name = ?");
+        $stm->execute([$tablename]);
+        return $stm->fetchColumn(0);
+    }
+
     /**
      * Export to GeoJSON
      * 
@@ -170,9 +203,7 @@ class GeoPackage
         $geom_column = $stm->fetchColumn(0);
         
         // Get table srid
-        $stm = $this->pdo->query("SELECT srs_id FROM gpkg_contents WHERE table_name = ?");
-        $stm->execute([$tablename]);
-        $srid = $stm->fetchColumn(0);
+        $srid = $this->getSRID($tablename);
         
         // Get table items
         $sql = 'SELECT "'.$column_id.'","'. $geom_column.'","'.$columns.'"'

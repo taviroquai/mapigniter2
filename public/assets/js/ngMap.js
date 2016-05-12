@@ -219,6 +219,21 @@ function ($http, ol, proj4, Buffer, wkx, c) {
         ].join('&'));
     };
     
+    var addLayerProjection = function (layer)
+    {
+        // Add projection
+        var lproj;
+        if (layer.projection_id !== config.map.projection.srid) {
+            proj4.defs("EPSG:" + layer.projection.srid, layer.projection.proj4_params);
+            lproj = new ol.proj.Projection({
+                code: 'EPSG:' + layer.projection.srid,
+                units: 'm',
+                extent: layer.projection.extent
+            });
+            ol.proj.addProjection(lproj);
+        }
+    }
+    
     /**
      * Create map quest layer
      * 
@@ -324,12 +339,15 @@ function ($http, ol, proj4, Buffer, wkx, c) {
         });
         finalurl = item.layer.wfs_url + (item.layer.wfs_url.indexOf('?') > -1 ? '' : '?');
         
+        // Add projection
+        addLayerProjection(item.layer);
+        
         function loadFeatures(url) {
             url = config.proxy + '/' + btoa(url);
             $http.get(url)
             .success(function (response) {                
                 features = format.readFeatures(response, {
-                    dataProjection: 'EPSG:' + config.map.projection.srid,
+                    dataProjection: 'EPSG:' + item.layer.projection.srid,
                     featureProjection: 'EPSG:' + config.map.projection.srid
                 });
                 angular.forEach(features, function (f, i) {
@@ -457,29 +475,33 @@ function ($http, ol, proj4, Buffer, wkx, c) {
         var style;
         var wkb, geometry, format = new ol.format.GeoJSON();
         var url = c.baseURL + '/storage/layer/' + item.layer.id + '/geopackage.json';
+        var options = {
+            dataProjection: 'EPSG:' + item.layer.projection_id,
+            featureProjection: 'EPSG:' + config.map.projection.srid
+        };
         
-        function parseJSONResponse(r) {
-            if (r.type !== 'FeatureCollection') {
-                console & console.warn('Not supported GeoJSON type');
-            }
-            
-            // Tranform WKB hexadecimal to WKT geometry using nodes modules Buffer and wkx
-            angular.forEach(r.features, function (f, i) {
-                wkb = new Buffer(f.geometry, 'hex');
-                geometry = wkx.Geometry.parse(wkb);
-                geometry.hasZ = false;
-                geometry.hasM = false;
-                f.geometry = geometry.toGeoJSON();
-            });
-            
-            // Read JSON
-            layer.getSource().addFeatures(format.readFeatures(r));
-        }
+        // Add projection
+        addLayerProjection(item.layer);
 
+        // Load features
         function loadFeatures(extent, resolution, projection) {
             $http.get(url)
-            .success(function (response) {
-                parseJSONResponse(response);
+            .success(function (r) {
+                if (r.type !== 'FeatureCollection') {
+                    console & console.warn('Not supported GeoJSON type');
+                }
+
+                // Tranform WKB hexadecimal to WKT geometry using nodes modules Buffer and wkx
+                angular.forEach(r.features, function (f, i) {
+                    wkb = new Buffer(f.geometry, 'hex');
+                    geometry = wkx.Geometry.parse(wkb);
+                    geometry.hasZ = false;
+                    geometry.hasM = false;
+                    f.geometry = geometry.toGeoJSON();
+                });
+
+                // Read JSON
+                layer.getSource().addFeatures(format.readFeatures(r, options));
             });
         }
 
@@ -508,11 +530,15 @@ function ($http, ol, proj4, Buffer, wkx, c) {
         var style, features = [];
         var format = new ol.format.GeoJSON();
         var url = c.baseURL + '/storage/layer/' + item.layer.id + '/postgis.json';
+        
+        // Add projection
+        addLayerProjection(item.layer);
 
         function loadFeatures(extent, resolution, projection) {
             $http.get(url)
             .success(function (response) {
                 features = format.readFeatures(response, {
+                    dataProjection: 'EPSG:' + item.layer.projection.srid,
                     featureProjection: 'EPSG:' + config.map.projection.srid
                 });
                 angular.forEach(features, function (f, i) {

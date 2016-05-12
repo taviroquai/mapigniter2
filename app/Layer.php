@@ -238,7 +238,8 @@ class Layer extends Content
         $stm = $pdo->query("SELECT Find_SRID('{$this->postgis_schema}','{$this->postgis_table}', '{$this->postgis_field}') as srid");
         if (!$stm) throw new \Exception ('Could not execute query');
         $stm->execute();
-        $srid = $stm->fetchColumn(0);
+        $this->projection_id = $stm->fetchColumn(0);
+        $this->save();
         
         // Get items
         $sql = "SELECT {$this->postgis_attributes}, ST_AsGeoJSON({$this->postgis_field}) as json FROM {$this->postgis_schema}.{$this->postgis_table}";
@@ -252,7 +253,7 @@ class Layer extends Content
             'crs' => [
                 'type' => 'name',
                 'properties' => [
-                    'name' => 'EPSG:' . $srid
+                    'name' => 'EPSG:' . $this->projection_id
                 ]
             ],
             'features' => []
@@ -322,6 +323,10 @@ class Layer extends Content
         // Make connection
         $geopackage = new GeoPackage($this->getPublicStoragePath() . '/' . $this->geopackage_filename);
         $geopackage->validate();
+        
+        // Save SRID
+        $this->projection_id = $geopackage->getSRID($this->geopackage_table);
+        $this->save();
         
         // Create directories
         if (!is_dir($this->getPublicStoragePath())) {

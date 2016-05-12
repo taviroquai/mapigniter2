@@ -44,7 +44,7 @@ class MapController extends BaseController
         $map->projection;
         $config = [
             'map' => $map,
-            'layers' => \App\Layeritem::with('layer', 'group', 'layer.content', 'group.content')
+            'layers' => \App\Layeritem::with('layer', 'group', 'layer.content', 'group.content', 'layer.projection')
                 ->where('map_id', $map->id)
                 ->orderBy('displayorder')
                 ->get(),
