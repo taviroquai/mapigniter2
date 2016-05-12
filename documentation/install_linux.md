@@ -1,5 +1,21 @@
 ## Installing on Linux
 
+Now it is easier to install under **Debian/Ubuntu**.  
+1. Download **.deb** package from [SourceForge](https://sourceforge.net/projects/mapigniter2/)  
+2. Install in terminal with:  
+    ```
+    $ sudo dpkg -i mapigniter2_[version]_all.deb
+    ```  
+3. This will install system-wide at /var/www/html/mapigniter2  
+4. Open in browser http://localhost/mapigniter2/public  
+5. To remove run:  
+    ```
+    $ sudo dpkg -r mapigniter2
+    ```  
+6. All data created will be saved at */usr/share/mapigniter2_data*
+
+### Manual install
+
 This install instructions takes in consideration that the [Requirements](https://github.com/taviroquai/mapigniter2/blob/master/README.md)
  are satisfied before going any further.
 
