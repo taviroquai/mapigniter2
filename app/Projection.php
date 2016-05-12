@@ -38,6 +38,13 @@ class Projection extends Content
         return $this->belongsTo('App\Map');
     }
 
+    /**
+     * Decrecated. Now using import from spatialrefeence.org
+     * 
+     * File deprecated: storage/app/projections.json
+     * 
+     * @return type
+     */
     static function sridOptions()
     {
         try {

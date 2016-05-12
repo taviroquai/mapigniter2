@@ -62,6 +62,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['aut
     Route::get('/projections/form/{projection?}', 'ProjectionController@form');
     Route::post('/projections', 'ProjectionController@save');
     Route::get('/projections/delete/{projection}', 'ProjectionController@delete');
+    Route::get('/projections/import/{srid}', 'ProjectionController@importFromSpatialReference');
     
     // Map
     Route::get('/maps', 'MapController@json');

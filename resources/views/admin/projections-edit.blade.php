@@ -31,15 +31,19 @@
                 <div role="tabpanel" class="tab-pane fade in active" id="general">
                     
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-8">
                             <div class="form-group">
                                 <label for="srid">{{ trans('backoffice.srid') }}</label>
-                                <select class="form-control" name="srid">
-                                    @foreach(App\Projection::sridOptions() as $item)
-                                    <option value="{{ $item->srid }}"
-                                        @if($item->srid === $projection->srid) selected @endif>{{ $item->srid }}</option>
-                                    @endforeach
-                                </select>
+                                <input class="form-control" name="srid" type="text" 
+                                    @if(!empty($item)) value="{{ $item->srid }}" @endif
+                                    />
+                                <span class="help-block alert-danger v-error-srid"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Spatial Reference .org</label><br />
+                                <button class="btn btn-info import-spatialreference">Import</button>
                             </div>
                         </div>
                     </div>
@@ -102,6 +106,19 @@
 
 @section('script')
 <script type="text/javascript">
+    
+    $('form .import-spatialreference').on('click', function (e) {
+        e.preventDefault();
+        $.getJSON('{{ url("admin/projections/import") }}/' + $('[name="srid"]').val(), function (r) {
+            if (r.success) {
+                $('[name="proj4_params"]').text(r.proj4);
+                $('[name="extent[]"]').eq(0).val(r.bounds[0]);
+                $('[name="extent[]"]').eq(1).val(r.bounds[1]);
+                $('[name="extent[]"]').eq(2).val(r.bounds[2]);
+                $('[name="extent[]"]').eq(3).val(r.bounds[3]);
+            }
+        });
+    });
     
     var formMap = new Form($, '#formProjection');
     

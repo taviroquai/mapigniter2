@@ -47,6 +47,7 @@ class ProjectionController extends AdminController
         
         // Validate map content
         $validator = \Validator::make($input, [
+            'srid' => 'required|unique:projections,srid',
             'extent' => 'required|max:255'
         ]);
 
@@ -91,6 +92,41 @@ class ProjectionController extends AdminController
     {
         $projection->delete();
         return redirect('admin/projections/list');
+    }
+    
+    /**
+     * Load epsg bounds and proj4 from http://spatialreference.org
+     * 
+     * @param int $srid
+     */
+    public function importFromSpatialReference($srid)
+    {
+        try {
+            $contents = file_get_contents('http://spatialreference.org/ref/epsg/' . ((int) $srid) . '/');
+            $doc = new \DOMDocument();
+            @$doc->loadHTML($contents);
+            $xpath = new \DOMXPath($doc);
+            $xquery = '//body/div[@id="content"]/ul/li';
+            $el = $xpath->query($xquery)->item(1);
+            $string = ($doc->saveHTML($el));
+
+            // Return success false on parse error
+            if (!(preg_match('/(-?\d+\.\d+),.(-?\d+\.\d+),.(-?\d+\.\d+),.(-?\d+\.\d+)/im', $string, $bounds))) {
+                throw new \Exception('Import projection error: could not parse bounds floats');
+            }
+
+            // Build JSON response
+            array_shift($bounds);
+            $proj4 = file_get_contents('http://spatialreference.org/ref/epsg/' . $srid .'/proj4/');
+            return response()->json([
+                'success' => true,
+                'bounds' => $bounds,
+                'proj4' => $proj4
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json(['success' => false]);
+        }
     }
 
 }
