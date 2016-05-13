@@ -6,6 +6,8 @@ A demo can be found [here](http://taviroquai.com/mapigniter2/public/).  Login wi
 email: admin@isp.com  
 password: admin  
 
+See [Quick Start](documentation/quickstart.md) to start creating maps!  
+
 ![MapIgniter 2 Screenshot](public/assets/images/screenshot.png?raw=true "Screenshot")
 
 ## Requirements
