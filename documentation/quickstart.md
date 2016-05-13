@@ -1,4 +1,4 @@
-# Frequently Asked Questions
+# MapIgniter2 Quick Start
 
 #### How do I enter the backoffice?
 
