@@ -7,7 +7,7 @@
 
 #### How can I change the default MapIgniter2 layout style?
 
-There are 2 ways to customize:
+There are 2 ways to customize:  
 1. Using the *Pages* and *Brands* features in backoffice (for non-developers)  
 2. Develop your *Laravel* views and stylesheets (for developers and designers)  
 
@@ -16,6 +16,7 @@ There are 2 ways to customize:
 MapIgniter2 supports several data formats:  
 1. In backoffice, at Layers menu, click create Layer  
 2. Choose layer type. Each layer type has it's own form fields  
+
     1. For CSV, choose Map Editor; data will be cached into a GeoJSON file  
     2. For Shapefile, choose Shapefile (requires MapServer); a WMS will be created  
     3. For KML choose KML  
@@ -44,9 +45,11 @@ Be sure to enter on the layer form, the **Searchable Properties** (separated by 
 This feature is only available for vector features.  
 Be sure to enter Feature Info HTML Template.  
 To display the feature title attribute, enter:  
-    1. <p>{{ item.title }}</p>  
-To display an image, save the image path in feature attribute and enter:
-    1. <p><img src="{{ item.image }}" /></p>
+> &lt;p&gt;{{ item.title }}&lt;/p&gt;  
+
+To display an image, save the image path in feature attribute and enter:  
+> &lt;p&gt;&lt;img src="{{ item.image }}" /&gt;&lt;/p&gt;
+
 The HTML template must be valid and use AngularJS templates format  
 
 #### How do I hide some feature attributes?
