@@ -78,12 +78,12 @@ By default the Content item will be visible in frontend under Contents menu.
 By default, MapIgniter2 ships with demo pages.  
 You can edit these pages under Admin => System => Pages (for non-developers).  
 
-### How to take advantage of Search Engine Optimisation?
+#### How to take advantage of Search Engine Optimisation?
 
 Content pages can be fully optimized for Search Engines by using the SEO fields under
 Admin => Contents => Create Content => Tab SEO.
 
-### How do I print a map? (TODO)
+#### How do I print a map? (TODO)
 
 #### What's the usage of Users, Roles and Permissions?
 
