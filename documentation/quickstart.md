@@ -15,8 +15,8 @@ There are 2 ways to customize your MapIgniter2 web application:
 #### How do I load my geo data?
 
 MapIgniter2 supports several data formats:  
-1. In backoffice, at Layers menu, click create Layer  
-2. Choose layer type. Each layer type has it's own form fields  
+1. In backoffice, at Layers menu, click **Create Layer**  
+2. Choose layer type. Each *layer type* has it's own form fields:  
 
     1. For CSV, choose Map Editor; data will be cached into a GeoJSON file  
     2. For Shapefile, choose Shapefile (requires MapServer); a WMS/WFS will be created  
@@ -28,13 +28,13 @@ MapIgniter2 supports several data formats:
 
 #### How do I display my data?
 
-1. After creating your layer, for vector features, choose an icon in Static Symbology or setup colors  
+1. After creating your layer, for vector features, set up Static/Dynamic Symbology on layer form
 2. Create a Map in the **Maps** menu  
-2. After saving your new map, click on tab Layers and **Add Layer**  
-3. Choose your layer and click save
-4. **Important:** set your Map Projection, center coordinates and initial zoom level  
-5. Click on View Site and choose your map from Maps menu
-6. You should now see your data. If not check, for layer and map projection  
+3. After saving your new map, click on tab Layers and **Add Layer**  
+4. Choose your layer and click save
+5. **Important:** set your Map Projection, center coordinates and initial zoom level  
+6. Click on View Site and choose your map from Maps menu
+7. You should now see your data. If not check, for layer and map projection  
 
 #### My data has custom projection. What now?
 
