@@ -8,6 +8,8 @@
 | Authentication inc. LDAP               | yes                |
 | User access logs                       | yes                |
 | Multiple Maps, Layers and Groups       | yes                |
+| Multiple Projections                   | yes (proj4 only)   |
+| Import projection parameters           | yes (proj4 only)   |
 | Bing layer                             | yes                |
 | Open Street Map layer                  | yes                |
 | Mapquest layer                         | yes                |
