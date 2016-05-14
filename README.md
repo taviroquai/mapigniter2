@@ -20,6 +20,10 @@ See [Quick Start](documentation/quickstart.md) to start creating maps!
 For linux users running under Apache, refer to [Install Linux](documentation/install_linux.md)  
 For windows users running under IIS, refer to [Install Windows IIS](documentation/install_windows.md)
 
+## Features CheatSeet
+
+See [here](documentation/featurescheatsheet.md)
+
 ## Web Mapping Features
 
 1. Multiple maps and layers allowed
