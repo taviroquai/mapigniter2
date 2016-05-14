@@ -48,6 +48,16 @@ You can also import proj4 projection parameters from http://spatialreference.org
 The search feature only applies for vector features on map (also called overlayers).  
 Be sure to enter on the layer form, the **Searchable Properties** (separated by comma).  
 
+#### How can a visitor print a map?
+
+1. On the navigation bar, click Print
+1. Select a map layout, ie. A4 Vertical
+1. Click Print
+
+This will adjust the openlayers map size based on the choosen layout 
+and the stylesheet map_print.css will be used.  
+More layouts will be added to configuration (TODO).
+
 #### How can I customize a map feature HTML when clicked?
 
 This feature is only available for vector features.  

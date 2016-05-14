@@ -28,4 +28,4 @@
 | Customize search features attributes   | yes                |
 | Customize SEO content                  | yes                |
 | Geo Data Analysis                      | none (unplanned)   |
-| Map Print version                      | no (planned)       |
+| Map Print version                      | yes                |
