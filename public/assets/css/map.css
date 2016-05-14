@@ -16,17 +16,28 @@ html, body {
     overflow: hidden;
 }
 
-#map {
-    position: absolute;
-    top: 50px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+#print.dropdown-menu {
+    padding-left: 4px;
+}
+
+.map-container {
+    text-align: center;
+    width: 100%;
+    height: 100%;
     z-index: 35;
+    overflow: hidden;
+}
+
+#map {
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    width: 100%;
+    height: 100%;
 }
 
 #map .ol-zoom {
-    top: .5em;
+    top: 75px;
     left: auto;
     right: .5em;
 }

@@ -17,7 +17,8 @@
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/ol.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/map.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/map.css') }}" rel="stylesheet" media="screen,projection">
+    <link href="{{ asset('assets/css/map_print.css') }}" rel="stylesheet" media="print">
     <link href="{{ asset('storage/style.css') }}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -66,7 +67,6 @@
                         </ul>
                     </li>
                     
-                    
                 </ul>
                 
                 <form ng-controller="ngIdiom" ng-cloak
@@ -74,10 +74,29 @@
                     <select ng-model="selected"
                             ng-options="item for item in idioms"
                             ng-change="changeIdiom()"
-                        class="form-control" title="{{ trans('layout.select_idiom') }}"></select>
+                        class="form-control input-sm" title="{{ trans('layout.select_idiom') }}"></select>
                 </form>
                 
                 <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#" data-toggle="collapse" data-target="#print" aria-expanded="false" aria-controls="content">
+                            {{ trans('layout.link_print') }}
+                            <span class="caret"></span>
+                        </a>
+                        <div class="dropdown-menu" id="print" ng-controller="ngPrint">
+                            <form ng-submit="print()" class="form-inline">
+                                <div class="form-group">
+                                    <select ng-model="selected"
+                                        ng-change="updatePrintLayout()"
+                                        class="form-control input-sm" title="{{ trans('layout.select_map_layout') }}">
+                                        <option value="screen" selected="selected">{{ trans('layout.map_layout_screen') }}</option>
+                                        <option value="a4v">{{ trans('layout.map_layout_a4v') }}</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary">Print</button>
+                            </form>
+                        </div>
+                    </li>
                     @if (!Auth::check())
                     <li><a href="{{ url('auth/login') }}">{{ trans('layout.link_login') }}</a></li>
                     <li><a href="{{ url('auth/register') }}">{{ trans('layout.link_register') }}</a></li>
@@ -128,8 +147,12 @@
             </div>
         </div>
     </nav>
+    
+    <div class="map-container">
+          <div id="map"></div>
+    </div>
       
-    <div id="map"></div>
+    <div id="print-version"></div>
     
     <div id="content" class="container collapse in">
         <div class="row">
@@ -176,7 +199,7 @@
                                     class="pull-right layer-details-toggle"
                                     data-toggle="collapse"
                                     data-target=".layer-details-@{{ l.id }}"><span class="caret"></span></span>
-                                <div class="collapse layer-details-@{{ l.id }}">
+                                <div class="collapse layer-details layer-details-@{{ l.id }}">
                                     <div ng-bind="l.content.seo_description"></div>
                                     <img ng-show="l.ol.get('legendURL')" ng-src="@{{ l.ol.get('legendURL') }}" />
                                 </div>
@@ -219,7 +242,7 @@
                     </p>
                     
                     <div ng-show="hasResults">
-                        <ul>
+                        <ul id="search-results">
                             <li ng-repeat="item in results">
                                 <a ng-click="locateItem(item)" class="btn btn-default btn-xs">
                                     <span ng-bind="item.label"></span> 
@@ -233,14 +256,14 @@
             </div>
         </div>
         
-        <div class="row">
+        <div id="feature-info" class="row">
             <div class="col-md-12">
                 
                 <div ng-controller="ngFeatureInfo" ng-cloak>
                     <div ng-show="item">
                         <h4>{{ trans('layout.featureinfo_title') }}</h4>
                         <button ng-click="clearInfo()" 
-                            class="btn btn-danger btn-xs pull-right">
+                            class="btn btn-danger btn-xs pull-right feature-info-clear">
                             {{ trans('layout.clear') }}
                         </button>
                         <div compile="template"></div>
@@ -250,7 +273,7 @@
             </div>
         </div>
         
-        <div class="row">
+        <div id="content-section" class="row">
             <div class="col-md-12">
                 
                 @section('content')
@@ -278,6 +301,7 @@
     <script src="{{ asset('assets/js/ngLayerSwitcher.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngSearchResults.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngNavigationToolbar.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/ngPrint.js') }}" type="text/javascript"></script>
     <script type="text/javascript">
         
         angular.module('ngMap').value('config', { 

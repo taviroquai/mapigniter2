@@ -15,8 +15,7 @@ function ($scope, config, $window) {
      * @returns {undefined}
      */
     $scope.changeIdiom = function () {
-        console.log($scope.selected);
-         $window.location.href = config.baseURL + '/idiom/' + $scope.selected;
+        $window.location.href = config.baseURL + '/idiom/' + $scope.selected;
     };
     
 }]);

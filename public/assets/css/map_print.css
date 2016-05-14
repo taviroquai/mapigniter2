@@ -1,0 +1,38 @@
+/* 
+    Created on : 14/mai/2016, 17:56:58
+    Author     : mafonso
+*/
+
+.navbar {
+    display: none;
+}
+
+.map-container {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#map {
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+}
+
+#map .ol-zoom {
+    display: none;
+}
+
+#content {
+    display: none;
+}
+
+#print-version {
+    page-break-before: always;
+    width: 100%;
+}
+
+#print-version .feature-info-clear {
+    display: none;
+}
