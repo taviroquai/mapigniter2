@@ -54,7 +54,6 @@ function ($scope, $window, ngMapBuilder) {
         
         // Add layers content
         angular.element('#layerSwitcher li input[type="checkbox"]:checked').each(function (i, el) {
-            console.log(el);
             var layer = angular.element(el).closest('li');
             angular.element('#print-version').append('<h4>' + angular.element(layer).find('label').text() + '</h4>');
             angular.element('#print-version').append(angular.element(layer).find('.layer-details').html());

@@ -26,6 +26,7 @@ html, body {
     height: 100%;
     z-index: 35;
     overflow: hidden;
+    background-color: #888;
 }
 
 #map {
@@ -40,6 +41,10 @@ html, body {
     top: 75px;
     left: auto;
     right: .5em;
+}
+
+#print-version {
+    display: none;
 }
 
 #content {

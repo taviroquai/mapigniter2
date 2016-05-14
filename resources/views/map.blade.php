@@ -14,7 +14,7 @@
     @show
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" media="screen,projection">
     <link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/ol.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/map.css') }}" rel="stylesheet" media="screen,projection">
@@ -211,7 +211,7 @@
             </div>
         </div>
         
-        <div class="row">
+        <div id="search" class="row">
             <div class="col-md-12">
                 
                 <div ng-controller="ngSearchResults" ng-cloak>
