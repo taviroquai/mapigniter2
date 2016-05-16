@@ -491,14 +491,17 @@ function ($http, ol, proj4, Buffer, wkx, c) {
                     console & console.warn('Not supported GeoJSON type');
                 }
 
-                // Tranform WKB hexadecimal to WKT geometry using nodes modules Buffer and wkx
-                angular.forEach(r.features, function (f, i) {
-                    wkb = new Buffer(f.geometry, 'hex');
-                    geometry = wkx.Geometry.parse(wkb);
-                    geometry.hasZ = false;
-                    geometry.hasM = false;
-                    f.geometry = geometry.toGeoJSON();
-                });
+                // If geometry is string assume WKB hexadecimal and convert to GeoJSON 
+                // using nodes modules Buffer and wkx
+                if (r.features.length && (typeof r.features[0].geometry === 'string')) {
+                    angular.forEach(r.features, function (f, i) {
+                        wkb = new Buffer(f.geometry, 'hex');
+                        geometry = wkx.Geometry.parse(wkb);
+                        geometry.hasZ = false;
+                        geometry.hasM = false;
+                        f.geometry = geometry.toGeoJSON();
+                    });
+                }
 
                 // Read JSON
                 layer.getSource().addFeatures(format.readFeatures(r, options));
