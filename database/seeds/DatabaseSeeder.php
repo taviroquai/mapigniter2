@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
     {
         // Copy distributable storage folder
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            shell_exec('xcopy /H /E /Y ' . public_path('storage.dist') . ' ' . public_path('storage'));
+            shell_exec('xcopy ' . public_path('storage.dist') . ' ' . public_path('storage') . ' /H /E /Y');
         } else {
             shell_exec('cp -R ' . public_path('storage.dist') . ' ' . public_path('storage'));
         }
