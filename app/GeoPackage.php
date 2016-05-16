@@ -3,7 +3,7 @@
 namespace App;
 
 // TODO: Parse WKB
-//use CrEOF\Geo\WKB\Parser as WKBParser;
+use CrEOF\Geo\WKB\Parser as WKBParser;
 
 /**
  * GeoPackage wapper
@@ -214,7 +214,9 @@ class GeoPackage
         $items = $stm->fetchAll(\PDO::FETCH_OBJ);
         
         // Get WKB parser (TODO)
-        //$parser = new WKBParser();
+        $wkbNames = ['POINT', 'LINESTRING', 'POLYGON'];
+        $geojsonNames = ['Point', 'LineString', 'Polygon'];
+        $parser = new WKBParser();
 
         // Init GeoJSON object
         $geojson = [
@@ -241,8 +243,12 @@ class GeoPackage
             $feature = ['type' => 'Feature', 'geometry' => null, 'properties' => null];
             
             // Add geometry
-            //$feature['geometry'] = $parser->parse(pack('H*', bin2hex($wkb))); // TODO: use PHP parser
-            $feature['geometry'] = bin2hex($wkb); // Use hexadecimal for interopability
+            $feature['geometry'] = $parser->parse($wkb); // TODO: use PHP parser
+            $feature['geometry']['type'] = str_replace($wkbNames, $geojsonNames, $feature['geometry']['type']);
+            $feature['geometry']['coordinates'] = $feature['geometry']['value'];
+            unset($feature['geometry']['srid']);
+            unset($feature['geometry']['value']);
+            //$feature['geometry'] = bin2hex($wkb); // Use hexadecimal for interopability
             unset($item->{$geom_column}); // Remove geometry column from feature attributes
             
             // Add feature

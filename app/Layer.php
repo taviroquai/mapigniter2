@@ -328,12 +328,9 @@ class Layer extends Content
         $this->projection_id = $geopackage->getSRID($this->geopackage_table);
         $this->save();
         
-        // Create directories
+        // Create directory
         if (!is_dir($this->getPublicStoragePath())) {
             mkdir($this->getPublicStoragePath(), 0777, true);
-        }
-        if (!is_dir($this->getPublicStoragePath().'/bin')) {
-            mkdir($this->getPublicStoragePath().'/bin', 0777, true);
         }
         
         // Create JSON from GeoPackage table if does not exists
