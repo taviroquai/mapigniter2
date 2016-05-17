@@ -34,18 +34,18 @@ MapIgniter2 supports several data formats:
 4. Choose your layer and click save
 5. **Important:** set your Map Projection, center coordinates and initial zoom level  
 6. Click on View Site and choose your map from Maps menu
-7. You should now see your data. If not check, for layer and map projection  
+7. You should now see your data. If not, check for layer and map projection  
 
 #### My data has custom projection. What now?
 
 MapIgniter allows to register projections parameters that can be used by OpenLayers 3.  
-To create a pojection go to Admin => Projections => Create Projection.  
+To create a projection go to Admin => Projections => Create Projection.  
 You can also import proj4 projection parameters from http://spatialreference.org.  
 **Important:** Don't forget to set up your maps and layers to use it!  
 
 #### How can a visitor search on map?
 
-The search feature only applies for vector features on map (also called overlayers).  
+The search feature only applies for vector features on map (also called overlays).  
 Be sure to enter on the layer form, the **Searchable Properties** (separated by comma).  
 
 #### How can a visitor print a map?
@@ -53,12 +53,13 @@ Be sure to enter on the layer form, the **Searchable Properties** (separated by 
 1. On the navigation bar, click Print
 1. Select a map layout, ie. A4 Vertical
 1. Click Print
+1. After print, select screen layout to reset the map to full screen  
 
 This will adjust the openlayers map size based on the choosen layout 
 and the stylesheet map_print.css will be used.  
 More layouts will be added to configuration (TODO).
 
-#### How can I customize a map feature HTML when clicked?
+#### How can I customize a feature information when clicked?
 
 This feature is only available for vector features.  
 Be sure to enter Feature Info HTML Template in the respective Layer.  
@@ -69,6 +70,7 @@ To display an image, save the image path in feature attribute and enter:
 > &lt;p&gt;&lt;img src="{{ item.image }}" /&gt;&lt;/p&gt;
 
 The HTML template must be valid and is a AngularJS templates format  
+See more information [here](https://docs.angularjs.org/guide/templates)  
 
 #### How do I hide some feature attributes?
 
@@ -85,7 +87,7 @@ By default the Content item will be visible in frontend under Contents menu.
 
 #### How to customize a Content page?
 
-By default, MapIgniter2 ships with demo pages.  
+By default, MapIgniter2 ships with some demo pages.  
 You can edit these pages under Admin => System => Pages (for non-developers).  
 
 #### How to take advantage of Search Engine Optimisation?
@@ -93,20 +95,18 @@ You can edit these pages under Admin => System => Pages (for non-developers).
 Content pages can be fully optimized for Search Engines by using the SEO fields under
 Admin => Contents => Create Content => Tab SEO.
 
-#### How do I print a map? (TODO)
-
 #### What's the usage of Users, Roles and Permissions?
 
 MapIgniter2 uses a role based permissions system. 
-This permissions system is useful on a small/medium size organization, where large number of users
-have diferente roles to access and change information.  
+This permissions system are useful for small/medium size organizations, where large number of users
+have diferente roles to access and update information.  
 Permissions are defined based on HTTP URI route and method.  
-Menus and save operations can be assign to role(s).  
+Menus and form operations can be assign to role(s).  
 Contents write permission can be assign to a role.  
 Specific Content write permission can be assign just to the owner (user).  
 TODO: implement roles and permissions inheritance.  
 
-#### Who is using, and how are users using, my MapIgniter2 web application?
+#### How can I see who and how are users using my MapIgniter2 web application?
 
 On the backoffice dashboard you can see a chart overview about visitors/content relation.  
 Change the start and end date of dashboard visits chart to get the visits interval chart.  
