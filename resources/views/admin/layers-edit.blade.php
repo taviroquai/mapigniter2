@@ -816,6 +816,7 @@
                     '<option value="' + item.table_name + '">' + item.table_name + '</option>'
                 );
             });
+            $('[name="geopackage_table"').trigger('change');
         }
     });
     

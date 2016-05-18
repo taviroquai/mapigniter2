@@ -311,10 +311,10 @@ class Layer extends Content
         ini_set('memory_limit','512M');
         
         // Validate uploaded file
-        $files = glob(public_path(\Auth::user()->getStoragePath()).'*.gpkg');
+        $files = glob(public_path(\Auth::user()->getStoragePath()).'/*.gpkg');
         if (!empty($files)) {
-            copy($files[0], $this->getPublicStoragePath().'/'.basename($files[0]));
-            $this->geopackage_filename = basename($files[0]);
+            copy($files[0], $this->getPublicStoragePath().'/geopackage.gpkg');
+            $this->geopackage_filename = 'geopackage.gpkg';
             $this->save();
 
             // Clear temporary files
