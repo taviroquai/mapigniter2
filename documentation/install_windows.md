@@ -47,6 +47,9 @@ These instructions were tested on Windows 2012 R2 IIS 8, but should work more or
 1. create a postgres database and set your local configuration on **.env**      
 1. Install as you would install a [Laravel](http://laravel.com/) application
 by opening up command prompt, cd into folder you extracted and then run the following:
+
+(if you have multiple versions of PHP installed, you may have to call explicitly the one asssociated with IIS like C:\Program Files (x86)\PHP\v5.6\php.exe instead of just php)
+
     * php composer.phar install --prefer-dist
     * php artisan key:generate
     * php artisan migrate
