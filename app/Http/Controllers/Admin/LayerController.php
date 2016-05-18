@@ -2,6 +2,7 @@
 
 use App\Content;
 use App\Layer;
+use App\GeoPackage;
 
 class LayerController extends AdminController
 {
@@ -109,11 +110,9 @@ class LayerController extends AdminController
                 }
                 break;
             case 'geopackage':
-                if (empty($input['id'])) {
-                    $rules['geopackage_filename_0'] = 'required';
-                }
                 $rules['geopackage_table'] = 'required';
                 $rules['geopackage_fields'] = 'required';
+                $input['geopackage_fields'] = implode(',', $input['geopackage_fields']);
                 break;
             case 'group':
             default:;
@@ -158,7 +157,7 @@ class LayerController extends AdminController
         }
         if ($layer->type === 'geopackage') {
             try {
-                $layer->saveGeoPackageFile(\Request::file('geopackage_filename_0'));
+                $layer->saveGeoPackageFile();
             } catch (\PDOException $e) {
                 return response()->json(['errors' => ['geopackage_filename_0_error' => [$e->getMessage()]]]);
             } catch (\Exception $e) {
@@ -336,5 +335,32 @@ class LayerController extends AdminController
         
         //Response
         return response()->json(['success' => false]);
+    }
+    
+    /**
+     * Get GeoPackage info
+     * 
+     * @return \Illiminate\Http\JsonResponse
+     */
+    public function getGeoPackageInfo()
+    {
+        try {
+            
+            // Process geopackage upload
+            $file = \Request::file('geopackage_filename');
+            $filename = $file->getClientOriginalName();
+            $file->move(public_path(\Auth::user()->getStoragePath()), $filename);
+        
+            // Make connection
+            $filename = public_path(\Auth::user()->getStoragePath().'/'. $filename);
+            $geopackage = new GeoPackage($filename);
+            $geopackage->validate();
+
+            // Response
+            return response()->json(['success' => true, 'result' => $geopackage->getInfo()]);
+            
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 }

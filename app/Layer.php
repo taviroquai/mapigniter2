@@ -304,20 +304,23 @@ class Layer extends Content
     
     /**
      * Save geopackage file
-     * 
-     * @param null|File $file
      */
-    public function saveGeoPackageFile($file)
+    public function saveGeoPackageFile()
     {
         // Set PHP settings
         ini_set('memory_limit','512M');
         
-        // Save uploaded file
-        if ($file) {
-            $filename = 'geopackage.'.$file->getClientOriginalExtension();
-            $file->move($this->getPublicStoragePath(), $filename);
-            $this->geopackage_filename = $filename;
+        // Validate uploaded file
+        $files = glob(public_path(\Auth::user()->getStoragePath()).'*.gpkg');
+        if (!empty($files)) {
+            copy($files[0], $this->getPublicStoragePath().'/'.basename($files[0]));
+            $this->geopackage_filename = basename($files[0]);
             $this->save();
+
+            // Clear temporary files
+            foreach($files as $item) {
+                unlink($item);
+            }
         }
         
         // Make connection
@@ -332,13 +335,10 @@ class Layer extends Content
         if (!is_dir($this->getPublicStoragePath())) {
             mkdir($this->getPublicStoragePath(), 0777, true);
         }
-        if (!is_dir($this->getPublicStoragePath().'/bin')) {
-            mkdir($this->getPublicStoragePath().'/bin', 0777, true);
-        }
         
         // Create JSON from GeoPackage table if does not exists
         $filename = $this->getPublicStoragePath() . '/geopackage.json';
-        if (!file_exists($filename) || $file) {
+        if (!file_exists($filename) || !empty($files)) {
             file_put_contents($filename, $geopackage->toGeoJSON(
                 $this->geopackage_table,
                 $this->geopackage_fields

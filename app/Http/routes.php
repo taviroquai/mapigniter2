@@ -94,6 +94,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['aut
     Route::post('/layers/upload/{layer}', 'LayerController@upload');
     Route::get('/layers/{layer}/delete/{filename}', 'LayerController@deleteIconImage');
     Route::post('/layers/import/csv/{layer}', 'LayerController@importCSV');
+    Route::post('/layers/geopackage_upload', 'LayerController@getGeoPackageInfo');
     
     // Content
     Route::get('/contents', 'ContentController@json');

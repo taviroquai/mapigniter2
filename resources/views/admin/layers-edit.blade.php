@@ -458,18 +458,20 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="geopackage_table">{{ trans('backoffice.geopackage_table') }}</label>
-                                <input class="form-control" type="text" name="geopackage_table"
-                                    placeholder=""
-                                    value="{{ $layer->geopackage_table }}">
+                                <select class="form-control" name="geopackage_table">
+                                    <option value="{{ $layer->geopackage_table }}" selected>{{ $layer->geopackage_table }}</option>
+                                </select>
                                 <span class="help-block alert-danger v-error-geopackage_table"></span>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="geopackage_fields">{{ trans('backoffice.geopackage_fields') }}</label>
-                                <input class="form-control" type="text" name="geopackage_fields"
-                                    placeholder=""
-                                    value="{{ $layer->geopackage_fields }}">
+                                <select class="form-control" name="geopackage_fields[]" multiple="multiple">
+                                    @foreach(explode(',', $layer->geopackage_fields) as $option)
+                                    <option value="{{ $option }}" selected>{{ $option }}</option>
+                                    @endforeach
+                                </select>
                                 <span class="help-block alert-danger v-error-geopackage_fields"></span>
                             </div>
                         </div>
@@ -702,6 +704,9 @@
 <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
     
+    // tables options
+    var tables = [];
+    
     function hideTypeOptions() {
         $('#projection_options').hide();
         $('#style_options').hide();
@@ -765,14 +770,53 @@
         showPreview: false
     });
     
-    $("#geopackage_filename").fileinput({
+    var geopackage_uploader = $("#geopackage_filename").fileinput({
         showCaption: false,
         overwriteInitial: true,
         showUpload: false,
         showRemove: false,
 		maxFileCount: 1,
+        uploadUrl: "{{ url('admin/layers/geopackage_upload') }}",
         allowedFileExtensions: ['gpkg'],
-        showPreview: false
+        showPreview: false,
+        uploadExtraData: function() {
+            return {
+                '_token': $('[name="_token"]').val()
+            };
+        }
+    });
+    geopackage_uploader.on('filebatchselected', function(event, files) {
+        geopackage_uploader.fileinput('upload');
+    });
+    
+    // Populate fields options
+    $('[name="geopackage_table"').on('change', function () {
+        var selected = $(this).val();
+        $('[name="geopackage_fields[]"').empty();
+        $.each(tables, function (i, item) {
+            if (item.table_name === selected) {
+                $.each(item.columns, function (i, column) {
+                    $('[name="geopackage_fields[]"').append(
+                        '<option value="' + column.column_name + '">' + column.column_name + '</option>'
+                    );
+                });
+            }
+        });
+    });
+    geopackage_uploader.on('filebatchuploadsuccess', function(event, data, previewId, index) {
+        var form = data.form, files = data.files, extra = data.extra,
+            response = data.response, reader = data.reader;
+        if (response.success) {
+            tables = response.result.tables;
+            
+            // Populate table options
+            $('[name="geopackage_table"').empty();
+            $.each(response.result.tables, function (i, item) {
+                $('[name="geopackage_table"').append(
+                    '<option value="' + item.table_name + '">' + item.table_name + '</option>'
+                );
+            });
+        }
     });
     
     $("#ol_style_static_icon").fileinput({
