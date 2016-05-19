@@ -112,7 +112,6 @@ class LayerController extends AdminController
             case 'geopackage':
                 $rules['geopackage_table'] = 'required';
                 $rules['geopackage_fields'] = 'required';
-                $input['geopackage_fields'] = implode(',', $input['geopackage_fields']);
                 break;
             case 'group':
             default:;
@@ -144,6 +143,7 @@ class LayerController extends AdminController
         }
         
         // Save changes
+        $input['geopackage_fields'] = implode(',', $input['geopackage_fields']);
         $layer->fill($input);
         $layer->save();
         

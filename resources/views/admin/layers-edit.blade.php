@@ -702,6 +702,7 @@
 <script src="{{ asset('assets/js/fileinput.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/bootstrap-colorpicker.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/js/ogc.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
     
     // tables options
@@ -736,6 +737,10 @@
         if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
             $('#vector_options').show(200);
             $('.vector-warning').show('slow');
+        }
+        if (value === 'wms') {
+            var wms = new ogc($, $('[name="wms_url"]').val());
+            wms.getCapabilities();
         }
     }
     
