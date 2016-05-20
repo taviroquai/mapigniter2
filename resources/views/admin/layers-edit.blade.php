@@ -740,7 +740,7 @@
         }
         if (value === 'wms') {
             var service = new $.fn.OGCService($('[name="wms_url"]').val());
-            service.getWMSCapabilities('1.1.0', function (result) {
+            service.getCapabilities('WMS', '1.1.0', function (result) {
                 console.log(result);
             });
         }

@@ -18,20 +18,6 @@
             wfsCapabilities = [];
 
         /**
-         * Build WMS GetCapabilities URL
-         * @param {String} version
-         * @returns {OGCService_L2.OGCService.url|String}
-         */
-        var getWMSCapabilitiesUrl = function (version)
-        {
-            var params = [];
-            params.push('SERVICE=WMS');
-            params.push('VERSION=' + version);
-            params.push('REQUEST=GetCapabilities');
-            return url + (url.indexOf('?') === -1 ? '?' : '') + params.join('&');
-        };
-
-        /**
          * Parse layer SRS/CRS
          * 
          * @param {type} node
@@ -178,14 +164,28 @@
                 }
             });
         };
-
+        
         /**
-         * Get capabilities
+         * Build GetCapabilities URL
+         * @param {String} version
+         * @returns {OGCService_L2.OGCService.url|String}
+         */
+        var getCapabilitiesUrl = function (service, version)
+        {
+            var params = [];
+            params.push('SERVICE=' + service);
+            params.push('VERSION=' + version);
+            params.push('REQUEST=GetCapabilities');
+            return url + (url.indexOf('?') === -1 ? '?' : '') + params.join('&');
+        };
+        
+        /**
+         * Get WMS Capabilities
          * 
          * @param {String} url
          * @returns {undefined}
          */
-        this.getWMSCapabilities = function (version, cb)
+        this.getCapabilities = function (service, version, cb)
         {
             if (wmsCapabilities.length) {
                 cb.call(self, wmsCapabilities[version]);
@@ -193,8 +193,15 @@
             
             // Request and parse capabilities
             var self = this;
-            $.when(requestXML(getWMSCapabilitiesUrl(url, version))).then(function (r) {
-                parseWMSCapabilities(r, version);
+            $.when(requestXML(getCapabilitiesUrl(service, version))).then(function (r) {
+                
+                // Call parse service
+                switch(service) {
+                    case 'WMS': parseWMSCapabilities(r, version); break;
+                    default: alert('Invalid OGC service name.');
+                }
+                
+                // Call callback
                 if (typeof cb === 'function') {
                     cb.call(self, wmsCapabilities[version]);
                 }
