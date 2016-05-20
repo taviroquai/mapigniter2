@@ -702,7 +702,7 @@
 <script src="{{ asset('assets/js/fileinput.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/bootstrap-colorpicker.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/js/ogc.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/js/OGCService.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
     
     // tables options
@@ -739,8 +739,10 @@
             $('.vector-warning').show('slow');
         }
         if (value === 'wms') {
-            var wms = new ogc($, $('[name="wms_url"]').val());
-            wms.getCapabilities();
+            var service = new $.fn.OGCService($('[name="wms_url"]').val());
+            service.getWMSCapabilities('1.1.0', function (result) {
+                console.log(result);
+            });
         }
     }
     
