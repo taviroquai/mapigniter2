@@ -163,7 +163,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="wms_version">{{ trans('backoffice.wms_version') }}</label>
                                     <select class="form-control" name="wms_version" id="wms_version">
@@ -174,7 +174,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="wms_tiled">{{ trans('backoffice.wms_tiled') }}</label>
                                     <select class="form-control" name="wms_tiled" id="wms_tiled">
@@ -185,14 +185,23 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Load</label>
+                                    <div class="clearfix"></div>
+                                    <button class="btn btn-info getwmscapabilities">Get Capabilities</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="wms_layers">{{ trans('backoffice.wms_layers') }}</label>
-                                    <input class="form-control" type="text" name="wms_layers"
-                                        placeholder=""
-                                        value="{{ $layer->wms_layers }}">
+                                    <select class="form-control" name="wms_layers[]" multiple="multiple">
+                                        @foreach(explode(',', $layer->wms_layers) as $option)
+                                        <option value="{{ $option }}" selected>{{ $option }}</option>
+                                        @endforeach
+                                    </select>
                                     <span class="help-block alert-danger v-error-wms_layers"></span>
                                 </div>
                             </div>
@@ -201,7 +210,7 @@
                     
                     <div id="wfs_options">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="wfs_url">{{ trans('backoffice.wfs_url') }}</label>
                                     <input class="form-control" type="text" name="wfs_url"
@@ -214,11 +223,18 @@
                                 <div class="form-group">
                                     <label for="wfs_version">{{ trans('backoffice.wfs_version') }}</label>
                                     <select class="form-control" name="wfs_version" id="wfs_version">
-                                        @foreach(App\Layer::wmsVersionOptions() as $k => $label)
+                                        @foreach(App\Layer::wfsVersionOptions() as $k => $label)
                                         <option value="{{ $k }}"
                                             @if($k === $layer->wfs_version) selected @endif>{{ $label }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Load</label>
+                                    <div class="clearfix"></div>
+                                    <button class="btn btn-info getwfscapabilities">Get Capabilities</button>
                                 </div>
                             </div>
                         </div>
@@ -226,10 +242,11 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="wfs_typename">{{ trans('backoffice.wfs_typename') }}</label>
-                                    <input class="form-control" type="text" name="wfs_typename"
-                                        placeholder=""
-                                        value="{{ $layer->wfs_typename }}">
+                                    <select class="form-control" name="wfs_typename">
+                                        <option value="{{ $layer->wfs_typename }}" selected>{{ $layer->wfs_typename }}</option>
+                                    </select>
                                     <span class="help-block alert-danger v-error-wfs_typename"></span>
+                                    <span class="help-block wfs-attributes"></span>
                                 </div>
                             </div>
                         </div>
@@ -707,6 +724,16 @@
     
     // tables options
     var tables = [];
+    var attributes = [];
+    
+    function updateSearchablePoperties() {
+        $('[name="search[]"]').empty();
+        $.each(attributes, function (i, item) {
+            $('[name="search[]"').append(
+                '<option value="' + item + '">' + item + '</option>'
+            );
+        });
+    }
     
     function hideTypeOptions() {
         $('#projection_options').hide();
@@ -738,12 +765,6 @@
             $('#vector_options').show(200);
             $('.vector-warning').show('slow');
         }
-        if (value === 'wms') {
-            var service = new $.fn.OGCService($('[name="wms_url"]').val());
-            service.getCapabilities('WMS', '1.1.0', function (result) {
-                console.log(result);
-            });
-        }
     }
     
     showTypeOptions($('[name="type"]').val());
@@ -757,6 +778,68 @@
         showUpload: false,
         showRemove: false,
 		maxFileCount: 1
+    });
+    
+    $('.getwmscapabilities').on('click', function (e) {
+        e.preventDefault();
+        
+        var url = $('[name="wms_url"]').val();
+        var version = $('[name="wms_version"]').val();
+        var service = new $.fn.OGCService(url);
+        
+        // Call WMS GetCapabilities
+        service.getCapabilities('WMS', version, function (result) {
+            $('[name="wms_layers[]"').empty();
+            $.each(result, function (i, group) {
+                $.each(group.layers, function (i, l) {
+                    $('[name="wms_layers[]"').append(
+                        '<option value="' + l.name + '">' + l.title + '</option>'
+                    );
+                });
+            });
+        });
+    });
+    
+    $('.getwfscapabilities').on('click', function (e) {
+        e.preventDefault();
+        
+        var url = $('[name="wfs_url"]').val();
+        var version = $('[name="wfs_version"]').val();
+        var service = new $.fn.OGCService(url);
+        
+        // Call WFS GetCapabilities
+        service.getCapabilities('WFS', version, function (result) {
+            $('[name="wfs_typename"').empty();
+            tables = [];
+            $.each(result, function (i, f) {
+                $('[name="wfs_typename"').append(
+                    '<option value="' + f.name + '">' + f.title + '</option>'
+                );
+                tables.push(f.name);
+            });
+            $('[name="wfs_typename"]').trigger('change');
+        });
+    });
+    
+    $('[name="wfs_typename"]').change('click', function (e) {
+        e.preventDefault();
+        
+        var url = $('[name="wfs_url"]').val();
+        var version = $('[name="wfs_version"]').val();
+        var typename = $('[name="wfs_typename"]').val();
+        var service = new $.fn.OGCService(url);
+        
+        // Call WFS GetCapabilities
+        service.getWFSTypenameAttributes(version, typename, {'MAXFEATURES': 1}, function (result) {
+            if (result.length) {
+                delete result[0]['bounds'];
+                delete result[0]['geometry'];
+                attributes = Object.keys(result[0]);
+                $('.wfs-attributes').text("{{ trans('backoffice.attributes') }}: " + (Object.keys(result[0]).join(',')));
+            } else {
+                $('.wfs-attributes').text('');
+            }
+        });
     });
     
     $("#kml_filename").fileinput({
@@ -800,12 +883,14 @@
     $('[name="geopackage_table"').on('change', function () {
         var selected = $(this).val();
         $('[name="geopackage_fields[]"').empty();
+        attributes = [];
         $.each(tables, function (i, item) {
             if (item.table_name === selected) {
                 $.each(item.columns, function (i, column) {
                     $('[name="geopackage_fields[]"').append(
                         '<option value="' + column.column_name + '">' + column.column_name + '</option>'
                     );
+                    attributes.push(column.column_name);
                 });
             }
         });
@@ -818,10 +903,12 @@
             
             // Populate table options
             $('[name="geopackage_table"').empty();
+            tables = [];
             $.each(response.result.tables, function (i, item) {
                 $('[name="geopackage_table"').append(
                     '<option value="' + item.table_name + '">' + item.table_name + '</option>'
                 );
+                tables.push(item.table_name);
             });
             $('[name="geopackage_table"').trigger('change');
         }
