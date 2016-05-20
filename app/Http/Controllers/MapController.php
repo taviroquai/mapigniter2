@@ -66,7 +66,7 @@ class MapController extends BaseController
         ini_set('display_errors', 1);
 
         $url = base64_decode(\Input::get('url'));
-        echo $url; die();
+        
         // Return not-allowed if is no OWS request
         if (
             !strpos($url, strtoupper('SERVICE')) 
