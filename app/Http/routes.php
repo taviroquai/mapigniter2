@@ -34,7 +34,7 @@ Route::get('/idiom/{idiom}', 'IdiomController@setIdiom');
 // WebGIS
 Route::get('/maps/{map}', 'MapController@getMap');
 Route::get('/maps/{map}/config', 'MapController@getConfig');
-Route::get('/proxy/{url}', 'MapController@proxyRequest');
+Route::post('/proxy', 'MapController@proxyRequest');
 
 // Auth routes
 Route::get('auth/login', 'Auth\AuthController@getLogin');

@@ -343,8 +343,7 @@ function ($http, ol, proj4, Buffer, wkx, c) {
         addLayerProjection(item.layer);
         
         function loadFeatures(url) {
-            url = config.proxy + '/' + btoa(url);
-            $http.get(url)
+            $http.post(config.proxy, {url: btoa(url)})
             .success(function (response) {                
                 features = format.readFeatures(response, {
                     dataProjection: 'EPSG:' + item.layer.projection.srid,

@@ -145,6 +145,14 @@ class Layer extends Content
         ];
     }
     
+    static function wfsVersionOptions()
+    {
+        return [
+            '1.0.0' => '1.0.0',
+            '1.1.0' => '1.1.0'
+        ];
+    }
+    
     /**
      * Save style icon image
      * 
