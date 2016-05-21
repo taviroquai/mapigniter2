@@ -260,6 +260,7 @@
                                 @endif
                                 <input class="form-control" type="file" name="gpx_filename" id="gpx_filename" value="">
                                 <span class="help-block alert-danger v-error-gpx_filename_0"></span>
+                                <span class="help-block gpx-attributes"></span>
                             </div>
                         </div>
                     </div>
@@ -272,6 +273,7 @@
                                 @endif
                                 <input class="form-control" type="file" name="kml_filename" id="kml_filename" value="">
                                 <span class="help-block alert-danger v-error-kml_filename_0"></span>
+                                <span class="help-block kml-attributes"></span>
                             </div>
                         </div>
                     </div>
@@ -772,12 +774,43 @@
         showTypeOptions($(this).val());
     });
     
-    $("#gpx_filename").fileinput({
+    var gpx_uploader = $("#gpx_filename").fileinput({
         showCaption: false,
         overwriteInitial: true,
         showUpload: false,
         showRemove: false,
-		maxFileCount: 1
+		maxFileCount: 1,
+        allowedFileExtensions: ["gpx"]
+    });
+    gpx_uploader.on('filebatchselected', function(event, files) {
+        
+        var reader = new FileReader();
+        var format = new ol.format.GPX();
+        var result = [];
+        var attrs;
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                result = format.readFeatures(e.target.result);
+                if (result.length) {
+                    attributes = [];
+                    $.each(result, function (i, item) {
+                        attrs = Object.keys(item.getProperties());
+                        $.each(attrs, function (j, att) {
+                            if (attributes.indexOf(att) === -1) attributes.push(att);
+                        });
+                    });
+                    attributes.splice(attributes.indexOf('geometry'), 1);
+                    $('.gpx-attributes').text("{{ trans('backoffice.attributes') }}: " + (attributes.join(',')));
+                } else {
+                    $('.gpx-attributes').text('');
+                }
+            };
+        })(files[0]);
+
+        // Read in the image file as a data URL.
+        reader.readAsBinaryString(files[0]);
     });
     
     $('.getwmscapabilities').on('click', function (e) {
@@ -842,12 +875,37 @@
         });
     });
     
-    $("#kml_filename").fileinput({
+    var kml_uploader = $("#kml_filename").fileinput({
         showCaption: false,
         overwriteInitial: true,
         showUpload: false,
         showRemove: false,
-		maxFileCount: 1
+		maxFileCount: 1,
+        allowedFileExtensions: ["kml"]
+    });
+    kml_uploader.on('filebatchselected', function(event, files) {
+        
+        var reader = new FileReader();
+        var format = new ol.format.KML();
+        var result = [];
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                result = format.readFeatures(e.target.result);
+                if (result.length) {
+                    attributes = Object.keys(result[0].getProperties());
+                    attributes.splice(attributes.indexOf('geometry'), 1);
+                    attributes.splice(attributes.indexOf('styleUrl'), 1);
+                    $('.kml-attributes').text("{{ trans('backoffice.attributes') }}: " + (attributes.join(',')));
+                } else {
+                    $('.kml-attributes').text('');
+                }
+            };
+        })(files[0]);
+
+        // Read in the image file as a data URL.
+        reader.readAsBinaryString(files[0]);
     });
     
     $("#shapefile_filename").fileinput({
