@@ -950,6 +950,7 @@
                     );
                     tables.push(table.name);
                 });
+                $('[name="postgis_table"]').trigger('change');
             }
         });
     });
@@ -1000,6 +1001,7 @@
                         '<option value="' + schema.name + '">' + schema.name + '</option>'
                     );
                 });
+                $('[name="postgis_schema"]').trigger('change');
             }
         });
     });
