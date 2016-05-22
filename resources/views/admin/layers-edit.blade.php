@@ -331,7 +331,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_host">{{ trans('backoffice.postgis_host') }}</label>
                                     <input class="form-control" type="text" name="postgis_host"
@@ -340,36 +340,16 @@
                                     <span class="help-block alert-danger v-error-postgis_host"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_port">{{ trans('backoffice.postgis_port') }}</label>
                                     <input class="form-control" type="text" name="postgis_port"
                                         placeholder=""
-                                        value="{{ $layer->postgis_port }}">
+                                        value="{{ empty($layer->postgis_port) ? 5432 : $layer->postgis_port }}">
                                     <span class="help-block alert-danger v-error-postgis_port"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="postgis_user">{{ trans('backoffice.postgis_user') }}</label>
-                                    <input class="form-control" type="text" name="postgis_user"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_user }}">
-                                    <span class="help-block alert-danger v-error-postgis_user"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="postgis_pass">{{ trans('backoffice.postgis_pass') }}</label>
-                                    <input class="form-control" type="password" name="postgis_pass"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_pass }}">
-                                    <span class="help-block alert-danger v-error-postgis_pass"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_dbname">{{ trans('backoffice.postgis_dbname') }}</label>
                                     <input class="form-control" type="text" name="postgis_dbname"
@@ -378,30 +358,65 @@
                                     <span class="help-block alert-danger v-error-postgis_dbname"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="postgis_user">{{ trans('backoffice.postgis_user') }}</label>
+                                    <input class="form-control" type="text" name="postgis_user"
+                                        placeholder=""
+                                        value="{{ $layer->postgis_user }}">
+                                    <span class="help-block alert-danger v-error-postgis_user"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="postgis_pass">{{ trans('backoffice.postgis_pass') }}</label>
+                                    <input class="form-control" type="password" name="postgis_pass"
+                                        placeholder=""
+                                        value="">
+                                    <span class="help-block alert-danger v-error-postgis_pass"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>{{ trans('backoffice.postgis_connect') }}</label>
+                                    <div class="clearfix"></div>
+                                    <button class="btn btn-info getpostgisschemas">{{ trans('backoffice.postgis_connect') }}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_schema">{{ trans('backoffice.postgis_schema') }}</label>
-                                    <input class="form-control" type="text" name="postgis_schema"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_schema }}">
+                                    <select class="form-control" name="postgis_schema">
+                                        @if ($layer->postgis_schema)
+                                        <option value="{{ $layer->postgis_schema }}">{{ $layer->postgis_schema }}</option>
+                                        @endif
+                                    </select>
                                     <span class="help-block alert-danger v-error-postgis_schema"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_table">{{ trans('backoffice.postgis_table') }}</label>
-                                    <input class="form-control" type="text" name="postgis_table"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_table }}">
+                                    <select class="form-control" name="postgis_table">
+                                        @if ($layer->postgis_table)
+                                        <option value="{{ $layer->postgis_table }}">{{ $layer->postgis_table }}</option>
+                                        @endif
+                                    </select>
                                     <span class="help-block alert-danger v-error-postgis_table"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_field">{{ trans('backoffice.postgis_field') }}</label>
-                                    <input class="form-control" type="text" name="postgis_field"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_field }}">
+                                    <select class="form-control" name="postgis_field">
+                                        @if ($layer->postgis_field)
+                                        <option value="{{ $layer->postgis_field }}">{{ $layer->postgis_field }}</option>
+                                        @endif
+                                    </select>
                                     <span class="help-block alert-danger v-error-postgis_field"></span>
                                 </div>
                             </div>
@@ -410,9 +425,13 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="postgis_attributes">{{ trans('backoffice.postgis_attributes') }}</label>
-                                    <input class="form-control" type="text" name="postgis_attributes"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_attributes }}">
+                                    <select class="form-control" name="postgis_attributes[]" multiple="multiple">
+                                        @if ($layer->postgis_attributes)
+                                        @foreach(explode(',', $layer->postgis_attributes) as $attr)
+                                        <option selected value="{{ $attr }}">{{ $attr }}</option>
+                                        @endforeach
+                                        @endif
+                                    </select>
                                     <span class="help-block alert-danger v-error-postgis_attributes"></span>
                                 </div>
                             </div>
@@ -916,6 +935,73 @@
 		maxFileCount: 1,
         allowedFileExtensions: ['zip'],
         showPreview: false
+    });
+    
+    $('[name="postgis_schema"]').on('change', function () {
+        var form = $(this).closest('form');
+        var schemaname = $('[name="postgis_schema"]').val();
+        $.post("{{ url('admin/layers/postgis/table/list') }}/" + schemaname, form.serialize(), function (r) {
+            if (r.success) {
+                $('[name="postgis_table"]').empty();
+                tables = [];
+                $.each(r.result, function (i, table) {
+                    $('[name="postgis_table"]').append(
+                        '<option value="' + table.name + '">' + table.name + '</option>'
+                    );
+                    tables.push(table.name);
+                });
+            }
+        });
+    });
+    
+    $('[name="postgis_table"]').on('change', function () {
+        var form = $(this).closest('form');
+        var schemaname = $('[name="postgis_schema"]').val();
+        var tablename = $('[name="postgis_table"]').val();
+        $.post("{{ url('admin/layers/postgis/column/list') }}/" + schemaname + '/' + tablename, form.serialize(), function (r) {
+            if (r.success) {
+                attributes = [];
+                $('[name="postgis_field"]').empty();
+                $.each(r.result, function (i, column) {
+                    $('[name="postgis_field"]').append(
+                        '<option value="' + column.name + '">' + column.name + '</option>'
+                    );
+                    attributes.push(column.name);
+                });
+                $('[name="postgis_attributes[]"]').empty();
+                $.each(r.result, function (i, schema) {
+                    $('[name="postgis_attributes[]"]').append(
+                        '<option value="' + schema.name + '">' + schema.name + '</option>'
+                    );
+                });
+            }
+        });
+    });
+    
+    $('.getpostgisschemas').on('click', function (e) {
+        e.preventDefault();
+        
+        $('.v-error-postgis_user').text('');
+        $('.v-error-postgis_pass').text('');
+        if ($('[name="postgis_user"').val() === '') {
+            $('.v-error-postgis_user').text("{{ trans('validation.required', ['attribute' => trans('backoffice.postgis_user')]) }}");
+        }
+        if ($('[name="postgis_pass"').val() === '') {
+            $('.v-error-postgis_pass').text("{{ trans('validation.required', ['attribute' => trans('backoffice.postgis_pass')]) }}");
+        }
+        if ($('[name="postgis_user"').val() === '' || $('[name="postgis_pass"').val() === '') return;
+        
+        var form = $(this).closest('form');
+        $.post("{{ url('admin/layers/postgis/schema/list') }}", form.serialize(), function (r) {
+            if (r.success) {
+                $('[name="postgis_schema"]').empty();
+                $.each(r.result, function (i, schema) {
+                    $('[name="postgis_schema"]').append(
+                        '<option value="' + schema.name + '">' + schema.name + '</option>'
+                    );
+                });
+            }
+        });
     });
     
     var geopackage_uploader = $("#geopackage_filename").fileinput({

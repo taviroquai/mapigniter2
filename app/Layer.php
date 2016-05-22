@@ -43,7 +43,6 @@ class Layer extends Content
         'postgis_host',
         'postgis_port',
         'postgis_user',
-        'postgis_pass',
         'postgis_dbname',
         'postgis_schema',
         'postgis_table',
@@ -236,11 +235,11 @@ class Layer extends Content
      * 
      * @return boolean
      */
-    public function savePostgisFile()
+    public function savePostgisFile($user, $pass)
     {
         // Make connection
         $dsn = "pgsql:host={$this->postgis_host};port={$this->postgis_port};dbname={$this->postgis_dbname}";
-        $pdo = new \PDO($dsn, $this->postgis_user, $this->postgis_pass);
+        $pdo = new \PDO($dsn, $user, $pass);
         
         // Get table CRS
         $stm = $pdo->query("SELECT Find_SRID('{$this->postgis_schema}','{$this->postgis_table}', '{$this->postgis_field}') as srid");

@@ -95,6 +95,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['aut
     Route::get('/layers/{layer}/delete/{filename}', 'LayerController@deleteIconImage');
     Route::post('/layers/import/csv/{layer}', 'LayerController@importCSV');
     Route::post('/layers/geopackage_upload', 'LayerController@getGeoPackageInfo');
+    Route::post('/layers/postgis/schema/list', 'LayerController@getPostgisSchemaNames');
+    Route::post('/layers/postgis/table/list/{schemaname}', 'LayerController@getPostgisTableNames');
+    Route::post('/layers/postgis/column/list/{schemaname}/{tablename}', 'LayerController@getPostgisColumnNames');
     
     // Content
     Route::get('/contents', 'ContentController@json');
