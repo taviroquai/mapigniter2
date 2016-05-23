@@ -343,8 +343,7 @@ function ($http, ol, proj4, Buffer, wkx, c) {
         addLayerProjection(item.layer);
         
         function loadFeatures(url) {
-            url = config.proxy + '/' + btoa(url);
-            $http.get(url)
+            $http.post(config.proxy, {url: btoa(url)})
             .success(function (response) {                
                 features = format.readFeatures(response, {
                     dataProjection: 'EPSG:' + item.layer.projection.srid,
@@ -491,7 +490,8 @@ function ($http, ol, proj4, Buffer, wkx, c) {
                     console & console.warn('Not supported GeoJSON type');
                 }
 
-                // If geometry is string assume WKB hexadecimal and convert to GeoJSON using nodes modules Buffer and wkx
+                // If geometry is string assume WKB hexadecimal and convert to GeoJSON 
+                // using nodes modules Buffer and wkx
                 if (r.features.length && (typeof r.features[0].geometry === 'string')) {
                     angular.forEach(r.features, function (f, i) {
                         wkb = new Buffer(f.geometry, 'hex');

@@ -2,6 +2,8 @@
 
 use App\Content;
 use App\Layer;
+use App\GeoPackage;
+use App\Postgis;
 
 class LayerController extends AdminController
 {
@@ -109,9 +111,6 @@ class LayerController extends AdminController
                 }
                 break;
             case 'geopackage':
-                if (empty($input['id'])) {
-                    $rules['geopackage_filename_0'] = 'required';
-                }
                 $rules['geopackage_table'] = 'required';
                 $rules['geopackage_fields'] = 'required';
                 break;
@@ -145,6 +144,9 @@ class LayerController extends AdminController
         }
         
         // Save changes
+        $input['wms_layers'] = implode(',', $input['wms_layers']);
+        $input['postgis_attributes'] = implode(',', $input['postgis_attributes']);
+        $input['geopackage_fields'] = implode(',', $input['geopackage_fields']);
         $layer->fill($input);
         $layer->save();
         
@@ -158,7 +160,7 @@ class LayerController extends AdminController
         }
         if ($layer->type === 'geopackage') {
             try {
-                $layer->saveGeoPackageFile(\Request::file('geopackage_filename_0'));
+                $layer->saveGeoPackageFile();
             } catch (\PDOException $e) {
                 return response()->json(['errors' => ['geopackage_filename_0_error' => [$e->getMessage()]]]);
             } catch (\Exception $e) {
@@ -166,9 +168,9 @@ class LayerController extends AdminController
             }
         }
         
-        if ($layer->type === 'postgis') {
+        if ($layer->type === 'postgis' && !empty($input['postgis_pass'])) {
             try {
-                $layer->savePostgisFile();
+                $layer->savePostgisFile($layer->postgis_user, $input['postgis_pass']);
             } catch (\PDOException $e) {
                 return response()->json(['errors' => ['postgis_error' => [$e->getMessage()]]]);
             } catch (\Exception $e) {
@@ -336,5 +338,74 @@ class LayerController extends AdminController
         
         //Response
         return response()->json(['success' => false]);
+    }
+    
+    /**
+     * Get GeoPackage info
+     * 
+     * @return \Illiminate\Http\JsonResponse
+     */
+    public function getGeoPackageInfo()
+    {
+        try {
+            
+            // Process geopackage upload
+            $file = \Request::file('geopackage_filename');
+            $filename = $file->getClientOriginalName();
+            $file->move(public_path(\Auth::user()->getStoragePath()), $filename);
+        
+            // Make connection
+            $filename = public_path(\Auth::user()->getStoragePath().'/'. $filename);
+            $geopackage = new GeoPackage($filename);
+            $geopackage->validate();
+
+            // Response
+            return response()->json(['success' => true, 'result' => $geopackage->getInfo()]);
+            
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+    
+    /**
+     * Get postgis schema names
+     * 
+     * @return string
+     */
+    public function getPostgisSchemaNames()
+    {
+        $params = \Input::except('_token');
+        $postgis = new Postgis($params['postgis_host'], $params['postgis_dbname'], $params['postgis_port']);
+        $postgis->connect($params['postgis_user'], $params['postgis_pass']);
+        $result = $postgis->getSchemaNames();
+        return response()->json(['success' => true, 'result' => $result]);
+    }
+    
+    /**
+     * Get postgis table names
+     * 
+     * @return string
+     */
+    public function getPostgisTableNames($schemaname)
+    {
+        $params = \Input::except('_token');
+        $postgis = new Postgis($params['postgis_host'], $params['postgis_dbname'], $params['postgis_port']);
+        $postgis->connect($params['postgis_user'], $params['postgis_pass']);
+        $result = $postgis->getTableNames($schemaname);
+        return response()->json(['success' => true, 'result' => $result]);
+    }
+    
+    /**
+     * Get postgis column names
+     * 
+     * @return string
+     */
+    public function getPostgisColumnNames($schemaname, $tablename)
+    {
+        $params = \Input::except('_token');
+        $postgis = new Postgis($params['postgis_host'], $params['postgis_dbname'], $params['postgis_port']);
+        $postgis->connect($params['postgis_user'], $params['postgis_pass']);
+        $result = $postgis->getColumnNames($schemaname, $tablename);
+        return response()->json(['success' => true, 'result' => $result]);
     }
 }

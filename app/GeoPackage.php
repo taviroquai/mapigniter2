@@ -371,4 +371,27 @@ class GeoPackage
         
         return [$header, $wkb];
     }
+    
+    /**
+     * Get GeoPackage info
+     * 
+     * @return array
+     */
+    public function getInfo()
+    {
+        // Get tables
+        $stm = $this->pdo->query("SELECT * FROM gpkg_contents WHERE data_type = 'features'");
+        $stm->execute();
+        $tables = $stm->fetchAll(\PDO::FETCH_OBJ);
+        
+        // Get table feature id column
+        foreach($tables as &$item) {
+            $stm = $this->pdo->query("SELECT * FROM gpkg_data_columns WHERE table_name = '{$item->table_name}'");
+            $stm->execute();
+            $item->columns = $stm->fetchAll(\PDO::FETCH_OBJ);
+        }
+        
+        // Return info
+        return ['tables' => $tables];
+    }
 }

@@ -59,24 +59,21 @@ class MapController extends BaseController
     
     /**
      * Forward HTTP request
-     * @param type $url
      */
-    public function proxyRequest($url)
+    public function proxyRequest()
     {
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
 
-        $url = base64_decode($url);
-
+        $url = base64_decode(\Input::get('url'));
+        
         // Return not-allowed if is no OWS request
         if (
             !strpos($url, strtoupper('SERVICE')) 
             || !strpos($url, strtoupper('REQUEST'))
         ) {
-            die('Invalid request');
+            abort(400, 'Bad Request');
         }
-        
-        //echo $url; die();
 
         // Make request
         $ch = curl_init($url);

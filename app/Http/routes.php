@@ -34,7 +34,7 @@ Route::get('/idiom/{idiom}', 'IdiomController@setIdiom');
 // WebGIS
 Route::get('/maps/{map}', 'MapController@getMap');
 Route::get('/maps/{map}/config', 'MapController@getConfig');
-Route::get('/proxy/{url}', 'MapController@proxyRequest');
+Route::post('/proxy', 'MapController@proxyRequest');
 
 // Auth routes
 Route::get('auth/login', 'Auth\AuthController@getLogin');
@@ -94,6 +94,10 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['aut
     Route::post('/layers/upload/{layer}', 'LayerController@upload');
     Route::get('/layers/{layer}/delete/{filename}', 'LayerController@deleteIconImage');
     Route::post('/layers/import/csv/{layer}', 'LayerController@importCSV');
+    Route::post('/layers/geopackage_upload', 'LayerController@getGeoPackageInfo');
+    Route::post('/layers/postgis/schema/list', 'LayerController@getPostgisSchemaNames');
+    Route::post('/layers/postgis/table/list/{schemaname}', 'LayerController@getPostgisTableNames');
+    Route::post('/layers/postgis/column/list/{schemaname}/{tablename}', 'LayerController@getPostgisColumnNames');
     
     // Content
     Route::get('/contents', 'ContentController@json');

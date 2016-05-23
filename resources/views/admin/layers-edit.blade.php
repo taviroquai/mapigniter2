@@ -163,7 +163,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="wms_version">{{ trans('backoffice.wms_version') }}</label>
                                     <select class="form-control" name="wms_version" id="wms_version">
@@ -174,7 +174,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="wms_tiled">{{ trans('backoffice.wms_tiled') }}</label>
                                     <select class="form-control" name="wms_tiled" id="wms_tiled">
@@ -185,14 +185,23 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Load</label>
+                                    <div class="clearfix"></div>
+                                    <button class="btn btn-info getwmscapabilities">Get Capabilities</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="wms_layers">{{ trans('backoffice.wms_layers') }}</label>
-                                    <input class="form-control" type="text" name="wms_layers"
-                                        placeholder=""
-                                        value="{{ $layer->wms_layers }}">
+                                    <select class="form-control" name="wms_layers[]" multiple="multiple">
+                                        @foreach(explode(',', $layer->wms_layers) as $option)
+                                        <option value="{{ $option }}" selected>{{ $option }}</option>
+                                        @endforeach
+                                    </select>
                                     <span class="help-block alert-danger v-error-wms_layers"></span>
                                 </div>
                             </div>
@@ -201,7 +210,7 @@
                     
                     <div id="wfs_options">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="wfs_url">{{ trans('backoffice.wfs_url') }}</label>
                                     <input class="form-control" type="text" name="wfs_url"
@@ -214,11 +223,18 @@
                                 <div class="form-group">
                                     <label for="wfs_version">{{ trans('backoffice.wfs_version') }}</label>
                                     <select class="form-control" name="wfs_version" id="wfs_version">
-                                        @foreach(App\Layer::wmsVersionOptions() as $k => $label)
+                                        @foreach(App\Layer::wfsVersionOptions() as $k => $label)
                                         <option value="{{ $k }}"
                                             @if($k === $layer->wfs_version) selected @endif>{{ $label }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Load</label>
+                                    <div class="clearfix"></div>
+                                    <button class="btn btn-info getwfscapabilities">Get Capabilities</button>
                                 </div>
                             </div>
                         </div>
@@ -226,10 +242,11 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="wfs_typename">{{ trans('backoffice.wfs_typename') }}</label>
-                                    <input class="form-control" type="text" name="wfs_typename"
-                                        placeholder=""
-                                        value="{{ $layer->wfs_typename }}">
+                                    <select class="form-control" name="wfs_typename">
+                                        <option value="{{ $layer->wfs_typename }}" selected>{{ $layer->wfs_typename }}</option>
+                                    </select>
                                     <span class="help-block alert-danger v-error-wfs_typename"></span>
+                                    <span class="help-block wfs-attributes"></span>
                                 </div>
                             </div>
                         </div>
@@ -243,6 +260,7 @@
                                 @endif
                                 <input class="form-control" type="file" name="gpx_filename" id="gpx_filename" value="">
                                 <span class="help-block alert-danger v-error-gpx_filename_0"></span>
+                                <span class="help-block gpx-attributes"></span>
                             </div>
                         </div>
                     </div>
@@ -255,6 +273,7 @@
                                 @endif
                                 <input class="form-control" type="file" name="kml_filename" id="kml_filename" value="">
                                 <span class="help-block alert-danger v-error-kml_filename_0"></span>
+                                <span class="help-block kml-attributes"></span>
                             </div>
                         </div>
                     </div>
@@ -312,7 +331,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_host">{{ trans('backoffice.postgis_host') }}</label>
                                     <input class="form-control" type="text" name="postgis_host"
@@ -321,36 +340,16 @@
                                     <span class="help-block alert-danger v-error-postgis_host"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_port">{{ trans('backoffice.postgis_port') }}</label>
                                     <input class="form-control" type="text" name="postgis_port"
                                         placeholder=""
-                                        value="{{ $layer->postgis_port }}">
+                                        value="{{ empty($layer->postgis_port) ? 5432 : $layer->postgis_port }}">
                                     <span class="help-block alert-danger v-error-postgis_port"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="postgis_user">{{ trans('backoffice.postgis_user') }}</label>
-                                    <input class="form-control" type="text" name="postgis_user"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_user }}">
-                                    <span class="help-block alert-danger v-error-postgis_user"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="postgis_pass">{{ trans('backoffice.postgis_pass') }}</label>
-                                    <input class="form-control" type="password" name="postgis_pass"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_pass }}">
-                                    <span class="help-block alert-danger v-error-postgis_pass"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_dbname">{{ trans('backoffice.postgis_dbname') }}</label>
                                     <input class="form-control" type="text" name="postgis_dbname"
@@ -359,30 +358,65 @@
                                     <span class="help-block alert-danger v-error-postgis_dbname"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="postgis_user">{{ trans('backoffice.postgis_user') }}</label>
+                                    <input class="form-control" type="text" name="postgis_user"
+                                        placeholder=""
+                                        value="{{ $layer->postgis_user }}">
+                                    <span class="help-block alert-danger v-error-postgis_user"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="postgis_pass">{{ trans('backoffice.postgis_pass') }}</label>
+                                    <input class="form-control" type="password" name="postgis_pass"
+                                        placeholder=""
+                                        value="">
+                                    <span class="help-block alert-danger v-error-postgis_pass"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>{{ trans('backoffice.postgis_connect') }}</label>
+                                    <div class="clearfix"></div>
+                                    <button class="btn btn-info getpostgisschemas">{{ trans('backoffice.postgis_connect') }}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_schema">{{ trans('backoffice.postgis_schema') }}</label>
-                                    <input class="form-control" type="text" name="postgis_schema"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_schema }}">
+                                    <select class="form-control" name="postgis_schema">
+                                        @if ($layer->postgis_schema)
+                                        <option value="{{ $layer->postgis_schema }}">{{ $layer->postgis_schema }}</option>
+                                        @endif
+                                    </select>
                                     <span class="help-block alert-danger v-error-postgis_schema"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_table">{{ trans('backoffice.postgis_table') }}</label>
-                                    <input class="form-control" type="text" name="postgis_table"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_table }}">
+                                    <select class="form-control" name="postgis_table">
+                                        @if ($layer->postgis_table)
+                                        <option value="{{ $layer->postgis_table }}">{{ $layer->postgis_table }}</option>
+                                        @endif
+                                    </select>
                                     <span class="help-block alert-danger v-error-postgis_table"></span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="postgis_field">{{ trans('backoffice.postgis_field') }}</label>
-                                    <input class="form-control" type="text" name="postgis_field"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_field }}">
+                                    <select class="form-control" name="postgis_field">
+                                        @if ($layer->postgis_field)
+                                        <option value="{{ $layer->postgis_field }}">{{ $layer->postgis_field }}</option>
+                                        @endif
+                                    </select>
                                     <span class="help-block alert-danger v-error-postgis_field"></span>
                                 </div>
                             </div>
@@ -391,9 +425,13 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="postgis_attributes">{{ trans('backoffice.postgis_attributes') }}</label>
-                                    <input class="form-control" type="text" name="postgis_attributes"
-                                        placeholder=""
-                                        value="{{ $layer->postgis_attributes }}">
+                                    <select class="form-control" name="postgis_attributes[]" multiple="multiple">
+                                        @if ($layer->postgis_attributes)
+                                        @foreach(explode(',', $layer->postgis_attributes) as $attr)
+                                        <option selected value="{{ $attr }}">{{ $attr }}</option>
+                                        @endforeach
+                                        @endif
+                                    </select>
                                     <span class="help-block alert-danger v-error-postgis_attributes"></span>
                                 </div>
                             </div>
@@ -458,18 +496,20 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="geopackage_table">{{ trans('backoffice.geopackage_table') }}</label>
-                                <input class="form-control" type="text" name="geopackage_table"
-                                    placeholder=""
-                                    value="{{ $layer->geopackage_table }}">
+                                <select class="form-control" name="geopackage_table">
+                                    <option value="{{ $layer->geopackage_table }}" selected>{{ $layer->geopackage_table }}</option>
+                                </select>
                                 <span class="help-block alert-danger v-error-geopackage_table"></span>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="geopackage_fields">{{ trans('backoffice.geopackage_fields') }}</label>
-                                <input class="form-control" type="text" name="geopackage_fields"
-                                    placeholder=""
-                                    value="{{ $layer->geopackage_fields }}">
+                                <select class="form-control" name="geopackage_fields[]" multiple="multiple">
+                                    @foreach(explode(',', $layer->geopackage_fields) as $option)
+                                    <option value="{{ $option }}" selected>{{ $option }}</option>
+                                    @endforeach
+                                </select>
                                 <span class="help-block alert-danger v-error-geopackage_fields"></span>
                             </div>
                         </div>
@@ -700,7 +740,21 @@
 <script src="{{ asset('assets/js/fileinput.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/bootstrap-colorpicker.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/js/OGCService.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
+    
+    // tables options
+    var tables = [];
+    var attributes = [];
+    
+    function updateSearchablePoperties() {
+        $('[name="search[]"]').empty();
+        $.each(attributes, function (i, item) {
+            $('[name="search[]"').append(
+                '<option value="' + item + '">' + item + '</option>'
+            );
+        });
+    }
     
     function hideTypeOptions() {
         $('#projection_options').hide();
@@ -739,20 +793,138 @@
         showTypeOptions($(this).val());
     });
     
-    $("#gpx_filename").fileinput({
+    var gpx_uploader = $("#gpx_filename").fileinput({
         showCaption: false,
         overwriteInitial: true,
         showUpload: false,
         showRemove: false,
-		maxFileCount: 1
+		maxFileCount: 1,
+        allowedFileExtensions: ["gpx"]
+    });
+    gpx_uploader.on('filebatchselected', function(event, files) {
+        
+        var reader = new FileReader();
+        var format = new ol.format.GPX();
+        var result = [];
+        var attrs;
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                result = format.readFeatures(e.target.result);
+                if (result.length) {
+                    attributes = [];
+                    $.each(result, function (i, item) {
+                        attrs = Object.keys(item.getProperties());
+                        $.each(attrs, function (j, att) {
+                            if (attributes.indexOf(att) === -1) attributes.push(att);
+                        });
+                    });
+                    attributes.splice(attributes.indexOf('geometry'), 1);
+                    $('.gpx-attributes').text("{{ trans('backoffice.attributes') }}: " + (attributes.join(',')));
+                } else {
+                    $('.gpx-attributes').text('');
+                }
+            };
+        })(files[0]);
+
+        // Read in the image file as a data URL.
+        reader.readAsBinaryString(files[0]);
     });
     
-    $("#kml_filename").fileinput({
+    $('.getwmscapabilities').on('click', function (e) {
+        e.preventDefault();
+        
+        var url = $('[name="wms_url"]').val();
+        var version = $('[name="wms_version"]').val();
+        var service = new $.fn.OGCService(url);
+        
+        // Call WMS GetCapabilities
+        service.getCapabilities('WMS', version, function (result) {
+            $('[name="wms_layers[]"').empty();
+            $.each(result, function (i, group) {
+                $.each(group.layers, function (i, l) {
+                    $('[name="wms_layers[]"').append(
+                        '<option value="' + l.name + '">' + l.title + '</option>'
+                    );
+                });
+            });
+        });
+    });
+    
+    $('.getwfscapabilities').on('click', function (e) {
+        e.preventDefault();
+        
+        var url = $('[name="wfs_url"]').val();
+        var version = $('[name="wfs_version"]').val();
+        var service = new $.fn.OGCService(url);
+        
+        // Call WFS GetCapabilities
+        service.getCapabilities('WFS', version, function (result) {
+            $('[name="wfs_typename"').empty();
+            tables = [];
+            $.each(result, function (i, f) {
+                $('[name="wfs_typename"').append(
+                    '<option value="' + f.name + '">' + f.title + '</option>'
+                );
+                tables.push(f.name);
+            });
+            $('[name="wfs_typename"]').trigger('change');
+        });
+    });
+    
+    $('[name="wfs_typename"]').change('click', function (e) {
+        e.preventDefault();
+        
+        var url = $('[name="wfs_url"]').val();
+        var version = $('[name="wfs_version"]').val();
+        var typename = $('[name="wfs_typename"]').val();
+        var service = new $.fn.OGCService(url);
+        
+        // Call WFS GetCapabilities
+        service.getWFSTypenameAttributes(version, typename, {'MAXFEATURES': 1}, function (result) {
+            if (result.length) {
+                delete result[0]['bounds'];
+                delete result[0]['geometry'];
+                attributes = Object.keys(result[0]);
+                $('.wfs-attributes').text("{{ trans('backoffice.attributes') }}: " + (Object.keys(result[0]).join(',')));
+            } else {
+                $('.wfs-attributes').text('');
+            }
+        });
+    });
+    
+    var kml_uploader = $("#kml_filename").fileinput({
         showCaption: false,
         overwriteInitial: true,
         showUpload: false,
         showRemove: false,
-		maxFileCount: 1
+		maxFileCount: 1,
+        allowedFileExtensions: ["kml"]
+    });
+    kml_uploader.on('filebatchselected', function(event, files) {
+        
+        var reader = new FileReader();
+        var format = new ol.format.KML();
+        var result = [];
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                result = format.readFeatures(e.target.result);
+                if (result.length) {
+                    attributes = Object.keys(result[0].getProperties());
+                    attributes.splice(attributes.indexOf('geometry'), 1);
+                    attributes.splice(attributes.indexOf('styleUrl'), 1);
+                    $('.kml-attributes').text("{{ trans('backoffice.attributes') }}: " + (attributes.join(',')));
+                } else {
+                    $('.kml-attributes').text('');
+                }
+            };
+        })(files[0]);
+
+        // Read in the image file as a data URL.
+        reader.readAsBinaryString(files[0]);
     });
     
     $("#shapefile_filename").fileinput({
@@ -765,14 +937,127 @@
         showPreview: false
     });
     
-    $("#geopackage_filename").fileinput({
+    $('[name="postgis_schema"]').on('change', function () {
+        var form = $(this).closest('form');
+        var schemaname = $('[name="postgis_schema"]').val();
+        $.post("{{ url('admin/layers/postgis/table/list') }}/" + schemaname, form.serialize(), function (r) {
+            if (r.success) {
+                $('[name="postgis_table"]').empty();
+                tables = [];
+                $.each(r.result, function (i, table) {
+                    $('[name="postgis_table"]').append(
+                        '<option value="' + table.name + '">' + table.name + '</option>'
+                    );
+                    tables.push(table.name);
+                });
+                $('[name="postgis_table"]').trigger('change');
+            }
+        });
+    });
+    
+    $('[name="postgis_table"]').on('change', function () {
+        var form = $(this).closest('form');
+        var schemaname = $('[name="postgis_schema"]').val();
+        var tablename = $('[name="postgis_table"]').val();
+        $.post("{{ url('admin/layers/postgis/column/list') }}/" + schemaname + '/' + tablename, form.serialize(), function (r) {
+            if (r.success) {
+                attributes = [];
+                $('[name="postgis_field"]').empty();
+                $.each(r.result, function (i, column) {
+                    $('[name="postgis_field"]').append(
+                        '<option value="' + column.name + '">' + column.name + '</option>'
+                    );
+                    attributes.push(column.name);
+                });
+                $('[name="postgis_attributes[]"]').empty();
+                $.each(r.result, function (i, schema) {
+                    $('[name="postgis_attributes[]"]').append(
+                        '<option value="' + schema.name + '">' + schema.name + '</option>'
+                    );
+                });
+            }
+        });
+    });
+    
+    $('.getpostgisschemas').on('click', function (e) {
+        e.preventDefault();
+        
+        $('.v-error-postgis_user').text('');
+        $('.v-error-postgis_pass').text('');
+        if ($('[name="postgis_user"').val() === '') {
+            $('.v-error-postgis_user').text("{{ trans('validation.required', ['attribute' => trans('backoffice.postgis_user')]) }}");
+        }
+        if ($('[name="postgis_pass"').val() === '') {
+            $('.v-error-postgis_pass').text("{{ trans('validation.required', ['attribute' => trans('backoffice.postgis_pass')]) }}");
+        }
+        if ($('[name="postgis_user"').val() === '' || $('[name="postgis_pass"').val() === '') return;
+        
+        var form = $(this).closest('form');
+        $.post("{{ url('admin/layers/postgis/schema/list') }}", form.serialize(), function (r) {
+            if (r.success) {
+                $('[name="postgis_schema"]').empty();
+                $.each(r.result, function (i, schema) {
+                    $('[name="postgis_schema"]').append(
+                        '<option value="' + schema.name + '">' + schema.name + '</option>'
+                    );
+                });
+                $('[name="postgis_schema"]').trigger('change');
+            }
+        });
+    });
+    
+    var geopackage_uploader = $("#geopackage_filename").fileinput({
         showCaption: false,
         overwriteInitial: true,
         showUpload: false,
         showRemove: false,
 		maxFileCount: 1,
+        uploadUrl: "{{ url('admin/layers/geopackage_upload') }}",
         allowedFileExtensions: ['gpkg'],
-        showPreview: false
+        showPreview: false,
+        uploadExtraData: function() {
+            return {
+                '_token': $('[name="_token"]').val()
+            };
+        }
+    });
+    geopackage_uploader.on('filebatchselected', function(event, files) {
+        geopackage_uploader.fileinput('upload');
+    });
+    
+    // Populate fields options
+    $('[name="geopackage_table"').on('change', function () {
+        var selected = $(this).val();
+        $('[name="geopackage_fields[]"').empty();
+        attributes = [];
+        $.each(tables, function (i, item) {
+            if (item.table_name === selected) {
+                $.each(item.columns, function (i, column) {
+                    $('[name="geopackage_fields[]"').append(
+                        '<option value="' + column.column_name + '">' + column.column_name + '</option>'
+                    );
+                    attributes.push(column.column_name);
+                });
+            }
+        });
+    });
+    geopackage_uploader.on('filebatchuploadsuccess', function(event, data, previewId, index) {
+        var form = data.form, files = data.files, extra = data.extra,
+            response = data.response, reader = data.reader;
+        if (response.success) {
+            tables = response.result.tables;
+            
+            // Populate table options
+            $('[name="geopackage_table"').empty();
+            tables = [];
+            $.each(response.result.tables, function (i, item) {
+                $('[name="geopackage_table"').append(
+                    '<option value="' + item.table_name + '">' + item.table_name + '</option>'
+                );
+                tables.push(item.table_name);
+            });
+            $('[name="geopackage_table"').trigger('change');
+        }
     });
     
     $("#ol_style_static_icon").fileinput({

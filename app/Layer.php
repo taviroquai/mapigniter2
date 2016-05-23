@@ -43,7 +43,6 @@ class Layer extends Content
         'postgis_host',
         'postgis_port',
         'postgis_user',
-        'postgis_pass',
         'postgis_dbname',
         'postgis_schema',
         'postgis_table',
@@ -145,6 +144,14 @@ class Layer extends Content
         ];
     }
     
+    static function wfsVersionOptions()
+    {
+        return [
+            '1.0.0' => '1.0.0',
+            '1.1.0' => '1.1.0'
+        ];
+    }
+    
     /**
      * Save style icon image
      * 
@@ -228,11 +235,11 @@ class Layer extends Content
      * 
      * @return boolean
      */
-    public function savePostgisFile()
+    public function savePostgisFile($user, $pass)
     {
         // Make connection
         $dsn = "pgsql:host={$this->postgis_host};port={$this->postgis_port};dbname={$this->postgis_dbname}";
-        $pdo = new \PDO($dsn, $this->postgis_user, $this->postgis_pass);
+        $pdo = new \PDO($dsn, $user, $pass);
         
         // Get table CRS
         $stm = $pdo->query("SELECT Find_SRID('{$this->postgis_schema}','{$this->postgis_table}', '{$this->postgis_field}') as srid");
@@ -304,20 +311,23 @@ class Layer extends Content
     
     /**
      * Save geopackage file
-     * 
-     * @param null|File $file
      */
-    public function saveGeoPackageFile($file)
+    public function saveGeoPackageFile()
     {
         // Set PHP settings
         ini_set('memory_limit','512M');
         
-        // Save uploaded file
-        if ($file) {
-            $filename = 'geopackage.'.$file->getClientOriginalExtension();
-            $file->move($this->getPublicStoragePath(), $filename);
-            $this->geopackage_filename = $filename;
+        // Validate uploaded file
+        $files = glob(public_path(\Auth::user()->getStoragePath()).'/*.gpkg');
+        if (!empty($files)) {
+            copy($files[0], $this->getPublicStoragePath().'/geopackage.gpkg');
+            $this->geopackage_filename = 'geopackage.gpkg';
             $this->save();
+
+            // Clear temporary files
+            foreach($files as $item) {
+                unlink($item);
+            }
         }
         
         // Make connection
@@ -335,7 +345,7 @@ class Layer extends Content
         
         // Create JSON from GeoPackage table if does not exists
         $filename = $this->getPublicStoragePath() . '/geopackage.json';
-        if (!file_exists($filename) || $file) {
+        if (!file_exists($filename) || !empty($files)) {
             file_put_contents($filename, $geopackage->toGeoJSON(
                 $this->geopackage_table,
                 $this->geopackage_fields
