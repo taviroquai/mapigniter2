@@ -145,8 +145,10 @@ class LayerController extends AdminController
         
         // Save changes
         $input['wms_layers'] = implode(',', $input['wms_layers']);
-        $input['postgis_attributes'] = implode(',', $input['postgis_attributes']);
-        $input['geopackage_fields'] = implode(',', $input['geopackage_fields']);
+        $input['postgis_attributes'] = empty($input['postgis_attributes']) ? '' 
+            : implode(',', $input['postgis_attributes']);
+        $input['geopackage_fields'] = empty($input['geopackage_fields']) ? '' 
+            : implode(',', $input['geopackage_fields']);
         $layer->fill($input);
         $layer->save();
         
@@ -162,9 +164,9 @@ class LayerController extends AdminController
             try {
                 $layer->saveGeoPackageFile();
             } catch (\PDOException $e) {
-                return response()->json(['errors' => ['geopackage_filename_0_error' => [$e->getMessage()]]]);
+                return response()->json(['errors' => ['geopackage_filename_0' => [$e->getMessage()]]]);
             } catch (\Exception $e) {
-                return response()->json(['errors' => ['geopackage_filename_0_error' => [$e->getMessage()]]]);
+                return response()->json(['errors' => ['geopackage_filename_0' => [$e->getMessage()]]]);
             }
         }
         

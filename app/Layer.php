@@ -317,6 +317,11 @@ class Layer extends Content
         // Set PHP settings
         ini_set('memory_limit','512M');
         
+        // Create directories
+        if (!is_dir($this->getPublicStoragePath())) {
+            mkdir($this->getPublicStoragePath(), 0777, true);
+        }
+        
         // Validate uploaded file
         $files = glob(public_path(\Auth::user()->getStoragePath()).'/*.gpkg');
         if (!empty($files)) {
@@ -337,11 +342,6 @@ class Layer extends Content
         // Save SRID
         $this->projection_id = $geopackage->getSRID($this->geopackage_table);
         $this->save();
-        
-        // Create directory
-        if (!is_dir($this->getPublicStoragePath())) {
-            mkdir($this->getPublicStoragePath(), 0777, true);
-        }
         
         // Create JSON from GeoPackage table if does not exists
         $filename = $this->getPublicStoragePath() . '/geopackage.json';

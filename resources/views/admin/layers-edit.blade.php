@@ -86,7 +86,7 @@
                         </div>
                     </div>
                     
-                    <div class="row" id="projection_options">
+                    <div class="row" id="projection_options" style="display: none;">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="srid">{{ trans('backoffice.projection') }}</label>
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     
-                    <div class="row" id="bing_options">
+                    <div class="row" id="bing_options" style="display: none;">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="bing_key">{{ trans('backoffice.bing_key') }}</label>
@@ -123,7 +123,7 @@
                         </div>
                     </div>
                     
-                    <div class="row" id="mapquest_options">
+                    <div class="row" id="mapquest_options" style="display: none;">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="mapquest_layer">{{ trans('backoffice.mapquest_layer') }}</label>
@@ -137,7 +137,7 @@
                         </div>
                     </div>
                     
-                    <div id="wms_options">
+                    <div id="wms_options" style="display: none;">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -208,7 +208,7 @@
                         </div>
                     </div>
                     
-                    <div id="wfs_options">
+                    <div id="wfs_options" style="display: none;">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -251,7 +251,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" id="gpx_options">
+                    <div class="row" id="gpx_options" style="display: none;">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="gpx_filename">{{ trans('backoffice.gpx_filename') }}</label>
@@ -264,7 +264,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" id="kml_options">
+                    <div class="row" id="kml_options" style="display: none;">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="kml_filename">{{ trans('backoffice.kml_filename') }}</label>
@@ -277,7 +277,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="shapefile_options">
+                    <div id="shapefile_options" style="display: none;">
                         @if ($layer->shapefile_wmsurl)
                         <div class="row">
                             <div class="col-md-6">
@@ -324,7 +324,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="postgis_options">
+                    <div id="postgis_options" style="display: none;">
                         <div class="row">
                             <div class="col-md-12">
                                 <span class="help-block alert-danger v-error-postgis_error"></span>
@@ -437,7 +437,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="geojson_options">
+                    <div id="geojson_options" style="display: none;">
                         @if ($layer->id)
                         <div class="row">
                             <div class="col-md-6">
@@ -482,7 +482,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" id="geopackage_options">
+                    <div class="row" id="geopackage_options" style="display: none;">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="geopackage_filename">{{ trans('backoffice.geopackage_filename') }}</label>
@@ -514,7 +514,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="vector_options">
+                    <div id="vector_options" style="display: none;">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -541,7 +541,7 @@
                             </div>
                         </div>
                     </div>
-                    <fieldset id="style_options">
+                    <fieldset id="style_options" style="display: none;">
                         <legend>{{ trans('backoffice.static_style') }}</legend>
                         <div class="row">
                             <div class="col-md-3">
@@ -775,16 +775,16 @@
     
     function showTypeOptions(value) {
         hideTypeOptions();
-        $('#' + value + '_options').show(200);
+        $('#' + value + '_options').show();
         if (value === 'wfs' || value === 'wms' || value === 'shapefile') {
-            $('#projection_options').show(200);
+            $('#projection_options').show();
         }
         if (value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
-            $('#style_options').show(200);
+            $('#style_options').show();
         }
         if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
-            $('#vector_options').show(200);
-            $('.vector-warning').show('slow');
+            $('#vector_options').show();
+            $('.vector-warning').show();
         }
     }
     
