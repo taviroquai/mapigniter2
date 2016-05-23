@@ -1006,6 +1006,7 @@
         });
     });
     
+    var geopackage_tables = [];
     var geopackage_uploader = $("#geopackage_filename").fileinput({
         showCaption: false,
         overwriteInitial: true,
@@ -1030,7 +1031,7 @@
         var selected = $(this).val();
         $('[name="geopackage_fields[]"').empty();
         attributes = [];
-        $.each(tables, function (i, item) {
+        $.each(geopackage_tables, function (i, item) {
             if (item.table_name === selected) {
                 $.each(item.columns, function (i, column) {
                     $('[name="geopackage_fields[]"').append(
@@ -1045,7 +1046,7 @@
         var form = data.form, files = data.files, extra = data.extra,
             response = data.response, reader = data.reader;
         if (response.success) {
-            tables = response.result.tables;
+            geopackage_tables = response.result.tables;
             
             // Populate table options
             $('[name="geopackage_table"').empty();
