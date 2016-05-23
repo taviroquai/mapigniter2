@@ -22,7 +22,7 @@ MapIgniter2 supports several data formats:
     2. For Shapefile, choose Shapefile (requires MapServer); a WMS/WFS will be created  
     3. For KML choose KML  
     4. For GPX choose GPX  
-    5. For GeoPackage choose GeoPackage; data will be cached into a GeoJSON file  
+    5. For GeoPackage choose GeoPackage; data will be cached into a GeoJSON file using creof/wkb-parser  
     6. For Postgis choose Postgis; data will be cached into a GeoJSON file  
     7. For data in GeoServer/MapServer choose WMS or WFS  
 
