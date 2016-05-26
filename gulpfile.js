@@ -10,7 +10,33 @@ var elixir = require('laravel-elixir');
  | file for our application, as well as publishing vendor resources.
  |
  */
+elixir.config.assetsPath = 'public/assets/'; //trailing slash required.
 
 elixir(function(mix) {
-    mix.sass('app.scss');
+    //mix.sass('app.scss');
+    
+    mix.styles([
+        'bootstrap.min.css',
+        'font-awesome.min.css',
+        'ol.css',
+        'map.css'
+    ], 'public/assets/css/production_map.css');
+    
+    mix.scripts([
+        'jquery.min.js',
+        'bootstrap.min.js',
+        'buffer.js',
+        'wkx.js',
+        'proj4.js',
+        'ol-debug.js',
+        'angular.min.js',
+        'ngMap.js',
+        'ngIdiom.js',
+        'ngFeatureInfo.js',
+        'ngLayerSwitcher.js',
+        'ngSearchResults.js',
+        'ngNavigationToolbar.js',
+        'ngPrint.js'
+    ], 'public/assets/js/production_map.js');
+    
 });

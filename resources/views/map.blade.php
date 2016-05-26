@@ -14,10 +14,14 @@
     @show
 
     <!-- Bootstrap core CSS -->
+    @if(env('APP_ENV') === 'local')
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" media="screen,projection">
     <link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/ol.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/map.css') }}" rel="stylesheet" media="screen,projection">
+    @else
+    <link href="{{ asset('assets/css/production_map.css') }}" rel="stylesheet" media="screen,projection">
+    @endif
     <link href="{{ asset('assets/css/map_print.css') }}" rel="stylesheet" media="print">
     <link href="{{ asset('storage/style.css') }}" rel="stylesheet">
 
@@ -286,10 +290,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    @if(env('APP_ENV') === 'local')
     <script src="{{ asset('assets/js/jquery.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script>
-    
-    @section('script')
     <script src="{{ asset('assets/js/buffer.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/wkx.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/proj4.js') }}"  type="text/javascript"></script>
@@ -302,6 +305,11 @@
     <script src="{{ asset('assets/js/ngSearchResults.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngNavigationToolbar.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngPrint.js') }}" type="text/javascript"></script>
+    @else
+    <script src="{{ asset('assets/js/production_map.js') }}" type="text/javascript"></script>
+    @endif
+    
+    @section('script')
     <script type="text/javascript">
         
         angular.module('ngMap').value('config', { 
