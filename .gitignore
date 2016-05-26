@@ -2,4 +2,5 @@
 /vendor
 /config/local
 /public/storage
+/node_modules
 .env
