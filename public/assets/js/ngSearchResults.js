@@ -1,7 +1,7 @@
     
 angular.module('ngMap')
-.controller('ngSearchResults', ['$scope', 'ngMapBuilder',
-function ($scope, ngMapBuilder) {
+.controller('ngSearchResults', ['$scope', 'ngMapBuilder', 'lunr', 
+function ($scope, ngMapBuilder, lunr) {
     
     /**
      * Scope models
@@ -11,32 +11,66 @@ function ($scope, ngMapBuilder) {
     $scope.hasResults = false;
     
     /**
+     * Items store
+     * 
+     * @type {Array}
+     */
+    var store = [];
+    
+    /**
+     * Instantiate lunr text search
+     * 
+     * @type @call;lunr
+     */
+    var index = lunr(function () {
+        this.field('label', {boost: 10});
+        this.ref('id');
+    });
+    
+    /**
+     * Build text search index
+     */
+    function buildSearchIndex()
+    {
+        var item;
+        
+        ngMapBuilder.getMap().getLayers().forEach(function(layer) {
+            if (layer instanceof ol.layer.Vector && layer.get('search')) {
+                $.each(layer.get('search'), function (i, attribute) {
+                    $.each(layer.getSource().getFeatures(), function(i, feature) {
+                        item = {
+                            id: layer.get('content').seo_slug + '.' + i,
+                            label: feature.get(attribute),
+                            layer: layer,
+                            name: layer.get('content').title,
+                            attribute: attribute,
+                            index: i,
+                            feature: feature
+                        };
+                        store[item.id] = item;
+                        index.add({id: item.id, label: item.label});
+                    });
+                });
+            }
+        });
+    }
+    
+    /**
      * Search features
-     * TODO: needs more work
      * 
      * @returns {undefined}
      */
     var search = function () {
         
-        var result;
-        ngMapBuilder.getMap().getLayers().forEach(function(layer) {
-            if (layer instanceof ol.layer.Vector && layer.get('search')) {
-                $.each(layer.get('search'), function (i, attribute) {
-                    var regex = new RegExp($scope.query, "i");
-                    $.each(layer.getSource().getFeatures(), function(i, feature) {
-                        if (feature.get(attribute) && regex.test(feature.get(attribute), 'i')) {
-                            result = {
-                                label: feature.get(attribute),
-                                layer: layer.get('content').title,
-                                name: layer.get('content').seo_slug,
-                                index: i,
-                                feature: feature
-                            };
-                            $scope.results.push(result);
-                        }
-                    });
-                });
-            }
+        // Lazy loading to build search index
+        if (store.length === 0) {
+            buildSearchIndex();
+        }
+        
+        // Search index
+        var results = index.search($scope.query);
+        $.each(results, function (i, item) {
+            $scope.results.push(store[item.ref]);
         });
         
         // Set has results

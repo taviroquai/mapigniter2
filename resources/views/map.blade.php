@@ -250,7 +250,7 @@
                             <li ng-repeat="item in results">
                                 <a ng-click="locateItem(item)" class="btn btn-default btn-xs">
                                     <span ng-bind="item.label"></span> 
-                                    (<span ng-bind="item.layer"></span>)
+                                    (<span ng-bind="item.name"></span>)
                                 </a>
                             </li>
                         </ul>
@@ -297,6 +297,7 @@
     <script src="{{ asset('assets/js/wkx.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/proj4.js') }}"  type="text/javascript"></script>
     <script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/lunr.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/angular.min.js') }}"  type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngMap.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngIdiom.js') }}" type="text/javascript"></script>
