@@ -25,10 +25,9 @@ elixir(function(mix) {
     mix.scripts([
         'jquery.min.js',
         'bootstrap.min.js',
-        'buffer.js',
-        'wkx.js',
         'proj4.js',
         'ol-debug.js',
+        'lunr.min.js',
         'angular.min.js',
         'ngMap.js',
         'ngIdiom.js',

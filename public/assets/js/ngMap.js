@@ -32,12 +32,11 @@ function ($compileProvider) {
 
 angular.module('ngMap').service('ol', function () { return ol });
 angular.module('ngMap').service('proj4', function () { return proj4 });
-angular.module('ngMap').service('Buffer', function () { return require('buffer').Buffer; });
 angular.module('ngMap').service('lunr', function () { return lunr });
 
 angular.module('ngMap')
-.service('ngMapBuilder', ['$http', 'ol', 'proj4', 'Buffer', 'lunr', 'config',
-function ($http, ol, proj4, Buffer, wkx, c) {
+.service('ngMapBuilder', ['$http', 'ol', 'proj4', 'config',
+function ($http, ol, proj4, c) {
     
     var config = false;
     var extent = [];
