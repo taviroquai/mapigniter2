@@ -79,8 +79,8 @@ class Content extends Model
     static function getPublishedItems()
     {
         $items = Content::orWhere(function($query) {
-            $query->where('publish_start', '<', date('Y-m-d'));
-            $query->where('publish_end', '<', date('Y-m-d'));
+            $query->where('publish_start', '<=', date('Y-m-d'));
+            $query->where('publish_end', '>=', date('Y-m-d'));
         })
         ->orWhere(function($query) {
             $query->where('publish_start', '<', date('Y-m-d'));

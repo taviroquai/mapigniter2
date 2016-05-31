@@ -47,8 +47,8 @@ class Map extends Content
     {
         $items = Map::with(['content' => function ($query) {
             $query->orWhere(function($query) {
-                $query->where('publish_start', '<', date('Y-m-d'));
-                $query->where('publish_end', '<', date('Y-m-d'));
+                $query->where('publish_start', '<=', date('Y-m-d'));
+                $query->where('publish_end', '>=', date('Y-m-d'));
             })
             ->orWhere(function($query) {
                 $query->where('publish_start', '<', date('Y-m-d'));
