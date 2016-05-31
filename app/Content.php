@@ -228,25 +228,59 @@ class Content extends Model
      */
     public function copy(Content $target)
     {
-        // Copy picture
-        $target->seo_image = $this->seo_image;
+        // Create target folder
         if (!is_dir($target->getPublicStoragePath())) {
             mkdir ($target->getPublicStoragePath());
         }
-        copy($this->getPublicStoragePath().'/'.$this->seo_image, $target->getPublicStoragePath().'/'.$target->seo_image);
+        
+        // Copy picture
+        if ($this->seo_image) {
+            $target->seo_image = $this->seo_image;
+            copy(
+                $this->getPublicStoragePath().'/'.$this->seo_image, 
+                $target->getPublicStoragePath().'/'.$target->seo_image
+            );
+        }
+        
+        // Copy gallery
+        $images = $this->getGalleryImages();
+        if (count($images)) {
+            mkdir(public_path($target->getGalleryPath()));
+            foreach($images as $item) {
+                copy(
+                    public_path($this->getGalleryPath().'/'.basename($item)),
+                    public_path($target->getGalleryPath().'/'.basename($item))
+                );
+            }
+        }
+        
+        // Copy attachments
+        $attachments = $this->getAttachments();
+        if (count($attachments)) {
+            mkdir(public_path($target->getAttachmentsPath()));
+            foreach($attachments as $item) {
+                copy(
+                    public_path($this->getAttachmentsPath().'/'.basename($item)),
+                    public_path($target->getAttachmentsPath().'/'.basename($item))
+                );
+            }
+        }
         
         // Copy event
         $target->event ? $target->event->delete() : false;
-        $target->event()->create(['start' => $this->event->start, 'end' => $this->event->end]);
+        $this->event ? $target->event()->create([
+            'start' => $this->event->start, 
+            'end' => $this->event->end
+        ]) : false;
         
         // Copy location
         $target->location ? $target->location->delete() : false;
-        $target->location()->create([
+        $this->location ? $target->location()->create([
             'address' => $this->location->address,
             'lat' => $this->location->lat,
             'lon' => $this->location->lon,
             'zoom' => $this->location->zoom
-        ]);
+        ]) : false;
     }
     
     /**
