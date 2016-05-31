@@ -15,6 +15,7 @@ class DashboardController extends AdminController
             ->join('contents', 'contents.id', '=', 'visits.content_id')
             ->whereNotNull('content_id')
             ->groupBy('contents.id')
+            ->orderBy(DB::raw('count(contents.id)'), 'desc')
             ->take(10)
             ->get();
         $less_content = DB::table('visits')
@@ -22,6 +23,7 @@ class DashboardController extends AdminController
             ->join('contents', 'contents.id', '=', 'visits.content_id')
             ->whereNotNull('content_id')
             ->groupBy('contents.id')
+            ->orderBy(DB::raw('count(contents.id)'), 'asc')
             ->take(10)
             ->get();
         
