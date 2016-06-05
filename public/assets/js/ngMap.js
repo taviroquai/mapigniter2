@@ -231,7 +231,7 @@ function ($http, ol, proj4, c) {
             });
             ol.proj.addProjection(lproj);
         }
-    }
+    };
     
     /**
      * Create map quest layer

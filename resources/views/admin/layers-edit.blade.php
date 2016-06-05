@@ -776,7 +776,7 @@
     function showTypeOptions(value) {
         hideTypeOptions();
         $('#' + value + '_options').show();
-        if (value === 'wfs' || value === 'wms' || value === 'shapefile') {
+        if (value === 'wfs' || value === 'wms' || value === 'shapefile' || value === 'postgis') {
             $('#projection_options').show();
         }
         if (value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
