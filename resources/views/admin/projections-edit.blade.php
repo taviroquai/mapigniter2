@@ -34,9 +34,9 @@
                         <div class="col-md-8">
                             <div class="form-group">
                                 <label for="srid">{{ trans('backoffice.srid') }}</label>
-                                <input class="form-control" name="srid" type="text" 
-                                    @if(!empty($item)) value="{{ $item->srid }}" @endif
-                                    />
+                                <input class="form-control" 
+                                    @if(!empty($projection->id)) readonly @endif
+                                    name="srid" type="text" value="{{ $projection->srid }}" />
                                 <span class="help-block alert-danger v-error-srid"></span>
                             </div>
                         </div>

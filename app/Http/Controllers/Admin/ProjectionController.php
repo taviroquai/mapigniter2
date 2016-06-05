@@ -22,8 +22,7 @@ class ProjectionController extends AdminController
      */
     public function form(Projection $projection)
 	{
-        $projection->srid = empty($projection->srid) ? 3857 : $projection->srid;
-        $extent = empty($projection->extent) ? ['-20026376.39', '-20048966.10', '20026376.39', '20048966.10'] : explode(' ', $projection->extent);
+        $extent = empty($projection->extent) ? ['', '', '', ''] : explode(' ', $projection->extent);
 		return view('admin/projections-edit', compact('projection', 'extent'));
 	}
     
@@ -47,7 +46,7 @@ class ProjectionController extends AdminController
         
         // Validate map content
         $validator = \Validator::make($input, [
-            'srid' => 'required|unique:projections,srid',
+            'srid' => 'required|unique:projections,srid' . (empty($input['id']) ? '' : ',' . $input['id']),
             'extent' => 'required|max:255'
         ]);
 
