@@ -40,6 +40,19 @@ function ($scope, ngMapBuilder) {
     };
     
     /**
+     * Zoom to layer extent
+     * 
+     * @param {type} l
+     * @returns {undefined}
+     */
+    $scope.zoomLayer = function (l) {
+        ngMapBuilder.getMap().getView().fit(
+            l.ol.getSource().getExtent(),
+            ngMapBuilder.getMap().getSize()
+        );
+    };
+    
+    /**
      * Toggle base layer
      * 
      * @param {type} layer
