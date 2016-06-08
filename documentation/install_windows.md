@@ -37,10 +37,12 @@ These instructions were tested on Windows 2012 R2 IIS 8, but should work more or
 	* You should see a PHP Manager in IIS console.
 		* Click on it and enable following extensions  (if you prefer or don't have PHP Manager, you can edit the php.ini directly in C:\Program Files (x86)\PHP\v5.6\php.ini
 		```
-			php_pddo_pgsql.dll, php_fileinfo.dll
+			php_pddo_pgsql.dll
+                        php_fileinfo.dll
+                        php_openssl.dll
 		```
 		
-## Install Mapigntier2
+## Install MapIgniter2
 
 1. *Download* zip and *extract* to a web server folder
 1. Open **.env.example** in an editor such as notepad++ and saves as **.env**  as .env. (this is nneeded since win windows files start with . sometimes yield error during copy.
@@ -62,5 +64,6 @@ by opening up command prompt, cd into folder you extracted and then run the foll
 1. Configure the webiste folder in IIS either as an app or new website
 1. While still in IIS, select the public folder, go to the option labeled **URL Rewrite**
 1. Choose Import and select the .htaccess file found public/.htaccess
+1. Add JSON mime type. Extension **.json** and mime type **application/json**  
 1. Exit IIS
 1. Open in browser --  your_website_url/public 
