@@ -43,6 +43,13 @@ class HomeController extends Controller {
      */
     static function loadUserPagesRoutes()
     {
+        // Check database connectivity
+        try {
+            Schema::hasTable('pages');
+        } catch (Exception $ex) {
+            abort(503, 'Service Unavailable: Database');
+        }
+        
         // Load user pages
         Route::group(['middleware' => ['visit']], function () {
             
