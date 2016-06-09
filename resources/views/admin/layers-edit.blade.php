@@ -425,7 +425,9 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="postgis_attributes">{{ trans('backoffice.postgis_attributes') }}</label>
-                                    <select class="form-control" name="postgis_attributes[]" multiple="multiple">
+                                    <select class="form-control" 
+                                        name="postgis_attributes[]"
+                                        multiple="multiple">
                                         @if ($layer->postgis_attributes)
                                         @foreach(explode(',', $layer->postgis_attributes) as $attr)
                                         <option selected value="{{ $attr }}">{{ $attr }}</option>
@@ -533,10 +535,15 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="search">{{ trans('backoffice.layer_search') }}</label>
-                                    <input class="form-control" type="text" name="search"
-                                        placeholder=""
-                                        value="{{ $layer->search }}">
-                                    <span class="help-block alert-danger v-error-search"></span>
+                                    <select class="form-control"
+                                        name="search[]"
+                                        id="search"
+                                        multiple>
+                                        @foreach(explode(',', $layer->search) as $attr)
+                                        <option value="{{ $attr }}" selected>{{ $attr }}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="help-block alert-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -591,38 +598,54 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="ol_style_static_icon">{{ trans('backoffice.ol_style_field_icon') }}</label>
+                                    <label for="ol_style_field_icon">{{ trans('backoffice.ol_style_field_icon') }}</label>
+                                    <select class="form-control"
+                                        name="ol_style_field_icon"
+                                        id="ol_style_field_icon">
+                                        <option value="{{ $layer->ol_style_field_icon }}" selected>
+                                            {{ $layer->ol_style_field_icon }}
+                                        </option>
+                                    </select>
                                     <span class="help-block alert-danger v-error-ol_style_field_icon"></span>
-                                    <input class="form-control" type="text" 
-                                        name="ol_style_field_icon" id="ol_style_field_icon"
-                                        placeholder="" value="{{ $layer->ol_style_field_icon }}" />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="ol_style_field_fill_color">{{ trans('backoffice.ol_style_field_fill_color') }}</label>
+                                    <select class="form-control"
+                                        name="ol_style_field_fill_color"
+                                        id="ol_style_field_fill_color">
+                                        <option value="{{ $layer->ol_style_field_fill_color }}" selected>
+                                            {{ $layer->ol_style_field_fill_color }}
+                                        </option>
+                                    </select>
                                     <span class="help-block alert-danger v-error-ol_style_field_fill_color"></span>
-                                    <input class="form-control" type="text" 
-                                        name="ol_style_field_fill_color" id="ol_style_field_fill_color"
-                                        placeholder="" value="{{ $layer->ol_style_field_fill_color }}" />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="ol_style_field_stroke_color">{{ trans('backoffice.ol_style_field_stroke_color') }}</label>
+                                    <select class="form-control"
+                                        name="ol_style_field_stroke_color"
+                                        id="ol_style_field_stroke_color">
+                                        <option value="{{ $layer->ol_style_field_stroke_color }}" selected>
+                                            {{ $layer->ol_style_field_stroke_color }}
+                                        </option>
+                                    </select>
                                     <span class="help-block alert-danger v-error-ol_style_field_stroke_color"></span>
-                                    <input class="form-control" type="text" 
-                                        name="ol_style_field_stroke_color" id="ol_style_field_stroke_color"
-                                        placeholder="" value="{{ $layer->ol_style_field_stroke_color }}" />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="ol_style_field_stroke_width">{{ trans('backoffice.ol_style_field_stroke_width') }}</label>
+                                    <select class="form-control"
+                                        name="ol_style_field_stroke_width"
+                                        id="ol_style_field_stroke_width">
+                                        <option value="{{ $layer->ol_style_field_stroke_width }}" selected>
+                                            {{ $layer->ol_style_field_stroke_width }}
+                                        </option>
+                                    </select>
                                     <span class="help-block alert-danger v-error-ol_style_field_stroke_width"></span>
-                                    <input class="form-control" type="text" 
-                                        name="ol_style_field_stroke_width" id="ol_style_field_stroke_width"
-                                        placeholder="" value="{{ $layer->ol_style_field_stroke_width }}" />
                                 </div>
                             </div>
                         </div>
@@ -747,11 +770,52 @@
     var tables = [];
     var attributes = [];
     
-    function updateSearchablePoperties() {
+    // Update selectable attributes
+    function updateSelectAttribute() {
+        var search = [],
+            ol_style_field_icon = $('[name="ol_style_field_icon"]').val(),
+            ol_style_field_fill_color = $('[name="ol_style_field_fill_color"]').val(),
+            ol_style_field_stroke_color = $('[name="ol_style_field_stroke_color"]').val(),
+            ol_style_field_stroke_width = $('[name="ol_style_field_stroke_width"]').val();
+        $('[name="search[]"] :selected').each(function(i, selected){ 
+            search.push($(selected).text()); 
+        });
+    
         $('[name="search[]"]').empty();
+        $('[name="ol_style_field_icon"]').empty();
+        $('[name="ol_style_field_fill_color"]').empty();
+        $('[name="ol_style_field_stroke_color"]').empty();
+        $('[name="ol_style_field_stroke_width"]').empty();
+        $('[name="ol_style_field_icon"').append('<option value=""></option>');
+        $('[name="ol_style_field_fill_color"').append('<option value=""></option>');
+        $('[name="ol_style_field_stroke_color"').append('<option value=""></option>');
+        $('[name="ol_style_field_stroke_width"').append('<option value=""></option>');
+
         $.each(attributes, function (i, item) {
             $('[name="search[]"').append(
-                '<option value="' + item + '">' + item + '</option>'
+                '<option value="' + item + '"'
+                + (search.indexOf(item) !== -1? ' selected ' : '')
+                + '>' + item + '</option>'
+            );
+            $('[name="ol_style_field_icon"').append(
+                '<option value="' + item + '"'
+                + (ol_style_field_icon === item ? ' selected ' : '')
+                + '>' + item + '</option>'
+            );
+            $('[name="ol_style_field_fill_color"').append(
+                '<option value="' + item + '"'
+                + (ol_style_field_fill_color === item ? ' selected ' : '')
+                + '>' + item + '</option>'
+            );
+            $('[name="ol_style_field_stroke_color"').append(
+                '<option value="' + item + '"'
+                + (ol_style_field_stroke_color === item ? ' selected ' : '')
+                + '>' + item + '</option>'
+            );
+            $('[name="ol_style_field_stroke_width"').append(
+                '<option value="' + item + '"'
+                + (ol_style_field_stroke_width === item ? ' selected ' : '')
+                + '>' + item + '</option>'
             );
         });
     }
@@ -785,6 +849,10 @@
         if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
             $('#vector_options').show();
             $('.vector-warning').show();
+        }
+        if ($('[name="id"]').val() && value === 'geojson') {
+            attributes = $('[name="geojson_attributes"]').val().split(',');
+            updateSelectAttribute();
         }
     }
     
@@ -825,6 +893,7 @@
                 } else {
                     $('.gpx-attributes').text('');
                 }
+                updateSelectAttribute();
             };
         })(files[0]);
 
@@ -891,6 +960,7 @@
             } else {
                 $('.wfs-attributes').text('');
             }
+            updateSelectAttribute();
         });
     });
     
@@ -920,6 +990,7 @@
                 } else {
                     $('.kml-attributes').text('');
                 }
+                updateSelectAttribute();
             };
         })(files[0]);
 
@@ -975,6 +1046,7 @@
                         '<option value="' + schema.name + '">' + schema.name + '</option>'
                     );
                 });
+                updateSelectAttribute();
             }
         });
     });
@@ -1039,6 +1111,7 @@
                     );
                     attributes.push(column.column_name);
                 });
+                updateSelectAttribute();
             }
         });
     });
@@ -1082,9 +1155,8 @@
     };
     $('[name="geojson_attributes"]').on('keyup', function (e) {
         $(this).val(normalizeAttributes($(this).val()));
-    });
-    $('[name="search"]').on('keyup', function (e) {
-        $(this).val(normalizeAttributes($(this).val()));
+        attributes = $(this).val().split(',');
+        updateSelectAttribute();
     });
     
     $("#ol_style_static_icon").fileinput({

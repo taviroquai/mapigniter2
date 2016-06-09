@@ -149,6 +149,8 @@ class LayerController extends AdminController
             : implode(',', $input['postgis_attributes']);
         $input['geopackage_fields'] = empty($input['geopackage_fields']) ? '' 
             : implode(',', $input['geopackage_fields']);
+        $input['search'] = empty($input['search']) ? '' 
+            : implode(',', $input['search']);
         $layer->fill($input);
         $layer->save();
         
