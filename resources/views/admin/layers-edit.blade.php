@@ -1061,6 +1061,32 @@
         }
     });
     
+    // Correct attributes user input
+    var normalizeAttributes = function (input) {
+        input = input.replace(/^\s+|\s+$/g, ''); // trim
+        input = input.toLowerCase();
+
+        // remove accents, swap ñ for n, etc
+        var from = "ãàáäâẽèéëêìíïîõòóöôùúüûñç·/-:;|";
+        var to   = "aaaaaeeeeeiiiiooooouuuunc_____|";
+        for (var i=0, l=from.length ; i<l ; i++) {
+            input = input.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+        }
+
+        input = input.replace(/[^a-z0-9_,]/g, '') // remove invalid chars
+          .replace(/\s+/g, '') // collapse whitespace and replace by -
+          .replace(/-+/g, '') // collapse dashes
+          .replace(/_{3,}/g, '__'); // collapse 3 or more underscores
+
+        return input;
+    };
+    $('[name="geojson_attributes"]').on('keyup', function (e) {
+        $(this).val(normalizeAttributes($(this).val()));
+    });
+    $('[name="search"]').on('keyup', function (e) {
+        $(this).val(normalizeAttributes($(this).val()));
+    });
+    
     $("#ol_style_static_icon").fileinput({
         showCaption: false,
         overwriteInitial: true,
