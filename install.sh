@@ -17,33 +17,34 @@
 ####################################################################
 
 # Set target install directory
-TARGET="mapigniter2"
+TARGET="."
 
 # Set database name. This must match database name in file .env
+DBUSER="mapigniter2"
 DBNAME="mapigniter2"
 
 # Reset commands (only for testing purposes)
-#sudo rm -Rf "$TARGET"
-#sudo -u postgres dropdb "$DBNAME"
+su - postgres -c "dropdb $DBNAME"
+rm -f .env
+rm -Rf ./public/storage
 #exit 0
 
 # Check requirements
 echo "Checking requirements..."
-which apache2
-if [ $? -ne 0 ]; then { echo "Aborting: Apache2 not found" ; exit 1; } fi
 which php
 if [ $? -ne 0 ]; then { echo "Aborting: PHP not found" ; exit 1; } fi
-which git
-if [ $? -ne 0 ]; then { echo "Aborting: Git not found" ; exit 1; } fi
 which psql
 if [ $? -ne 0 ]; then { echo "Aborting: PostgreSQL not found" ; exit 1; } fi
+if [ "`php -m | grep pdo_pgsql | wc -l`" -eq 0 ]; then { echo "Aborting: PHP5 Pgsql module not found" ; exit 1; } fi
 
 # Create PostgreSQL database (PostgreSQL by default in .env.example)
 echo "Checking PostgreSQL database..."
-if [ "`sudo -u postgres psql -l | grep $DBNAME | wc -l`" -eq 0 ]
+if [ "`su - postgres -c \"psql -l\" | grep $DBNAME | wc -l`" -eq 0 ]
 then
+    echo "Creating PostgreSQL user"
+    su - postgres -c "psql -c \"CREATE USER mapigniter2 WITH password 'postgres'\""
     echo "Creating PostgreSQL database..."
-    sudo -u postgres createdb "$DBNAME"
+    su - postgres -c "psql -c \"CREATE DATABASE $DBNAME OWNER $DBUSER\""
     if [ $? -ne 0 ]
     then
         echo "Aborting: failed create database" ;
@@ -51,16 +52,9 @@ then
     fi
 fi
 
-# Clone mapigniter repository (If does not exists)
-echo "Download repository with Git..."
-if [ ! -d "./$TARGET" ];
-then
-    git clone http://github.com/taviroquai/mapigniter2 "$TARGET"
-fi
-
 # Change to directory
 cd "$TARGET"
-echo $(pwd)
+echo "Installing at $(pwd)..."
 
 # Creating configuration file from .env.example
 echo "Creating .env configuration file..."
@@ -88,13 +82,14 @@ fi
 php artisan migrate
 
 # Insert default database data (this creates the storage folder)
-echo "Creating storage folder..." ;
-if [ ! -d "./$TARGET/storage" ];
+echo "Install demo data if does not exists..." ;
+if [ ! -d "./$TARGET/public/storage" ];
 then
     php artisan db:seed
 fi
 
 # Give write permissions to Apache to the following folders
+echo "Giving write permissions to folders..."
 chmod -R 777 storage bootstrap/cache/ public/storage resources/views/pages
 
 # Inform user that is complete
