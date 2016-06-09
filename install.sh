@@ -24,9 +24,9 @@ DBUSER="mapigniter2"
 DBNAME="mapigniter2"
 
 # Reset commands (only for testing purposes)
-su - postgres -c "dropdb $DBNAME"
-rm -f .env
-rm -Rf ./public/storage
+#su - postgres -c "dropdb $DBNAME"
+#rm -f .env
+#rm -Rf ./public/storage
 #exit 0
 
 # Check requirements
