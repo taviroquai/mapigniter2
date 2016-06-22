@@ -854,6 +854,18 @@
             attributes = $('[name="geojson_attributes"]').val().split(',');
             updateSelectAttribute();
         }
+        if ($('[name="id"]').val() && value === 'postgis') {
+            $('[name="postgis_attributes[]"] :selected').each(function (i, item) {
+                attributes.push($(item).attr('value'));
+            });
+            updateSelectAttribute();
+        }
+        if ($('[name="id"]').val() && value === 'geopackage') {
+            $('[name="geopackage_fields[]"] :selected').each(function (i, item) {
+                attributes.push($(item).attr('value'));
+            });
+            updateSelectAttribute();
+        }
     }
     
     showTypeOptions($('[name="type"]').val());
@@ -1030,20 +1042,26 @@
         var form = $(this).closest('form');
         var schemaname = $('[name="postgis_schema"]').val();
         var tablename = $('[name="postgis_table"]').val();
+        var postgis_field = $('[name="postgis_field"]').val();
+        var postgis_attributes = attributes;
         $.post("{{ url('admin/layers/postgis/column/list') }}/" + schemaname + '/' + tablename, form.serialize(), function (r) {
             if (r.success) {
                 attributes = [];
                 $('[name="postgis_field"]').empty();
                 $.each(r.result, function (i, column) {
                     $('[name="postgis_field"]').append(
-                        '<option value="' + column.name + '">' + column.name + '</option>'
+                        '<option value="' + column.name + '"'
+                        + (column.name === postgis_field ? ' selected ' : '')
+                        + '>' + column.name + '</option>'
                     );
                     attributes.push(column.name);
                 });
                 $('[name="postgis_attributes[]"]').empty();
                 $.each(r.result, function (i, schema) {
                     $('[name="postgis_attributes[]"]').append(
-                        '<option value="' + schema.name + '">' + schema.name + '</option>'
+                        '<option value="' + schema.name + '"'
+                        + (postgis_attributes.indexOf(schema.name) !== -1 ? ' selected ' : '')
+                        + '>' + schema.name + '</option>'
                     );
                 });
                 updateSelectAttribute();
@@ -1101,13 +1119,16 @@
     // Populate fields options
     $('[name="geopackage_table"').on('change', function () {
         var selected = $(this).val();
+        var geopackage_fields = attributes;
         $('[name="geopackage_fields[]"').empty();
-        attributes = [];
         $.each(geopackage_tables, function (i, item) {
             if (item.table_name === selected) {
+                attributes = [];
                 $.each(item.columns, function (i, column) {
                     $('[name="geopackage_fields[]"').append(
-                        '<option value="' + column.column_name + '">' + column.column_name + '</option>'
+                        '<option value="' + column.column_name + '"'
+                        + (geopackage_fields.indexOf(column.column_name) !== -1 ? ' selected ' : '')
+                        + '>' + column.column_name + '</option>'
                     );
                     attributes.push(column.column_name);
                 });
