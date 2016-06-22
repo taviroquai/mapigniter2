@@ -762,7 +762,7 @@
 <script src="{{ asset('assets/js/mustache.min.js') }}"></script>
 <script src="{{ asset('assets/js/fileinput.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/bootstrap-colorpicker.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/js/ol-debug.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/js/ol.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/OGCService.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
     

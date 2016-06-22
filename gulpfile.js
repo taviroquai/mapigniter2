@@ -26,7 +26,7 @@ elixir(function(mix) {
         'jquery.min.js',
         'bootstrap.min.js',
         'proj4.js',
-        'ol-debug.js',
+        'ol.js',
         'lunr.min.js',
         'angular.min.js',
         'ngMap.js',
