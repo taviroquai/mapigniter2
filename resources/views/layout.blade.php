@@ -31,7 +31,15 @@
             @show
             
         </div>
-
+        <script src="{{ asset('assets/js/jquery.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('assets/js/ekko-lightbox.min.js') }}" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).delegate('*[data-toggle="lightbox"]:not([data-gallery="navigateTo"])', 'click', function(e) {
+                e.preventDefault();
+                return $(this).ekkoLightbox();
+            });
+        </script>
         @section('script')
         @show
     

@@ -17,6 +17,8 @@
     @if(env('APP_ENV') === 'local')
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" media="screen,projection">
     <link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/ekko-lightbox.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/lightbox-dark.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/ol.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/map.css') }}" rel="stylesheet" media="screen,projection">
     @else
@@ -59,14 +61,18 @@
                         @endforeach
                         </ul>
                     </li>
-                    <li class="dropdown">
+                    <li class="dropdown" ng-controller="ngContent" 
+                        ng-init="target = '#content-modal'">
+                        <input type="hidden" ng-model="url" />
                         <a class="dropdown-toggle" href="#" data-toggle="collapse" data-target="#content-items" aria-expanded="false" aria-controls="content">
                             {{ trans('layout.link_contents') }}
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" id="content-items">
                         @foreach(App\Content::getPublishedItems() as $item)
-                            <li><a href="{{ url($item->seo_slug) }}">{{ $item->title }}</a></li>
+                        <li><a ng-click="url = '{{ url($item->seo_slug) }}'; title = '{{ $item->title }}'; show();"
+                                href="">{{ $item->title }}</a>
+                        </li>
                         @endforeach
                         </ul>
                     </li>
@@ -292,6 +298,24 @@
             </div>
         </div>
     </div>
+    
+    <!-- Content modal -->
+    <div id="content-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -299,6 +323,7 @@
     @if(env('APP_ENV') === 'local')
     <script src="{{ asset('assets/js/jquery.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/ekko-lightbox.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/buffer.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/wkx.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/proj4.js') }}"  type="text/javascript"></script>
@@ -307,6 +332,7 @@
     <script src="{{ asset('assets/js/angular.min.js') }}"  type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngMap.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngIdiom.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/ngContent.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngFeatureInfo.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngLayerSwitcher.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/ngSearchResults.js') }}" type="text/javascript"></script>
@@ -318,6 +344,11 @@
     
     @section('script')
     <script type="text/javascript">
+        
+        $(document).delegate('*[data-toggle="lightbox"]:not([data-gallery="navigateTo"])', 'click', function(e) {
+            e.preventDefault();
+            return $(this).ekkoLightbox();
+        });
         
         angular.module('ngMap').value('config', { 
             baseURL: '{!! url('/') !!}',

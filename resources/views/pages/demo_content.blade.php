@@ -1,18 +1,15 @@
-@extends('layout')
+@extends('ajax')
 
 @section('seo')
 <title>{{ $content->seo_title }}</title>
 @stop
 
 @section('style')
-<link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/css/ekko-lightbox.min.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/css/lightbox-dark.css') }}" rel="stylesheet">
 @stop
 
 @section('content')
     <h1>{{ $content->title }}</h1>
-    <p><a href="{{ url('/') }}">Home</a></p>
+    
     <p><img class="col-md-2 thumbnail" style="margin: 20px" src="{{ $content->getPictureUrl() }}" alt="Logo" /></p>
     {!! $content->getContent() !!}
     
@@ -40,13 +37,4 @@
 @stop
 
 @section('script')
-<script src="{{ asset('assets/js/jquery.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/js/ekko-lightbox.min.js') }}" type="text/javascript"></script>
-<script type="text/javascript">
-    $(document).delegate('*[data-toggle="lightbox"]:not([data-gallery="navigateTo"])', 'click', function(e) {
-        e.preventDefault();
-        return $(this).ekkoLightbox();
-    });
-</script>
 @stop
