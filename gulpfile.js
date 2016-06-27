@@ -18,6 +18,8 @@ elixir(function(mix) {
     mix.styles([
         'bootstrap.min.css',
         'font-awesome.min.css',
+        'ekko-lightbox.min.css',
+        'lightbox-dark.css',
         'ol.css',
         'map.css'
     ], 'public/assets/css/production_map.css');
@@ -25,12 +27,14 @@ elixir(function(mix) {
     mix.scripts([
         'jquery.min.js',
         'bootstrap.min.js',
+        'ekko-lightbox.min.js',
         'proj4.js',
         'ol.js',
         'lunr.min.js',
         'angular.min.js',
         'ngMap.js',
         'ngIdiom.js',
+        'ngContent.js',
         'ngFeatureInfo.js',
         'ngLayerSwitcher.js',
         'ngSearchResults.js',
