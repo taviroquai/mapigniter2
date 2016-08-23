@@ -2,7 +2,7 @@
 
 MapIgniter2 is a geocms that uses [Laravel 5](http://laravel.com), [OpenLayers 3](http://openlayers.org), and [AngularJS](https://angularjs.org/).  
 
-A demo can be found [here](http://taviroquai.com/mapigniter2/public/).  Login with  
+A demo can be found [here](http://afonsodev.eu/mapigniter2/public/).  Login with  
 email: admin@isp.com  
 password: admin  
 
