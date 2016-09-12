@@ -42,7 +42,7 @@
             <ul class="nav navbar-nav navbar">
                 <li><a href="{{ url('/admin/maps/list') }}"><i class="fa fa-map-o"></i> {{ trans('backoffice.maps') }}</a></li>
                 <li><a href="{{ url('/admin/layers/list') }}"><i class="fa fa-database"></i> {{ trans('backoffice.layers') }}</a></li>
-                <li><a href="{{ url('/admin/projections/list') }}"><i class="fa fa-database"></i> {{ trans('backoffice.projections') }}</a></li>
+                <li><a href="{{ url('/admin/projections/list') }}"><i class="fa fa-arrows-alt"></i> {{ trans('backoffice.projections') }}</a></li>
                 <li><a href="{{ url('/admin/contents/list') }}"><i class="fa fa-files-o"></i> {{ trans('backoffice.contents') }}</a></li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="fa fa-cogs"></i> {{ trans('backoffice.system') }} <span class="caret"></span></a>
