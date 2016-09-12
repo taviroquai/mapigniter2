@@ -919,9 +919,12 @@
         var url = $('[name="wms_url"]').val();
         var version = $('[name="wms_version"]').val();
         var service = new $.fn.OGCService(url);
-        
-        // Call WMS GetCapabilities
-        service.getCapabilities('WMS', version, function (result) {
+            url = service.getCapabilitiesUrl('WMS', version);
+        $.post(BASE_URL + '/proxy', {url: url, _token: $('[name="_token"]').val()}, function (r) {
+            
+            // Call WMS GetCapabilities
+            var service = new $.fn.OGCService(url);
+            var result = service.parseWMSCapabilities(r, version);
             $('[name="wms_layers[]"').empty();
             $.each(result, function (i, group) {
                 $.each(group.layers, function (i, l) {
@@ -930,7 +933,9 @@
                     );
                 });
             });
+
         });
+        
     });
     
     $('.getwfscapabilities').on('click', function (e) {
@@ -940,8 +945,11 @@
         var version = $('[name="wfs_version"]').val();
         var service = new $.fn.OGCService(url);
         
-        // Call WFS GetCapabilities
-        service.getCapabilities('WFS', version, function (result) {
+        url = service.getCapabilitiesUrl('WFS', version);
+        $.post(BASE_URL + '/proxy', {url: url, _token: $('[name="_token"]').val()}, function (r) {
+            
+            var service = new $.fn.OGCService(url);
+            var result = service.parseWFSCapabilities(r, version);
             $('[name="wfs_typename"').empty();
             tables = [];
             $.each(result, function (i, f) {
@@ -960,10 +968,14 @@
         var url = $('[name="wfs_url"]').val();
         var version = $('[name="wfs_version"]').val();
         var typename = $('[name="wfs_typename"]').val();
+        var namespace = 'ms'; // TODO, check type of server
         var service = new $.fn.OGCService(url);
         
         // Call WFS GetCapabilities
-        service.getWFSTypenameAttributes(version, typename, {'MAXFEATURES': 1}, function (result) {
+        url = service.buildWFSGetFeatureUrl(version, typename, {'MAXFEATURES': 1});
+        $.post(BASE_URL + '/proxy', {url: url, _token: $('[name="_token"]').val()}, function (r) {
+                
+            var result = service.parseWFSGetFeature(r, typename, namespace);
             if (result.length) {
                 delete result[0]['bounds'];
                 delete result[0]['geometry'];

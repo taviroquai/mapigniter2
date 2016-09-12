@@ -412,4 +412,15 @@ class LayerController extends AdminController
         $result = $postgis->getColumnNames($schemaname, $tablename);
         return response()->json(['success' => true, 'result' => $result]);
     }
+    
+    /**
+     * Proxy request with PHP
+     * 
+     * @return \Response
+     */
+    public function proxyRequestUrl()
+    {
+        $url = \Input::get('url');
+        return file_get_contents($url);
+    }
 }

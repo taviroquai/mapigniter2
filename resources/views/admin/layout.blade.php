@@ -95,6 +95,9 @@
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/js/knockout-3.3.0.debug.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script type="text/javascript">
+        var BASE_URL = "{{ url('admin') }}";
+    </script>
     
     @section('script')
     @show

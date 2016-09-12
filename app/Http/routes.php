@@ -98,6 +98,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['aut
     Route::post('/layers/postgis/schema/list', 'LayerController@getPostgisSchemaNames');
     Route::post('/layers/postgis/table/list/{schemaname}', 'LayerController@getPostgisTableNames');
     Route::post('/layers/postgis/column/list/{schemaname}/{tablename}', 'LayerController@getPostgisColumnNames');
+    Route::post('/proxy', 'LayerController@proxyRequestUrl');
     
     // Content
     Route::get('/contents', 'ContentController@json');

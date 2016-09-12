@@ -115,12 +115,13 @@
          * @param {Object} response
          * @returns {undefined}
          */
-        var parseWMSCapabilities = function (response, version) {
+        this.parseWMSCapabilities = function (response, version) {
             
             var nodes, group, i, j;
 
             // Get Layers
             nodes = $(response).find('Capability > Layer');
+            //console.log(nodes);
             for (i = 0; i < nodes.length; i += 1) {
 
                 // Create layer group
@@ -146,6 +147,7 @@
                 wmsCapabilities[version] = wmsCapabilities[version] || [];
                 wmsCapabilities[version].push(group);
             }
+            return wmsCapabilities[version];
         };
         
         /**
@@ -154,7 +156,7 @@
          * @param {Object} response
          * @returns {undefined}
          */
-        var parseWFSCapabilities = function (response, version) {
+        this.parseWFSCapabilities = function (response, version) {
             
             var nodes, featureType, i, j;
 
@@ -186,6 +188,7 @@
                 wfsCapabilities[version] = wfsCapabilities[version] || [];
                 wfsCapabilities[version].push(featureType);
             }
+            return wfsCapabilities[version];
         };
         
         /**
@@ -224,24 +227,25 @@
          * @param {Object} response
          * @returns {undefined}
          */
-        var parseWFSGetFeature = function (response, typename) {
+        this.parseWFSGetFeature = function (response, typename, namespace) {
             
-            var feature;
+            var feature, name;
             wfsFeatures[typename] = [];
 
             // Get features
-            $(response).find('featureMember').each(function(i, node) {
+            //console.log($(response).find('gml\\:featureMember'));
+            $(response).find('gml\\:featureMember').each(function(i, node) {
                 feature = {};
                 
                 // Get attributes
-                $(node).find(typename).children().each(function(j, attribute) {
-                    
-                    if (attribute.localName === 'boundedBy') {
+                $(node).find(namespace + '\\:' + typename).children().each(function(j, attribute) {
+                    if (attribute.localName.toLowerCase() === 'gml:boundedby') {
                         feature['bounds'] = parseWFSBoundedBy(attribute);
-                    } else if (attribute.localName === 'msGeometry') {
+                    } else if (attribute.localName.toLowerCase() === namespace + ':msgeometry') {
                         feature['geometry'] = parseWFSGeometry(attribute);
                     } else {
-                        feature[attribute.localName] = $.isNumeric($(attribute).text()) ? 
+                        name = attribute.localName.replace(namespace + ':', '');
+                        feature[name] = $.isNumeric($(attribute).text()) ? 
                             parseInt($(attribute).text()) : $(attribute).text();
                     }
                 });
@@ -249,6 +253,7 @@
                 // Add feature
                 wfsFeatures[typename].push(feature);
             });
+            return wfsFeatures[typename];
         };
         
         /**
@@ -274,7 +279,7 @@
          * @param {String} version
          * @returns {OGCService_L2.OGCService.url|String}
          */
-        var getCapabilitiesUrl = function (service, version)
+        this.getCapabilitiesUrl = function (service, version)
         {
             var params = [];
             params.push('SERVICE=' + service);
