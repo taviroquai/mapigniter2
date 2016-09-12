@@ -843,10 +843,10 @@
         if (value === 'wfs' || value === 'wms' || value === 'shapefile' || value === 'postgis') {
             $('#projection_options').show();
         }
-        if (value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
+        if (value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'geopackage') {
             $('#style_options').show();
         }
-        if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'shapefile' || value === 'geopackage') {
+        if (value === 'kml' || value === 'wfs' || value === 'gpx' || value === 'postgis' || value === 'geojson' || value === 'geopackage') {
             $('#vector_options').show();
             $('.vector-warning').show();
         }
