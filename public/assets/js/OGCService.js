@@ -227,32 +227,40 @@
          * @param {Object} response
          * @returns {undefined}
          */
-        this.parseWFSGetFeature = function (response, typename, namespace) {
+        this.parseWFSGetFeature = function (response, typename) {
             
-            var feature, name;
+            var namespace, firstitem, feature, name;
             wfsFeatures[typename] = [];
+            
+            // Get namespace from feature member
+            if ($(response).find('gml\\:featureMember').length) {
+                
+                // Use WFS 1.0.0
+                firstitem = $(response).find('gml\\:featureMember').first().children().first()[0];
+                namespace = firstitem.localName.indexOf(':') ?
+                    firstitem.localName.substring(0, firstitem.localName.indexOf(':'))
+                    : '';
+            } else {
+                
+                // Use WFS 1.1.0
+                firstitem = $(response).find('gml\\:featureMembers').first().children().first()[0];
+                namespace = firstitem.localName.indexOf(':') ?
+                    firstitem.localName.substring(0, firstitem.localName.indexOf(':'))
+                    : '';
+            }
 
             // Get features
-            //console.log($(response).find('gml\\:featureMember'));
-            $(response).find('gml\\:featureMember').each(function(i, node) {
-                feature = {};
-                
-                // Get attributes
-                $(node).find(namespace + '\\:' + typename).children().each(function(j, attribute) {
-                    if (attribute.localName.toLowerCase() === 'gml:boundedby') {
-                        feature['bounds'] = parseWFSBoundedBy(attribute);
-                    } else if (attribute.localName.toLowerCase() === namespace + ':msgeometry') {
-                        feature['geometry'] = parseWFSGeometry(attribute);
-                    } else {
-                        name = attribute.localName.replace(namespace + ':', '');
-                        feature[name] = $.isNumeric($(attribute).text()) ? 
-                            parseInt($(attribute).text()) : $(attribute).text();
-                    }
-                });
+            feature = {};
 
-                // Add feature
-                wfsFeatures[typename].push(feature);
+            // Get attributes
+            $(firstitem).children().each(function(j, attribute) {
+                name = attribute.localName.replace(namespace + ':', '');
+                feature[name] = $.isNumeric($(attribute).text()) ? 
+                    parseInt($(attribute).text()) : $(attribute).text();
             });
+
+            // Add feature
+            wfsFeatures[typename].push(feature);
             return wfsFeatures[typename];
         };
         
