@@ -121,7 +121,7 @@
 
             // Get Layers
             nodes = $(response).find('Capability > Layer');
-            //console.log(nodes);
+            
             for (i = 0; i < nodes.length; i += 1) {
 
                 // Create layer group

@@ -923,7 +923,6 @@
         $.post(BASE_URL + '/proxy', {url: url, _token: $('[name="_token"]').val()}, function (r) {
             
             // Call WMS GetCapabilities
-            var service = new $.fn.OGCService(url);
             var result = service.parseWMSCapabilities(r, version);
             $('[name="wms_layers[]"').empty();
             $.each(result, function (i, group) {
@@ -948,7 +947,6 @@
         url = service.getCapabilitiesUrl('WFS', version);
         $.post(BASE_URL + '/proxy', {url: url, _token: $('[name="_token"]').val()}, function (r) {
             
-            var service = new $.fn.OGCService(url);
             var result = service.parseWFSCapabilities(r, version);
             $('[name="wfs_typename"').empty();
             tables = [];
