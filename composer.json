@@ -1,9 +1,10 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "taviroquai/mapigniter2",
+    "description": "MapIgniter is a GeoCMS for publishing geographic information",
+    "keywords": ["geocms", "geographic", "information", "publishing"],
     "license": "MIT",
     "type": "project",
+    "version": "0.3.1",
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.1.*",
