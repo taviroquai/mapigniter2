@@ -60,6 +60,7 @@ class HomeController extends Controller {
                 foreach(Page::where('active', 1)->get() as $page) {
 
                     // Create page route
+                    \Log::debug('add route: ' . $page->route);
                     Route::get($page->route, function () use ($page) {
                         
                         // Load idiom

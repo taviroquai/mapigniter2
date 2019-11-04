@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Routing\Middleware;
 use App\Permission;
 
 /**
@@ -11,7 +10,7 @@ use App\Permission;
  *
  * @author mafonso
  */
-class BackofficePermission implements Middleware {
+class BackofficePermission {
     
     /**
      * Run the request filter.
@@ -55,7 +54,7 @@ class BackofficePermission implements Middleware {
     {
         $pattern = $permission->route;
         if (strstr($pattern, '{') || strstr($pattern, '/')) {
-            $pattern = str_replace(['{', '}', '?', '/'], ['\{', '\}', '\?', '\/'], $pattern);
+            $pattern = Str::replace(['{', '}', '?', '/'], ['\{', '\}', '\?', '\/'], $pattern);
         }
         $pattern = "/".$pattern."/i";
         if ($request->isMethod($permission->http)

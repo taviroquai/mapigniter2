@@ -34,6 +34,7 @@ class BrandController extends AdminController
     {
         $input = \Input::except('_token');
         $input['active'] = empty($input['active']) ? 0 : 1;
+        $input['css'] = empty($input['css']) ? '' : $input['css'];
         
         // Validate
         $validator = \Validator::make($input, [
@@ -64,9 +65,9 @@ class BrandController extends AdminController
         }
         
         // At least 1 brand must be active
-        if (\DB::table('brands')->where('active', 1)->count() == 0) {
+        if (\DB::table('brands')->where('active', true)->count() == 0) {
             $first = \DB::table('brands')->first();
-            \DB::table('brands')->where('id', $first->id)->update(['active' => 1]);
+            \DB::table('brands')->where('id', $first->id)->update(['active' => true]);
         }
         
         try {

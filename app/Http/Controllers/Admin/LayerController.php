@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Admin;
 
+use Illuminate\Support\Str;
 use App\Content;
 use App\Layer;
 use App\GeoPackage;
@@ -61,7 +62,7 @@ class LayerController extends AdminController
         if (empty($input['id'])) {
             
             // Pre validate
-            $input['seo_slug'] = empty($input['seo_slug']) ? str_slug($input['title']) : $input['seo_slug'];
+            $input['seo_slug'] = empty($input['seo_slug']) ? Str::slug($input['title']) : $input['seo_slug'];
             
             // Validate required params
             $rules = [

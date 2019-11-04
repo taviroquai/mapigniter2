@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Routing\Middleware;
 use App\Visit;
 
 /**
@@ -11,7 +10,7 @@ use App\Visit;
  *
  * @author mafonso
  */
-class VisitLog implements Middleware {
+class VisitLog {
     
     /**
      * Run the request filter.

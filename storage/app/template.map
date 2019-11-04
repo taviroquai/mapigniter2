@@ -1,55 +1,55 @@
 MAP
     IMAGETYPE      PNG
-    EXTENT         <?= $this->projection->extent . PHP_EOL ?>
+    EXTENT         <?php echo  $this->projection->extent . PHP_EOL ?>
     SIZE           400 300
     IMAGECOLOR     255 255 255
 
     PROJECTION
-        "init=epsg:<?= $this->projection_id ?>"
+        "init=epsg:<?php echo  $this->projection_id ?>"
     END
 
     WEB
         METADATA
-            "wms_title" "<?= $this->content->title ?>"
-            "wms_onlineresource" "<?= $this->shapefile_wmsurl ?>"
-            "wms_srs" "EPSG:<?= $this->projection_id ?>"
-            "wms_extent" "<?= $this->projection->extent ?>"
+            "wms_title" "<?php echo  $this->content->title ?>"
+            "wms_onlineresource" "<?php echo  $this->shapefile_wmsurl ?>"
+            "wms_srs" "EPSG:<?php echo  $this->projection_id ?>"
+            "wms_extent" "<?php echo  $this->projection->extent ?>"
             "ows_enable_request" "*"
             "tile_map_edge_buffer" "512"
         END
     END
 
     LAYER
-        NAME "<?= $this->content->seo_slug ?>"
-        DATA "<?= public_path('storage/layer/' . $this->id) . '/' . $this->getMapfileData() ?>"
+        NAME "<?php echo  $this->content->seo_slug ?>"
+        DATA "<?php echo  public_path('storage/layer/' . $this->id) . '/' . $this->getMapfileData() ?>"
         STATUS ON
-        TYPE <?= $this->shapefile_geomtype . PHP_EOL ?>
-        EXTENT <?= $this->projection->extent . PHP_EOL ?>
+        TYPE <?php echo  $this->shapefile_geomtype . PHP_EOL ?>
+        EXTENT <?php echo  $this->projection->extent . PHP_EOL ?>
         
         <?php if (empty($this->shapefile_msclass)) : ?>
         
         CLASS
-            NAME "<?= $this->content->title ?>"
+            NAME "<?php echo  $this->content->title ?>"
             
             STYLE
                 
                 <?php if($this->ol_style_static_icon) : ?>
 
-                SYMBOL "<?= $this->getStaticIconPath() ?>"
+                SYMBOL "<?php echo  $this->getStaticIconPath() ?>"
                 
-                SIZE <?= $this->getStaticIconSize() ?>
+                SIZE <?php echo  $this->getStaticIconSize() ?>
 
                 <?php endif; ?>
                 
                 <?php if ($this->ol_style_static_fill_color) : ?>
                 <?php if ($this->parseRGBA($this->ol_style_static_fill_color)) : ?>
 
-                COLOR <?= $this->getRGB($this->parseRGBA($this->ol_style_static_fill_color)) . PHP_EOL ?>
-                OPACITY <?= $this->getOpacity($this->parseRGBA($this->ol_style_static_fill_color)) . PHP_EOL ?>
+                COLOR <?php echo  $this->getRGB($this->parseRGBA($this->ol_style_static_fill_color)) . PHP_EOL ?>
+                OPACITY <?php echo  $this->getOpacity($this->parseRGBA($this->ol_style_static_fill_color)) . PHP_EOL ?>
 
                 <?php else: ?>
 
-                COLOR <?= $this->hex2rgb($this->ol_style_static_fill_color) . PHP_EOL ?>
+                COLOR <?php echo  $this->hex2rgb($this->ol_style_static_fill_color) . PHP_EOL ?>
 
                 <?php endif; ?>
                 <?php endif; ?>
@@ -57,15 +57,15 @@ MAP
                 <?php if ($this->ol_style_static_stroke_color) : ?>
                 <?php if ($this->parseRGBA($this->ol_style_static_stroke_color)) : ?>
 
-                OUTLINECOLOR <?= $this->getRGB($this->parseRGBA($this->ol_style_static_stroke_color)) . PHP_EOL ?>
+                OUTLINECOLOR <?php echo  $this->getRGB($this->parseRGBA($this->ol_style_static_stroke_color)) . PHP_EOL ?>
 
                 <?php else: ?>
 
-                OUTLINECOLOR <?= $this->hex2rgb($this->ol_style_static_stroke_color) . PHP_EOL ?>
+                OUTLINECOLOR <?php echo  $this->hex2rgb($this->ol_style_static_stroke_color) . PHP_EOL ?>
 
                 <?php endif; ?>
 
-                WIDTH <?= (empty($this->ol_style_static_stroke_width) ? 1 : $this->ol_style_static_stroke_width) . PHP_EOL ?>
+                WIDTH <?php echo  (empty($this->ol_style_static_stroke_width) ? 1 : $this->ol_style_static_stroke_width) . PHP_EOL ?>
 
                 <?php endif; ?>
 
@@ -74,15 +74,15 @@ MAP
         
         <?php else : ?>
         
-        <?= $this->shapefile_msclass ?>
+        <?php echo  $this->shapefile_msclass ?>
         
         <?php endif; ?>
 
         METADATA
-            "wms_title" "<?= $this->content->title ?>"
-            "wms_onlineresource" "<?= $this->shapefile_wmsurl ?>"
-            "wms_srs" "EPSG:<?= $this->projection_id ?>"
-            "wms_extent" "<?= $this->projection->extent ?>"
+            "wms_title" "<?php echo  $this->content->title ?>"
+            "wms_onlineresource" "<?php echo  $this->shapefile_wmsurl ?>"
+            "wms_srs" "EPSG:<?php echo  $this->projection_id ?>"
+            "wms_extent" "<?php echo  $this->projection->extent ?>"
             "ows_enable_request" "*"
             "gml_include_items"  "all"
         END

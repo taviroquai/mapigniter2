@@ -37,6 +37,7 @@ class PageController extends AdminController
     {
         $input = \Input::except('_token');
         $input['name'] = strtolower($input['name']);
+        $input['css'] = empty($input['css']) ? '' : $input['css'];
         
         $validator = \Validator::make($input, [
             'name' => 'required|alpha_dash|max:255|unique:pages'.(!empty($input['id']) ? ',name,'.$input['id'] : ''),
