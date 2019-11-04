@@ -13,7 +13,7 @@ See [Quick Start](documentation/quickstart.md) to start creating maps!
 ## Requirements
 1. Webserver with PHP 5.5+ (recommended 5.5.9+)
 2. Database server (with PDO driver) - defaults to [PostgreSQL](http://www.postgresql.org) server and has currently only been tested on PostgreSQL, but should work with MySQL, SQLite, and Microsoft SQL Server
-3. PHP extensions: pdo, pdo_pgsql (if you are using PostgreSQL), fileinfo and any other extensions required by [Laravel Install](http://laravel.com/docs/5.1#installation)
+3. PHP extensions: pdo, pdo_pgsql (if you are using PostgreSQL), fileinfo and any other extensions required by [Laravel Install](https://laravel.com/docs/6.x/installation)
 
 ## Install
 
